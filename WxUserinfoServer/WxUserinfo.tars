@@ -1,0 +1,20 @@
+
+module WmsPlatform
+{
+
+struct WxUserinfoReq
+{
+    0 require string openId;
+    1 require string accessToken;
+    2 optional string refreshToken;
+    3 optional string wechatAppId;
+};
+
+
+
+interface WxUserinfo
+{
+    int test();
+};
+
+}; 

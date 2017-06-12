@@ -1,0 +1,23 @@
+
+module WmsPlatform
+{
+
+
+struct WxoauthReq
+{
+    0 require string openId;
+    1 require string accessToken;
+    2 optional string refreshToken;
+    3 optional string wechatAppId;
+};
+
+
+interface Wxoauth
+{
+    int test();
+
+    int wxchatLogin(WxoauthReq req, out string res);
+
+};
+
+}; 

@@ -1,0 +1,29 @@
+
+module WmsPlatform
+{
+
+
+
+
+struct CreateRoomReq
+{
+    0 require string userId;
+    1 require string appId;
+    2 require string appCode;
+    3 require string token;
+    4 require string gameId;
+    5 require string useNum;
+    6 require string orderType;
+};
+
+
+
+interface Order
+{
+    int test();
+ 	int generateOrder(CreateRoomReq req,  out string res);
+
+
+};
+
+}; 
