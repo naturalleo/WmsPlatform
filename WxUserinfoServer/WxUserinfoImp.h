@@ -3,7 +3,7 @@
 
 #include "servant/Application.h"
 #include "WxUserinfo.h"
-
+#include "DbAgent.h"
 /**
  *
  *
@@ -30,6 +30,13 @@ public:
      *
      */
     virtual int test(tars::TarsCurrentPtr current) { return 0;};
+
+
+    virtual int getWxUserinfo(const WmsPlatform::WxUserinfoReq& sIn, WmsPlatform::WxUserinfoRes& sOut, tars::TarsCurrentPtr current);
+
+
+protected:
+    DbAgent _db;
 };
 /////////////////////////////////////////////////////
 #endif

@@ -9,14 +9,10 @@ void OrderImp::initialize()
     //initialize servant here:
     //...
 	TLOGDEBUG("begin OrderImp initialize"<<endl);
-    try{
-        try{
-            _db.init();
+    try
+    {
 
-        }catch(exception &ex)
-        {
-                cout << ex.what() << endl;
-        }
+        _db.init();   
         //string order = "";
     	//_db.generaterOrderID("hello",order);
    }

@@ -4,10 +4,23 @@ module WmsPlatform
 
 struct WxUserinfoReq
 {
-    0 require string openId;
-    1 require string accessToken;
-    2 optional string refreshToken;
-    3 optional string wechatAppId;
+    0 require  string unionid;
+    1 require  string headimgurl;
+    2 require  string nickname;
+    3 require  string sex;
+    4 require  string country;
+    5 require  string province;
+    6 require  string city;
+    7 require  string openid;    
+};
+
+
+struct WxUserinfoRes
+{
+    0 require  string userId;
+    1 require  string headimgurl;
+    2 require  string nickname;
+    3 require  string sex;  
 };
 
 
@@ -15,6 +28,9 @@ struct WxUserinfoReq
 interface WxUserinfo
 {
     int test();
+
+    int getWxUserinfo(WxUserinfoReq req, out WxUserinfoRes res);
+
 };
 
 }; 

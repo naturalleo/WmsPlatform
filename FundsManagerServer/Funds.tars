@@ -1,0 +1,10 @@
+
+module WmsPlatform
+{
+
+interface Funds
+{
+    int test();
+};
+
+}; 

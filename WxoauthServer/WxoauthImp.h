@@ -3,6 +3,14 @@
 
 #include "servant/Application.h"
 #include "Wxoauth.h"
+#include "WxUserinfo.h"
+#include "rapidjson/include/rapidjson/document.h"
+#include "rapidjson/include/rapidjson/writer.h"
+#include "rapidjson/include/rapidjson/stringbuffer.h"
+
+using namespace rapidjson;
+using namespace std;
+using namespace WmsPlatform;
 
 /**
  *
@@ -33,6 +41,10 @@ public:
 
 
     virtual int wxchatLogin(const WmsPlatform::WxoauthReq& sIn, std::string& sOut, tars::TarsCurrentPtr current);
+
+protected:
+     WxUserinfoPrx  _wxuserinfoPrx;
+     
 };
 /////////////////////////////////////////////////////
 #endif
