@@ -58,17 +58,25 @@ public:
 };
 
 
-
+/*
+客户端请求
 //http://10.17.174.171:8192/user/thirdPartyLogin?nettype=windows+net&appId=40&loginFrom=10&osVer=windows&model=windows&clientFrom=3
 //&accessToken=test&openId=2000211&appCode=klmgphz&clientVer=0.1&uuId=windows+uuId&chanId=windows+0&operator=windows+Operator
 //&macAddr=windows&imei=UnKnow+IMIE&sign=83054b51ab447abd38a3f49896cf20ce5f080c39
 //
+后台返回数据
+{"status":1,"errCode":0,"error":"","data":{"mySign":"6ddb248cdb99ad9e596b05825543fdd6eb35ff97","userId":"2000211",
+"status":"1","token":"46455a42e42b059fe7446fd7dea6c478","gender":"1","nickName":"klgdmj_guest_2000211","avatar":"",
+"totalGameCard":"105","surplusGameCard":"62","isNew":0,"ip":"10.17.191.3","shareList":[],"w":true}}
+
+
+
 
 //微信请求数据
 //https://api.weixin.qq.com/sns/userinfo?access_token=OezXcEiiBSKSxW0eoylIeAsR0GmYd1awCffdHgb4fhS_KKf2CotGj2cBNUKQQvj-G0ZWEE5
 //-uBjBz941EOPqDQy5sS_GCs2z40dnvU99Y5AI1bw2uqN--2jXoBLIM5d6L9RImvm8Vg8cBAiLpWA8Vw&openid=oLVPpjqs9BhvzwPj5A-vTYAX3GLc
 
-/*
+
 微信正常返回数据
 {
     "openid": "oLVPpjqs9BhvzwPj5A-vTYAX3GLc",
@@ -81,6 +89,11 @@ public:
     "headimgurl": "http://wx.qlogo.cn/mmopen/utpKYf69VAbCRDRlbUsPsdQN38DoibCkrU6SAMCSNx558eTaLVM8PyM6jlEGzOrH67hyZibIZPXu4BK1XNWzSXB3Cs4qpBBg18/0",
     "privilege": []
 }
+
+
+
+
+
 */
 
 
