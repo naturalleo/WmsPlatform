@@ -159,7 +159,7 @@ public:
     virtual void callback_wxchatLogin_exception(tars::Int32 ret)
     { 
         TLOGERROR("WxoauthCallback callback_wxchatLogin_exception ret:" << ret << endl); 
-        
+
         Wxoauth::async_response_wxchatLogin(_current, ret, "");
     }
 
@@ -308,3 +308,105 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
     }
     return 0;
 }
+
+
+/*
+要实现以下接口实现
+客户端与后台通信API
+    App第三方登录注册
+    请求示例：
+    http://10.17.174.171:8192/User/thirdPartyLogin?nettype=4&loginFrom=10&appId=1&chanId=0&osVer=6.0&model=EVA-AL10&clientFrom=2&wechatAppId=wxb0c1087c2a499493&
+    accessToken=iAr1JDqg%5F4Tp%5FekZi8LbJlF3zDhSH7AIMthWANt64n9ZGNTlrhnmjy-Fl9wEzRVlLsPnAen4R3Vyq1uxMCH64d34LUJ77Mll8gUmVEwAq8k&openId=oUJxOv-hvRQlKQn7JzE-l4OsFzFw&
+    appCode=klmj&clientVer=0.1&uuId=A2053CBF562A3521863E95C94CDE5FB6&refreshToken=4HQbp4Z3lbrU5brjTMrdm2JZUpPXkbxNAY0A61aU3J%5F6gdsAIrB9IPdVzg-Et%5FLEtgZ%5FLVm7t17Qx
+    c0kYEDlRkAItw386WpQ4mvqU%5FzhEO4&operator=1&macAddr=f8%3A23%3Ab2%3Ade%3Aa1%3Ac9&imei=862187033177835&sign=aa2db44c817e92a2befb8ce953de27124528f060
+    返回值：
+{
+  "status": 1,
+  "errCode": 0,
+  "error": "",
+  "data": {
+    "mySign": false,
+    "userId": "32",
+    "token": "4856fa1d4e94d488683c1e9655de767e",
+    "nickName": "Rocky-江树琪",
+    "gender": "1",
+    "avatar": "http://wx.qlogo.cn/mmopen/nMLdCrVfKelB8YQPB3wGXibgBHznlibX7mjW4zRcBZ9zQib73ZqXZPmgU9cDO50TsnXnb9yTSm8DFR36jtGshTxL6bQcdtj1icx1/0",
+    "totalGameCard": "70",
+    "surplusGameCard": "70",
+    "isNew": 0,
+    "ip": "127.0.0.1",
+    "isRefreshToken": true,
+    "wechatAccessToken": "4HQbp4Z3lbrU5brjTMrdm_dqsc2vW4_COZSRjQmOzzKAQSiUSmkfDlE_axAHI2AnmnkrPpBAMRXdb4UgYWRgqUu3emgplByniqNE1YN14c0",
+    "wechatRefreshToken": "4HQbp4Z3lbrU5brjTMrdm2JZUpPXkbxNAY0A61aU3J_6gdsAIrB9IPdVzg-Et_LEtgZ_LVm7t17Qxc0kYEDlRkAItw386WpQ4mvqU_zhEO4",
+    "shareList": {
+      "roomShare": {
+        "shareId": "2",
+        "shareType": "2",
+        "title": "",
+        "desc": "",
+        "link": "",
+        "img": ""
+      },
+      "mainShare": {
+        "shareId": "1",
+        "shareType": "1",
+        "title": "【快来麻将】",
+        "desc": "快来麻将是一款完美还原的\r\n湖南本土麻将，玩法齐全。",
+        "link": "http://www.baidu.com/",
+        "img": "https://www.baidu.com/img/bd_logo1.png"
+      }
+    }
+  }
+}
+
+    获取用户最新余额信息
+    请求示例：
+    http://10.17.174.171:8192/User/getFunds?appId=1&appCode=klmj&clientFrom=1&userId=12&uuId=2342342343243243&token=oKfGns9KeLBhut0uSp56f9pR-4RE&sign=f1c5614a5abbcc9f6e8fe45f02f6640bab3018c9
+    返回值：
+    {
+      "status": 1,
+      "errCode": 0,
+      "error": "没有错误",
+      "data": {
+        "userId": "12",
+        "totalGameCard": "3",
+        "surplusGameCard": "3",
+        "ip": "127.0.0.1"
+      }
+    }
+游戏服务器与后台通信API
+    创建游戏房间订单
+    请求示例：
+    http://10.17.174.171:8192/GameService/addOrder?appId=1&appCode=klmj&clientFrom=1&userId=13&token=569553243e028c6711f2a53e6bf6c4d3&gameId=1&useNum=1&orderType=1
+    返回值：
+    {
+      "status": 1,
+      "errCode": 0,
+      "error": "没有错误",
+      "data": {
+        "isNew": "1",
+        "userId": "13",
+        "nickName": "郑凯斌",
+        "avatar": "http://wx.qlogo.cn/mmopen/Q3auHgzwzM4WXv9zEF7tpJlkmXtEbDkJO3LZZjREcy3ic4YN8a3s5jpASmEib79mKAg7xxIdZZmd8EicxPcSRMRfw/0",
+        "orderCode": "6177007419",
+        "errTxt": "",
+        "ip": "10.17.174.110"
+      }
+    }
+
+    更新游戏房间订单状态
+    请求示例：
+    http://10.17.174.171:8192/GameService/updateOrder?status=used&orderCode=6177002443&roomId=123
+    返回值：
+    {
+      "status": 1,
+      "errCode": 0,
+      "error": "没有错误",
+      "data": {
+        "orderCode": "6177002443"
+      }
+    }
+
+
+
+*/
