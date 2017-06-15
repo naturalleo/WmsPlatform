@@ -40,11 +40,14 @@ public:
     virtual int test(tars::TarsCurrentPtr current) { return 0;};
 
 
+    int getUseInfo(const WxUserinfoReq &req, WxUserinfoRes & res);
+
+
     virtual int wxchatLogin(const WmsPlatform::WxoauthReq& sIn, std::string& sOut, tars::TarsCurrentPtr current);
 
 protected:
      WxUserinfoPrx  _wxuserinfoPrx;
-     
+
 };
 /////////////////////////////////////////////////////
 #endif

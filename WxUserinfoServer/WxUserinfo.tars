@@ -5,22 +5,30 @@ module WmsPlatform
 struct WxUserinfoReq
 {
     0 require  string unionid;
-    1 require  string headimgurl;
-    2 require  string nickname;
-    3 require  string sex;
-    4 require  string country;
-    5 require  string province;
-    6 require  string city;
-    7 require  string openid;    
+    1 require  string appGroupId;
+    2 require  string headimgurl;
+    3 require  string nickname;
+    4 require  string sex;
+    5 require  string openid; 
+    6 require  string appId;  
+    7 require  string appGroupId; 
 };
 
 
 struct WxUserinfoRes
 {
     0 require  string userId;
+
+
     1 require  string headimgurl;
     2 require  string nickname;
     3 require  string sex;  
+
+    4 require string isNew;
+    5 require string totalcard;
+    6 require string currentcard;
+    7 require string token;
+
 };
 
 

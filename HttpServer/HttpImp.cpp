@@ -159,8 +159,8 @@ public:
     virtual void callback_wxchatLogin_exception(tars::Int32 ret)
     { 
         TLOGERROR("WxoauthCallback callback_wxchatLogin_exception ret:" << ret << endl); 
-
-        Order::async_response_generateOrder(_current, ret, "");
+        
+        Wxoauth::async_response_wxchatLogin(_current, ret, "");
     }
 
     TarsCurrentPtr _current;

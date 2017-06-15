@@ -31,10 +31,10 @@ public:
     : _current(current)
     {}
 
-    virtual void callback_wxchatLogin(tars::Int32 ret,  const std::string& sOut)
+    virtual void callback_getWxUserinfo(tars::Int32 ret,  const WmsPlatform::WxUserinfoRes& sOut)
     {
         //HttpImp::async_response_doRequest(_current, ret, sOut);
-        TLOGDEBUG("callback_wxchatLogin : " << ret << sOut << endl);
+        TLOGDEBUG("callback_getWxUserinfo : " << ret  << endl);
         TC_HttpResponse rsp;
         vector<char> buffer;
         string s = sOut;
@@ -43,7 +43,7 @@ public:
 
 
         _current->sendResponse(&buffer.at(0),buffer.size());
-        TLOGDEBUG("callback_wxchatLogin : " << s << s.size() << endl);
+        TLOGDEBUG("callback_getWxUserinfo : " << s << s.size() << endl);
        // _current->sendResponse(tars::TARSSERVERSUCCESS, buffer);    
         //HttpImp::async_response_doRequest(_current, ret, buffer);
     }
@@ -51,7 +51,7 @@ public:
     { 
         TLOGERROR("WxoauthCallback callback_wxchatLogin_exception ret:" << ret << endl); 
 
-        Order::async_response_generateOrder(_current, ret, "");
+        WxUserinfo::async_response_getWxUserinfo(_current, ret, "");
     }
 
     TarsCurrentPtr _current;
@@ -168,4 +168,42 @@ int WxoauthImp::wxchatLogin(const WmsPlatform::WxoauthReq& sIn, std::string& sOu
         cout << ex.what() << endl;
     }
     return 0;
+}
+
+/*
+struct WxUserinfoReq
+{
+    0 require  string unionid;
+    1 require  string appGroupId;
+    2 require  string headimgurl;
+    3 require  string nickname;
+    4 require  string sex;
+    5 require  string openid;    
+};
+
+*/
+
+
+
+
+int WxoauthImp::getUseInfo(const WxUserinfoReq &req, WxUserinfoRes &res)
+{
+
+    try
+    {
+
+	    iRet = _wxuserinfoPrx->getWxUserinfo(req, res);
+
+        if(iRet != 0)
+        {
+        	TLOGERROR("WxoauthImp getUseInfo iRet != 0: " << iRet);
+        	return iRet;
+        }
+
+        return iRet;
+    }
+    catch(exception &ex)
+    {
+        TLOGERROR("WxoauthImp::getUseInfo exception:" << ex.what() << endl);
+    }
 }
