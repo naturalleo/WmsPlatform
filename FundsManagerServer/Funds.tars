@@ -2,9 +2,54 @@
 module WmsPlatform
 {
 
+
+struct FundsNewUserReq
+{
+    0 require  string userId;
+    1 require  string appId;
+    2 require  string appCode;
+ 	3 require  string nickName; 
+};
+
+struct FundsUserInfoReq
+{
+    0 require  string userId;
+    1 require  string appId;  
+    2 require  string appCode;  	
+};
+
+
+
+struct FundsUserInfoRes
+{
+    0 require  string userId;
+    1 require  string cards;  	
+};
+
+
+
+struct FundsUserModifyReq
+{
+    0 require  string userId;
+    1 require  string appId;  
+    2 require  string appCode; 
+    3 require  string value ;
+    4 require  string value_type;		
+};
+
 interface Funds
 {
     int test();
+
+	int addFunds(FundsNewUserReq req, out string res);
+
+	int getFunds(FundsUserInfoReq req, out FundsUserInfoRes res);
+
+	int modifyFunds(FundsUserModifyReq req, out string res);
+
+
+
+
 };
 
 }; 

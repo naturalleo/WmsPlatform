@@ -17,3 +17,19 @@ void FundsImp::destroy()
     //...
 }
 
+
+
+int FundsImp::addFunds(const WmsPlatform::FundsNewUserReq& sIn, std::string& sOut, tars::TarsCurrentPtr current)
+{
+
+}
+
+int FundsImp::getFunds(const WmsPlatform::FundsUserInfoReq& sIn, WmsPlatform::FundsUserInfoRes& sOut, tars::TarsCurrentPtr current)
+{
+
+}
+
+int FundsImp::modifyFunds(const WmsPlatform::FundsUserModifyReq& sIn, std::string& sOut, tars::TarsCurrentPtr current)
+{
+
+}
