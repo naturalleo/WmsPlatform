@@ -46,6 +46,10 @@ CREATE TABLE `t_user_funds` (
   UNIQUE KEY `userId` (`userId`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=685 DEFAULT CHARSET=utf8 COMMENT='余额模块-用户余额';
 
+
+
+
+
 */
 
 int DbAgent::addFunds(const WmsPlatform::FundsNewUserReq& sIn, std::string& sOut) 
