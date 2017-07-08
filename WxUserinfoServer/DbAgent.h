@@ -31,7 +31,7 @@ public:
 
     int getDbUserinfo(const WmsPlatform::WxUserinfoReq &in, string &userId);
     
-
+    int isUserAgent(const std::string userId ,int &result);
 
 private:
     //mysql连接对象

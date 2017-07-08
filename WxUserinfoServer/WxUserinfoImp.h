@@ -34,9 +34,12 @@ public:
 
     virtual int getWxUserinfo(const WmsPlatform::WxUserinfoReq& sIn, WmsPlatform::WxUserinfoRes& sOut, tars::TarsCurrentPtr current);
 
+    virtual int getWxUserIsAgent(const WmsPlatform::WxUserisAgentReq& sIn, WmsPlatform::WxUserisAgentRes& sOut, tars::TarsCurrentPtr current);
 
+    virtual int updateWxUserCards(const WmsPlatform::WxUserExchangeReq& sIn, WmsPlatform::WxUserExchangeRes& sOut, tars::TarsCurrentPtr current);
 protected:
     DbAgent _db;
+    FundsPrx  _FundsPrx;
 };
 /////////////////////////////////////////////////////
 #endif

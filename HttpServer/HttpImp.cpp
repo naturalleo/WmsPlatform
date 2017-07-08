@@ -28,6 +28,7 @@ void HttpImp::initialize()
     //...
     _orderPrx   = Application::getCommunicator()->stringToProxy<OrderPrx>("WmsPlatform.OrderManagerServer.OrderObj");
     _wxoauthPrx = Application::getCommunicator()->stringToProxy<WxoauthPrx>("WmsPlatform.WxoauthServer.WxoauthObj");
+    _WxUserinfoPrx = Application::getCommunicator()->stringToProxy<WxoauthPrx>("WmsPlatform.WxUserinfoServer.WxUserinfoObj");
 }
 
 //////////////////////////////////////////////////////
@@ -166,6 +167,64 @@ public:
     TarsCurrentPtr _current;
 };
 
+class WxUserinfoCallback : public WxUserinfoPrxCallback
+{
+
+public:
+    WxUserinfoCallback(TarsCurrentPtr &current)
+    : _current(current)
+    {}
+
+    virtual void callback_updateWxUserCards(tars::Int32 ret,  const WmsPlatform::WxUserExchangeRes& sOut)
+    {
+        //HttpImp::async_response_doRequest(_current, ret, sOut);
+        TLOGDEBUG("callback_updateWxUserCards : " << ret << sOut << endl);
+        TC_HttpResponse rsp;
+        vector<char> buffer;
+        string s="hello world";
+        rsp.setResponse(s.c_str(),s.size());
+        rsp.encode(buffer);     
+
+        _current->sendResponse(&buffer.at(0),buffer.size());
+        TLOGDEBUG("callback_updateWxUserCards : " << s << s.size() << endl);
+       // _current->sendResponse(tars::TARSSERVERSUCCESS, buffer);    
+        //HttpImp::async_response_doRequest(_current, ret, buffer);
+    }
+    virtual void callback_updateWxUserCards_exception(tars::Int32 ret)
+    { 
+        TLOGERROR("WxUserinfoCallback callback_updateWxUserCards_exception ret:" << ret << endl); 
+
+        Wxoauth::async_response_updateWxUserCards(_current, ret, "");
+    }
+
+    virtual void callback_getWxUserIsAgent(tars::Int32 ret,  const WmsPlatform::WxUserisAgentRes& sOut)
+    {
+        //HttpImp::async_response_doRequest(_current, ret, sOut);
+        TLOGDEBUG("callback_getWxUserIsAgent : " << ret << sOut << endl);
+        TC_HttpResponse rsp;
+        vector<char> buffer;
+        string s="hello world";
+        rsp.setResponse(s.c_str(),s.size());
+        rsp.encode(buffer);     
+
+        _current->sendResponse(&buffer.at(0),buffer.size());
+        TLOGDEBUG("callback_getWxUserIsAgent : " << s << s.size() << endl);
+       // _current->sendResponse(tars::TARSSERVERSUCCESS, buffer);    
+        //HttpImp::async_response_doRequest(_current, ret, buffer);
+    }
+    virtual void callback_getWxUserIsAgent_exception(tars::Int32 ret)
+    { 
+        TLOGERROR("WxUserinfoCallback callback_getWxUserIsAgent_exception ret:" << ret << endl); 
+
+        Wxoauth::async_response_getWxUserIsAgent(_current, ret, "");
+    }
+
+
+
+
+    TarsCurrentPtr _current;
+};
+
 bool HttpImp::isParamExist(const multimap<string, string> &mmpParams , const string& sName) const
 {
     return mmpParams.find(sName) != mmpParams.end();
@@ -278,6 +337,28 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
             rsp.encode(buffer);
 */
 
+        }
+        else if (request.getRequestUrl() == "/GameService/isagent")
+        {
+            current->setResponse(false);
+            WxUserisAgentReq req;
+            string res;
+            req.userId = "123";  
+            WmsPlatform::WxUserinfoPrxCallbackPtr cb = new WxUserinfoCallback(current);
+
+            _orderPrx->tars_set_timeout(3000)->async_getWxUserIsAgent(cb,req);        
+        }
+        else if (request.getRequestUrl() == "/GameService/ExchangeCards")
+        {
+            current->setResponse(false);
+            WxUserExchangeReq req;
+            req.userId = "123";  
+            req.otherId = "123";
+            req.opcode = "add";
+            req.cards = "1";
+            WmsPlatform::WxUserinfoPrxCallbackPtr cb = new WxUserinfoCallback(current);
+
+            _orderPrx->tars_set_timeout(3000)->async_updateWxUserCards(cb,req);        
         }
         else
         {

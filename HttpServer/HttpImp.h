@@ -69,6 +69,7 @@ public:
 protected:
     OrderPrx    _orderPrx;
     WxoauthPrx  _wxoauthPrx;
+    WxUserinfoPrx  _WxUserinfoPrx;
 };
 /////////////////////////////////////////////////////
 #endif

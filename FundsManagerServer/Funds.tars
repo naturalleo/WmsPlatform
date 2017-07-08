@@ -33,8 +33,22 @@ struct FundsUserModifyReq
     0 require  string userId;
     1 require  string appId;  
     2 require  string appCode; 
-    3 require  string value ;
-    4 require  string value_type;		
+    3 require  string cards ;
+    4 require  string opcode;		
+};
+
+struct FundsUserModifyOtherReq
+{
+    0 require  string userId;
+    1 require  string otherId; 
+    2 require  string cards ;
+    3 require  string opcode;      
+};
+struct FundsUserModifyOtherRes
+{
+    0 require  string userId;
+    1 require  string cards ;
+ 
 };
 
 interface Funds
@@ -47,8 +61,7 @@ interface Funds
 
 	int modifyFunds(FundsUserModifyReq req, out string res);
 
-
-
+    int modifyFundsOther(FundsUserModifyOtherReq req, out FundsUserModifyOtherRes result) ;
 
 };
 

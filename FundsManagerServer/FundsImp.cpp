@@ -33,3 +33,7 @@ int FundsImp::modifyFunds(const WmsPlatform::FundsUserModifyReq& sIn, std::strin
 {
 
 }
+int FundsImp::modifyFundsOther(const WmsPlatform::FundsUserModifyOtherReq& sIn, WmsPlatform::FundsUserModifyOtherRes& sOut, tars::TarsCurrentPtr current)
+{
+
+}

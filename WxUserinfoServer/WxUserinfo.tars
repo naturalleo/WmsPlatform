@@ -31,6 +31,35 @@ struct WxUserinfoRes
 
 };
 
+struct WxUserisAgentReq
+{
+    0 require  string userId;
+};
+
+
+struct WxUserisAgentRes
+{
+    0 require  integer errorCode;
+    1 require  integer isAgent;
+};
+
+
+struct WxUserExchangeReq
+{
+    0 require  string userId;
+    1 require  string otherId;
+    2 require  string opcode ;
+    3 require  string cards;
+
+};
+
+struct WxUserExchangeRes
+{
+    0 require  integer errorCode;
+    1 require  integer userId;
+    2 require  integer cards;
+};
+
 
 
 interface WxUserinfo
@@ -38,6 +67,10 @@ interface WxUserinfo
     int test();
 
     int getWxUserinfo(WxUserinfoReq req, out WxUserinfoRes res);
+
+    int getWxUserIsAgent(WxUserisAgentReq req, out WxUserisAgentRes res);
+
+    int updateWxUserCards(WxUserExchangeReq req, out WxUserExchangeRes res)
 
 };
 

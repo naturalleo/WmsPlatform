@@ -158,3 +158,35 @@ int DbAgent::getDbUserinfo(const WmsPlatform::WxUserinfoReq &in, string &userId)
     }
     return 0;
 }
+
+int DbAgent::isUserAgent(const std::string userId ,int &result)
+{
+    try
+    {
+        string sSql = "select `userId` from `t_user` where userId = " + userId + " and userType = 1"  " limit 0,1";
+
+        tars::TC_Mysql::MysqlData item = _mysqlReg.queryRecord(sSql);
+        if (item.size() == 0)
+        {
+            result = -1;
+            return 0;
+        }
+        else
+        {
+            result = 0;
+            return 0;
+        }
+
+        TLOGDEBUG(__FUNCTION__ << pthread_self() <<" affected: " << _mysqlReg.getAffectedRows() << endl);
+    }
+    catch (TC_Mysql_Exception& ex)
+    {
+        TLOGERROR(__FUNCTION__ << " exception: " << ex.what() << endl);
+        return -1;
+    }
+    catch (exception& ex)
+    {
+        TLOGERROR(__FUNCTION__ << " exception: " << ex.what() << endl);
+        return -1;
+    }  
+}
