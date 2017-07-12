@@ -37,7 +37,7 @@ int DbAgent::isUniqueUser(const std::string unionId, const std::string appGroupI
         }
         else
         {
-            return TC_Common::strto<int>(item[0]["userId"])
+            return TC_Common::strto<int>(item[0]["userId"]);
         }
     }
     catch (TC_Mysql_Exception& ex)
@@ -89,15 +89,26 @@ CREATE TABLE `t_user` (
   PRIMARY KEY (`userId`),
   KEY `appId` (`appId`,`regFrom`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2000726 DEFAULT CHARSET=utf8 COMMENT='用户模块-用户主表';
+struct WxUserinfoReq
+{
+    0 require  string unionid;
+    1 require  string appGroupId;
+    2 require  string headimgurl;
+    3 require  string nickname;
+    4 require  string sex;
+    5 require  string openid; 
+    6 require  string appId;  
+};
+
+
 */
 
 int DbAgent::insertNewUser(const WmsPlatform::WxUserinfoReq &in, string &userId)
 {
     try
     {
-        string sSql = "insert into t_user(`nickName`, `password`, `gender`, `regTime`, `loginTimes`, `lastLoginTime`,
-                                          `status`, `userType`, `appId`, `unionId`, `appGroupId`) 
-                        values"
+        string sSql = "insert into t_user(`nickName`, `password`, `gender`, `regTime`, `loginTimes`, `lastLoginTime`,`status`, `userType`, `appId`, `unionId`, `appGroupId`)"
+                            "values"
                             "( " + in.nickname + " ,"
                             "'test' , "
                             " " + in.sex + " ,"
@@ -113,6 +124,7 @@ int DbAgent::insertNewUser(const WmsPlatform::WxUserinfoReq &in, string &userId)
         _mysqlReg.execute(sSql);
 
         TLOGDEBUG(__FUNCTION__ << pthread_self() <<" affected: " << _mysqlReg.getAffectedRows() << endl);
+        return 0;
     }
     catch (TC_Mysql_Exception& ex)
     {
@@ -132,13 +144,13 @@ int DbAgent::getDbUserinfo(const WmsPlatform::WxUserinfoReq &in, string &userId)
     try
     {
         int uid;
-        if ((uid == isUniqueUser(in.unionid , "")) == 0)
+        if ((uid == isUniqueUser(in.unionId , "")) == 0)
         {
             insertNewUser(in,userId);
-            uid = isUniqueUser(in.unionid , "");
+            uid = isUniqueUser(in.unionId , "");
             return 1;
         }
-        else if ((uid == isUniqueUser(in.unionid , "")) == -1)
+        else if ((uid == isUniqueUser(in.unionId , "")) == -1)
         {
             TLOGERROR(" DbAgent::getDbUserinfo exception: " << -1 << endl);
             return -1;

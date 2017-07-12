@@ -57,7 +57,7 @@ int DbAgent::addFunds(const WmsPlatform::FundsNewUserReq& sIn, std::string& sOut
     try
     {
 
-
+      return 0;
     }
     catch (TC_Mysql_Exception& ex)
     {
@@ -76,7 +76,7 @@ int DbAgent::getFunds(const WmsPlatform::FundsUserInfoReq& sIn, WmsPlatform::Fun
     try
     {
 
-
+      return 0;
     }
     catch (TC_Mysql_Exception& ex)
     {
@@ -95,7 +95,7 @@ int DbAgent::modifyFunds(const WmsPlatform::FundsUserModifyReq& sIn, std::string
     try
     {
 
-
+      return 0 ;
     }
     catch (TC_Mysql_Exception& ex)
     {

@@ -4,6 +4,7 @@
 #include "servant/Application.h"
 #include "WxUserinfo.h"
 #include "DbAgent.h"
+#include "Funds.h"
 /**
  *
  *

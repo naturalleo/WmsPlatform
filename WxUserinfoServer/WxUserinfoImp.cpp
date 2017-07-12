@@ -14,7 +14,7 @@ void WxUserinfoImp::initialize()
     {
 
     	 _db.init();
-         _FundsPrx = Application::getCommunicator()->stringToProxy<WxoauthPrx>("WmsPlatform.FundsManagerServer.FundsObj");
+         _FundsPrx = Application::getCommunicator()->stringToProxy<FundsPrx>("WmsPlatform.FundsManagerServer.FundsObj");
         //string order = "";
     	//_db.generaterOrderID("hello",order);
     }
@@ -66,10 +66,10 @@ struct WxUserinfoRes
 
 int WxUserinfoImp::getWxUserinfo(const WmsPlatform::WxUserinfoReq& sIn, WmsPlatform::WxUserinfoRes& sOut, tars::TarsCurrentPtr current)
 {
-	TLOGDEBUG("getWxUserinfo : " << sIn.unionid << endl);
+	TLOGDEBUG("getWxUserinfo : " << sIn.unionId << endl);
     try
     {
-    	 int iRet = _db.getDbUserinfo(sReq, sOut.userId)
+    	 int iRet = _db.getDbUserinfo(sIn, sOut.userId);
     	 sOut.headimgurl =  sIn.headimgurl ;
     	 sOut.nickname   =  sIn.nickname ;
     	 sOut.sex 		 =  sIn.sex ;
@@ -95,7 +95,7 @@ int WxUserinfoImp::getWxUserinfo(const WmsPlatform::WxUserinfoReq& sIn, WmsPlatf
     }
 
     
-	return 0
+	return 0;
 }
 int WxUserinfoImp::getWxUserIsAgent(const WmsPlatform::WxUserisAgentReq& sIn, WmsPlatform::WxUserisAgentRes& sOut, tars::TarsCurrentPtr current)
 {
@@ -124,7 +124,7 @@ int WxUserinfoImp::getWxUserIsAgent(const WmsPlatform::WxUserisAgentReq& sIn, Wm
     }
 
     
-    return 0  
+    return 0  ;
 }
 /*
 struct FundsUserModifyOtherReq
@@ -210,5 +210,5 @@ int WxUserinfoImp::updateWxUserCards(const WmsPlatform::WxUserExchangeReq& sIn, 
     }
 
     
-    return 0 
+    return 0 ;
 }

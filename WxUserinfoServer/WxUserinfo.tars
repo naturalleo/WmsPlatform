@@ -4,14 +4,13 @@ module WmsPlatform
 
 struct WxUserinfoReq
 {
-    0 require  string unionid;
+    0 require  string unionId;
     1 require  string appGroupId;
     2 require  string headimgurl;
     3 require  string nickname;
     4 require  string sex;
     5 require  string openid; 
     6 require  string appId;  
-    7 require  string appGroupId; 
 };
 
 
@@ -39,8 +38,8 @@ struct WxUserisAgentReq
 
 struct WxUserisAgentRes
 {
-    0 require  integer errorCode;
-    1 require  integer isAgent;
+    0 require  int errorCode;
+    1 require  int isAgent;
 };
 
 
@@ -55,9 +54,9 @@ struct WxUserExchangeReq
 
 struct WxUserExchangeRes
 {
-    0 require  integer errorCode;
-    1 require  integer userId;
-    2 require  integer cards;
+    0 require  int errorCode;
+    1 require  string userId;
+    2 require  string cards;
 };
 
 
@@ -70,7 +69,7 @@ interface WxUserinfo
 
     int getWxUserIsAgent(WxUserisAgentReq req, out WxUserisAgentRes res);
 
-    int updateWxUserCards(WxUserExchangeReq req, out WxUserExchangeRes res)
+    int updateWxUserCards(WxUserExchangeReq req, out WxUserExchangeRes res);
 
 };
 

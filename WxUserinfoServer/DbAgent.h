@@ -8,8 +8,7 @@
 #include "util/tc_mysql.h"
 #include "util/tc_file.h"
 #include "servant/TarsLogger.h"
-#include "Order.h"
-
+#include "WxUserinfo.h"
 
 using namespace WmsPlatform;
 /**
