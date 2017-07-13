@@ -1,11 +1,12 @@
 #include "WxoauthImp.h"
 #include "servant/Application.h"
 #include "util/tc_http.h"
-
+#include "util/tc_md5.h"
 
 
 using namespace std;
-
+string WxoauthImp::_basekey1 = "e4b,KyiniuApi>VmZg7J!y";
+string WxoauthImp::_basekey2 = "<zwrUG2^?vN;ixApp";
 //////////////////////////////////////////////////////
 void WxoauthImp::initialize()
 {
@@ -219,4 +220,15 @@ int WxoauthImp::getUseInfo(const WxUserinfoReq &req, WxUserinfoRes &res)
     {
         TLOGERROR("WxoauthImp::getUseInfo exception:" << ex.what() << endl);
     }
+}
+
+string WxoauthImp::getLoginToken(string figure)
+{
+    string token;
+    if (figure == "") 
+         figure = TC_Common::now2ms();
+
+    token = tars::TC_MD5::md5str(tars::TC_MD5::md5str(_basekey1 + figure) + _basekey2) ;
+
+    return token;
 }
