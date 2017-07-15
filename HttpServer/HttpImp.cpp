@@ -18,6 +18,9 @@
 #include "servant/Application.h"
 #include "util/tc_common.h"
 #include "util/tc_cgi.h"
+#include <cctype>
+#include <algorithm>
+
 
 using namespace std;
 
@@ -38,6 +41,16 @@ void HttpImp::destroy()
     //...
 }
 
+string& HttpImp::trim(string &s)   
+{  
+    if (s.empty())   
+    {  
+        return s;  
+    }  
+    s.erase(0,s.find_first_not_of(" "));  
+    s.erase(s.find_last_not_of(" ") + 1);  
+    return s;  
+}
 void HttpImp::parseNormal(multimap<string, string> &mmpParams, const string& sBuffer)
 {
     int iFlag = 0;
@@ -78,7 +91,7 @@ void HttpImp::parseNormal(multimap<string, string> &mmpParams, const string& sBu
             {
                 sValue = "";
 
-                mmpParams.insert(multimap<string, string>::value_type(sName, sValue));
+                mmpParams.insert(multimap<string, string>::value_type(trim(sName), sValue));
             }
             else
             {
@@ -89,7 +102,7 @@ void HttpImp::parseNormal(multimap<string, string> &mmpParams, const string& sBu
         {
             sValue = TC_Cgi::decodeURL(sTmp);
 
-            mmpParams.insert(multimap<string, string>::value_type(sName, sValue));
+            mmpParams.insert(multimap<string, string>::value_type(trim(sName), sValue));
 
             iFlag = 0;
         }
@@ -141,13 +154,67 @@ public:
     : _current(current)
     {}
 
-    virtual void callback_wxchatLogin(tars::Int32 ret,  const std::string& sOut)
+    virtual void callback_wxchatLogin(tars::Int32 ret,  const WmsPlatform::WxUserinfoRes& sOut)
     {
         //HttpImp::async_response_doRequest(_current, ret, sOut);
-        TLOGDEBUG("callback_wxchatLogin : " << ret << sOut << endl);
+        
+
+        TLOGDEBUG("callback_wxchatLogin : " << ret << endl);
+/*
+
+    "mySign": false,
+    "userId": "32",
+    "token": "4856fa1d4e94d488683c1e9655de767e",
+    "nickName": "Rocky-江树琪",
+    "gender": "1",
+    "avatar": "http://wx.qlogo.cn/mmopen/nMLdCrVfKelB8YQPB3wGXibgBHznlibX7mjW4zRcBZ9zQib73ZqXZPmgU9cDO50TsnXnb9yTSm8DFR36jtGshTxL6bQcdtj1icx1/0",
+    "totalGameCard": "70",
+    "surplusGameCard": "70",
+    "isNew": 0,
+    "ip": "127.0.0.1",
+    "isRefreshToken": true,
+    "wechatAccessToken": "4HQbp4Z3lbrU5brjTMrdm_dqsc2vW4_COZSRjQmOzzKAQSiUSmkfDlE_axAHI2AnmnkrPpBAMRXdb4UgYWRgqUu3emgplByniqNE1YN14c0",
+    "wechatRefreshToken": "4HQbp4Z3lbrU5brjTMrdm2JZUpPXkbxNAY0A61aU3J_6gdsAIrB9IPdVzg-Et_LEtgZ_LVm7t17Qxc0kYEDlRkAItw386WpQ4mvqU_zhEO4",
+
+struct WxUserinfoRes
+{
+    0 require  string userId;
+
+
+    1 require  string headimgurl;
+    2 require  string nickname;
+    3 require  string sex;  
+
+    4 require string isNew;
+    5 require string totalcard;
+    6 require string currentcard;
+    7 require string token;
+
+};
+
+ */
+
+
         TC_HttpResponse rsp;
         vector<char> buffer;
-        string s = sOut;
+        string s ;
+        if (0 == ret)
+            s = "{\"status\":1,\"errCode\":0,\"error\":\"\",\"data\":"
+                    "{"   + "\"mySign \": false,"
+                       + "\"userId\" : " + sOut.userId + ","
+                       + "\"token\" : "  + sOut.token +  ","
+                       + "\"nickName\" : "  + sOut.nickname +  ","
+                       + "\"gender\" : "  + sOut.sex +  ","
+                       + "\"avatar\" : "  + sOut.headimgurl +  ","
+                       + "\"totalGameCard\" : "  + sOut.totalcard +  ","
+                       + "\"surplusGameCard\" : "  + sOut.currentcard +  ","
+                       + "\"isNew\" : "  + sOut.isNew +  ","
+                    "}"
+                "}"
+        else
+            s = "{\"status\":-1,\"errCode\":-1,\"error\":\"ret -1\",\"data\":[]}";
+
+
         rsp.setResponse(s.c_str(),s.size());
         rsp.encode(buffer);     
 
@@ -161,7 +228,7 @@ public:
     { 
         TLOGERROR("WxoauthCallback callback_wxchatLogin_exception ret:" << ret << endl); 
 
-        Wxoauth::async_response_wxchatLogin(_current, ret, "");
+        Wxoauth::async_response_wxchatLogin(_current, ret, "{\"status\":-1,\"errCode\":-2,\"error\":\"exception\",\"data\":[]}";);
     }
 
     TarsCurrentPtr _current;
@@ -295,7 +362,7 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
         }
         else if (request.getRequestUrl() == "/user/thirdPartyLogin")
         {
-            if (!isParamExist(_para,"openId")  or  !isParamExist(_para,"accessToken"))
+            if (!isParamExist(_para,"accessToken"))
                {
                     TC_HttpResponse rsp;
                     string s = "{\"status\":1,\"errCode\":10400,\"error\":\"param lost\",\"data\":[]}";
@@ -306,7 +373,7 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
 
             current->setResponse(false);
             WxoauthReq req;
-            req.openId = getValue(_para,"openId");
+            req.openId = "wxf0862d65306b025a";
             req.accessToken = getValue(_para,"accessToken"); 
             req.refreshToken = getValue(_para,"refreshToken"); 
             req.wechatAppId = getValue(_para,"wechatAppId"); 
@@ -398,7 +465,7 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
 客户端与后台通信API
     App第三方登录注册
     请求示例：
-    http://10.17.174.171:8192/User/thirdPartyLogin?nettype=4&loginFrom=10&appId=1&chanId=0&osVer=6.0&model=EVA-AL10&clientFrom=2&wechatAppId=wxb0c1087c2a499493&
+    http://192.168.1.103:40002/User/thirdPartyLogin?nettype=4&loginFrom=10&appId=1&chanId=0&osVer=6.0&model=EVA-AL10&clientFrom=2&wechatAppId=wxb0c1087c2a499493&
     accessToken=iAr1JDqg%5F4Tp%5FekZi8LbJlF3zDhSH7AIMthWANt64n9ZGNTlrhnmjy-Fl9wEzRVlLsPnAen4R3Vyq1uxMCH64d34LUJ77Mll8gUmVEwAq8k&openId=oUJxOv-hvRQlKQn7JzE-l4OsFzFw&
     appCode=klmj&clientVer=0.1&uuId=A2053CBF562A3521863E95C94CDE5FB6&refreshToken=4HQbp4Z3lbrU5brjTMrdm2JZUpPXkbxNAY0A61aU3J%5F6gdsAIrB9IPdVzg-Et%5FLEtgZ%5FLVm7t17Qx
     c0kYEDlRkAItw386WpQ4mvqU%5FzhEO4&operator=1&macAddr=f8%3A23%3Ab2%3Ade%3Aa1%3Ac9&imei=862187033177835&sign=aa2db44c817e92a2befb8ce953de27124528f060

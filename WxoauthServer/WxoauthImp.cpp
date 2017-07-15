@@ -5,8 +5,8 @@
 
 
 using namespace std;
-string WxoauthImp::_basekey1 = "e4b,KyiniuApi>VmZg7J!y";
-string WxoauthImp::_basekey2 = "<zwrUG2^?vN;ixApp";
+const string WxoauthImp:: _basekey1 = "e4b,KyiniuApi>VmZg7J!y";
+const string WxoauthImp:: _basekey2 = "<zwrUG2^?vN;ixApp";
 //////////////////////////////////////////////////////
 void WxoauthImp::initialize()
 {
@@ -38,7 +38,7 @@ public:
         TLOGDEBUG("callback_getWxUserinfo : " << ret  << endl);
         TC_HttpResponse rsp;
         vector<char> buffer;
-        string s = sOut;
+        string s = sOut.userId;
         rsp.setResponse(s.c_str(),s.size());
         rsp.encode(buffer);     
 
@@ -48,11 +48,12 @@ public:
        // _current->sendResponse(tars::TARSSERVERSUCCESS, buffer);    
         //HttpImp::async_response_doRequest(_current, ret, buffer);
     }
-    virtual void callback_wxchatLogin_exception(tars::Int32 ret)
+    virtual void callback_getWxUserinfo_exception(tars::Int32 ret)
     { 
         TLOGERROR("WxoauthCallback callback_wxchatLogin_exception ret:" << ret << endl); 
+        WmsPlatform::WxUserinfoRes res;
 
-        WxUserinfo::async_response_getWxUserinfo(_current, ret, "");
+        WxUserinfo::async_response_getWxUserinfo(_current, ret, res);
     }
 
     TarsCurrentPtr _current;
@@ -100,7 +101,7 @@ public:
 
 
 
-int WxoauthImp::wxchatLogin(const WmsPlatform::WxoauthReq& sIn, std::string& sOut, tars::TarsCurrentPtr current)
+int WxoauthImp::wxchatLogin(const WmsPlatform::WxoauthReq& sIn, WmsPlatform::WxUserinfoRes& sOut, tars::TarsCurrentPtr current)
 {
 
 	try
@@ -130,13 +131,13 @@ int WxoauthImp::wxchatLogin(const WmsPlatform::WxoauthReq& sIn, std::string& sOu
 	   //TLOGDEBUG("WxoauthImp wxchatLogin ok" << r << endl);
 	    TLOGDEBUG("WxoauthImp wxchatLogin content " << stHttpRep.getContent() << endl);
 	   // TLOGDEBUG("WxoauthImp headers " << TC_Common::tostr(stHttpRep.getHeaders()) << endl);
-
+        using rapidjson::Document ;
 	    rapidjson::Document document;
-	    document.Parse(stHttpRep.getContent());
+	    document.Parse(stHttpRep.getContent().c_str());
 
 	    if (document.HasParseError()) // 通过HasParseError()来判断解析是否成功
     	{
-    		TLOGERROR("parse error: " << document.GetParseError() << document.GetErrorOffset() << rapidjson::GetParseError_En(document.GetParseError()));
+    		TLOGERROR("parse error: " << document.GetParseError() << document.GetErrorOffset() );
     		sOut = "{\"status\":1,\"errCode\":10401,\"error\":\"winxin erro callback\",\"data\":[]}";
     		return 0;
     	}
@@ -162,20 +163,20 @@ int WxoauthImp::wxchatLogin(const WmsPlatform::WxoauthReq& sIn, std::string& sOu
 		 	}
 		 	else
 		 	{
-
-
-
-
-
-		 		return 0;
+                count_json = document["unionid"];
+                WxUserinfoReq req;
+                req.unionid = (document["unionid"]).GetString()
+                req.headimgurl = (document["headimgurl"]).GetString()
+                req.nickname = (document["nickname"]).GetString()
+                req.sex = (document["sex"]).GetString()
+                req.openid = (document["openid"]).GetString()
+                if (0 == getUseInfo(req, sOut))
+		 		   return 0;
+                else
+                   return -1;
 		 	}
 		 }   		
     	}
-
-
-
-	    sOut = "i come from wxchatLogin callback";
-
 	}
     catch(exception &ex)
     {
@@ -206,7 +207,7 @@ int WxoauthImp::getUseInfo(const WxUserinfoReq &req, WxUserinfoRes &res)
     try
     {
 
-	    iRet = _wxuserinfoPrx->getWxUserinfo(req, res);
+	    int iRet = _wxuserinfoPrx->getWxUserinfo(req, res);
 
         if(iRet != 0)
         {
@@ -220,6 +221,7 @@ int WxoauthImp::getUseInfo(const WxUserinfoReq &req, WxUserinfoRes &res)
     {
         TLOGERROR("WxoauthImp::getUseInfo exception:" << ex.what() << endl);
     }
+    return -1;
 }
 
 string WxoauthImp::getLoginToken(string figure)
@@ -228,7 +230,7 @@ string WxoauthImp::getLoginToken(string figure)
     if (figure == "") 
          figure = TC_Common::now2ms();
 
-    token = tars::TC_MD5::md5str(tars::TC_MD5::md5str(_basekey1 + figure) + _basekey2) ;
+    token = tars::TC_MD5::md5str(tars::TC_MD5::md5str(WxoauthImp::_basekey1 + figure) + WxoauthImp::_basekey2) ;
 
     return token;
 }

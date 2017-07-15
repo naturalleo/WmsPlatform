@@ -42,10 +42,10 @@ public:
 
     int getUseInfo(const WxUserinfoReq &req, WxUserinfoRes & res);
 
-    string getLoginToken(string figure == "");
+    string getLoginToken(string figure = "");
 
 
-    virtual int wxchatLogin(const WmsPlatform::WxoauthReq& sIn, std::string& sOut, tars::TarsCurrentPtr current);
+    virtual int wxchatLogin(const WmsPlatform::WxoauthReq& sIn, WmsPlatform::WxUserinfoRes& sOut, tars::TarsCurrentPtr current);
 
 protected:
      WxUserinfoPrx  _wxuserinfoPrx;

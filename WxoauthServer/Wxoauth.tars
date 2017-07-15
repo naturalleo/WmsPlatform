@@ -12,11 +12,12 @@ struct WxoauthReq
 };
 
 
+
 interface Wxoauth
 {
     int test();
 
-    int wxchatLogin(WxoauthReq req, out string res);
+    int wxchatLogin(WxoauthReq req, out WxoauthRes res);
 
 };
 

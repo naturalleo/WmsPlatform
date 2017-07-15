@@ -65,6 +65,7 @@ public:
     int doRequest(TarsCurrentPtr current, vector<char> &buffer);
 
 
+    string& trim(string &s);
 
     void parseNormal(multimap<string, string> &mmpParams, const string& sBuffer);
 
