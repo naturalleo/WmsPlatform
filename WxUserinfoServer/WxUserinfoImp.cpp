@@ -74,6 +74,8 @@ int WxUserinfoImp::getWxUserinfo(const WmsPlatform::WxUserinfoReq& sIn, WmsPlatf
     	 sOut.nickname   =  sIn.nickname ;
     	 sOut.sex 		 =  sIn.sex ;
     	 sOut.token      = "test"; // 后期MD5串化
+         sOut.totalcard = "20";
+         sOut.currentcard = "10";
     	 if(iRet == 0) 
     	 {
     	 	sOut.isNew = "0";

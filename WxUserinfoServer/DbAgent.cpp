@@ -10,8 +10,8 @@ int DbAgent::init()
 {
 	TLOGDEBUG("begin DbAgent init"<<endl);
 	try{
-        _mysqlReg.init("10.17.174.171", "linweixiong", "qipai123987", "db_tars_game");
-        //_mysqlReg.init("192.168.1.103", "tars", "tars2015", "db_games");
+        //_mysqlReg.init("10.17.174.171", "linweixiong", "qipai123987", "db_tars_game");
+        _mysqlReg.init("192.168.1.103", "tars", "tars2015", "db_player");
         //_mysqlReg.connect();
 
      }catch(exception &ex)
@@ -29,7 +29,7 @@ int DbAgent::isUniqueUser(const std::string unionId, const std::string appGroupI
 {
     try
     {
-        string sSql = "select `userId` from `t_user` where unionId = " + unionId + " and appGroupId = " + appGroupId + " limit 0,1";
+        string sSql = "select `userId` from `t_user` where unionId = '" + unionId + "' and appGroupId = '" + appGroupId + "' limit 0,1";
         tars::TC_Mysql::MysqlData item = _mysqlReg.queryRecord(sSql);
         if (item.size() == 0)
         {
@@ -107,19 +107,20 @@ int DbAgent::insertNewUser(const WmsPlatform::WxUserinfoReq &in, string &userId)
 {
     try
     {
-        string sSql = "insert into t_user(`nickName`, `password`, `gender`, `regTime`, `loginTimes`, `lastLoginTime`,`status`, `userType`, `appId`, `unionId`, `appGroupId`)"
+        string sSql = "insert into t_user(`nickName`,`avatar`, `password`, `gender`, `regTime`, `loginTimes`, `lastLoginTime`,`status`, `userType`, `appId`, `unionId`, `appGroupId`)"
                             "values"
-                            "( " + in.nickname + " ,"
+                            "( '" + in.nickname + "',"
+                            "'"   + in.headimgurl + "',"
                             "'test' , "
-                            " " + in.sex + " ,"
+                            "" + in.sex + ","
                             " " + TC_Common::tostr(TC_Common::now2ms()/1000)  + ","
                             " " + TC_Common::tostr(TC_Common::now2ms()/1000)  + ","
                             " " + TC_Common::tostr(TC_Common::now2ms()/1000)  + "," 
-                            "'" + TC_Common::tostr(1) + "' ,"
-                            "'" + TC_Common::tostr(0) + "' ,"
-                            " " + in.appId + " ,"
+                            "1 ,"
+                            "0 ,"
+                            "" + in.appId + " ,"
                             "'" + in.unionId + "' ,"
-                            "'" + in.appGroupId + "')";
+                            "" + in.appGroupId + ")";
 
         _mysqlReg.execute(sSql);
 
@@ -144,16 +145,15 @@ int DbAgent::getDbUserinfo(const WmsPlatform::WxUserinfoReq &in, string &userId)
     try
     {
         int uid;
-        if ((uid == isUniqueUser(in.unionId , "")) == 0)
+        if ((uid = isUniqueUser(in.unionId , in.appGroupId)) == 0)
         {
             insertNewUser(in,userId);
-            uid = isUniqueUser(in.unionId , "");
-            return 1;
+            uid = isUniqueUser(in.unionId , in.appGroupId);
         }
-        else if ((uid == isUniqueUser(in.unionId , "")) == -1)
+        else if ((uid = isUniqueUser(in.unionId , in.appGroupId)) == -1)
         {
             TLOGERROR(" DbAgent::getDbUserinfo exception: " << -1 << endl);
-            return -1;
+            return -1 ;
         }
 
         userId = TC_Common::tostr(uid);

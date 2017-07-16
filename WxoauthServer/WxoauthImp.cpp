@@ -11,8 +11,8 @@ const string WxoauthImp:: _basekey2 = "<zwrUG2^?vN;ixApp";
 void WxoauthImp::initialize()
 {
     //initialize servant here:
-    //...
-    _wxuserinfoPrx = Application::getCommunicator()->stringToProxy<WxUserinfoPrx>("WmsPlatform.WxoauthServer.WxUserinfoObj");
+    //... 
+    _wxuserinfoPrx = Application::getCommunicator()->stringToProxy<WxUserinfoPrx>("WmsPlatform.WxUserinfoServer.WxUserinfoObj");
 
 }
 
@@ -123,7 +123,7 @@ int WxoauthImp::wxchatLogin(const WmsPlatform::WxoauthReq& sIn, WmsPlatform::WxU
 	    if(iRet != 0)
 	    {
 	        TLOGERROR("WxoauthImp wxchatLogin iRet!=0 : " << url << endl);
-	        return 0;
+	        return -1;
 	    }
 
 
@@ -138,43 +138,50 @@ int WxoauthImp::wxchatLogin(const WmsPlatform::WxoauthReq& sIn, WmsPlatform::WxU
 	    if (document.HasParseError()) // 通过HasParseError()来判断解析是否成功
     	{
     		TLOGERROR("parse error: " << document.GetParseError() << document.GetErrorOffset() );
-    		sOut = "{\"status\":1,\"errCode\":10401,\"error\":\"winxin erro callback\",\"data\":[]}";
-    		return 0;
+    		//sOut = "{\"status\":1,\"errCode\":10401,\"error\":\"winxin erro callback\",\"data\":[]}";
+    		return -1;
     	}
   		else
     	{
-		 if (!document.HasMember("errcode") )
+		 if (document.HasMember("errcode") )
 		 {
-		 	TLOGERROR("invalid format: " << stHttpRep.getContent());
-    		sOut = "{\"status\":1,\"errCode\":10401,\"error\":\"winxin erro callback\",\"data\":[]}";
-    		return 0;
+            rapidjson::Value& count_json = document["errcode"];
+
+            int errcode = count_json.GetInt();
+
+            if (errcode == 42001 or errcode == 40001 or errcode == 40014)
+            {
+                // 后续补充
+                //sOut = "{\"status\":1,\"errCode\":10401,\"error\":\"winxin erro callback\",\"data\":[]}";
+                WxUserinfoReq req;
+                req.unionId ="oPNdvwN0QlM_lYx1oxTdLVxWIxmM";
+                req.headimgurl = "http:\/\/wx.qlogo.cn\/mmhead\/PiajxSqBRaELiahujtxQMlC6R0dFaEzk4elicicr03afBHdRZmS1UL7DFg\/0";
+                req.nickname = "YK";
+                req.sex = "1";
+                req.openid = "oLDB1wGkAE10jbj9TJ9lVbQ_16rs";
+                req.appId = "1";
+                req.appGroupId = "1";
+                if (0 == getUseInfo(req, sOut))
+                    return 0;
+                else
+                    return -1;
+            
+               // return -1;               
+            }
+
 		 }
 		 else
 		 {
-		 	rapidjson::Value& count_json = document["errcode"];
-
-		 	int errcode = count_json.GetInt();
-
-		 	if (errcode == 42001 or errcode == 40001 or errcode == 40014)
-		 	{
-		 		// 后续补充
-	    		sOut = "{\"status\":1,\"errCode\":10401,\"error\":\"winxin erro callback\",\"data\":[]}";
-	    		return 0;		 		
-		 	}
-		 	else
-		 	{
-                count_json = document["unionid"];
-                WxUserinfoReq req;
-                req.unionid = (document["unionid"]).GetString()
-                req.headimgurl = (document["headimgurl"]).GetString()
-                req.nickname = (document["nickname"]).GetString()
-                req.sex = (document["sex"]).GetString()
-                req.openid = (document["openid"]).GetString()
-                if (0 == getUseInfo(req, sOut))
-		 		   return 0;
-                else
-                   return -1;
-		 	}
+            WxUserinfoReq req;
+            req.unionId = (document["unionid"]).GetString();
+            req.headimgurl = (document["headimgurl"]).GetString();
+            req.nickname = (document["nickname"]).GetString();
+            req.sex = (document["sex"]).GetInt();
+            req.openid = (document["openid"]).GetString();
+            if (0 == getUseInfo(req, sOut))
+		 		return 0;
+            else
+                return -1;
 		 }   		
     	}
 	}
@@ -182,18 +189,19 @@ int WxoauthImp::wxchatLogin(const WmsPlatform::WxoauthReq& sIn, WmsPlatform::WxU
     {
         cout << ex.what() << endl;
     }
-    return 0;
+    return -1;
 }
 
 /*
 struct WxUserinfoReq
 {
-    0 require  string unionid;
+    0 require  string unionId;
     1 require  string appGroupId;
     2 require  string headimgurl;
     3 require  string nickname;
     4 require  string sex;
-    5 require  string openid;    
+    5 require  string openId; 
+    6 require  string appId;  
 };
 
 */

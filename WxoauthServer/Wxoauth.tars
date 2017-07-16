@@ -1,4 +1,6 @@
 
+#include "WxUserinfo.tars"
+
 module WmsPlatform
 {
 
@@ -17,7 +19,7 @@ interface Wxoauth
 {
     int test();
 
-    int wxchatLogin(WxoauthReq req, out WxoauthRes res);
+    int wxchatLogin(WxoauthReq req, out WxUserinfoRes res);
 
 };
 

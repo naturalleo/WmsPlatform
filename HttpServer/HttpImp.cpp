@@ -200,17 +200,17 @@ struct WxUserinfoRes
         string s ;
         if (0 == ret)
             s = "{\"status\":1,\"errCode\":0,\"error\":\"\",\"data\":"
-                    "{"   + "\"mySign \": false,"
-                       + "\"userId\" : " + sOut.userId + ","
-                       + "\"token\" : "  + sOut.token +  ","
-                       + "\"nickName\" : "  + sOut.nickname +  ","
-                       + "\"gender\" : "  + sOut.sex +  ","
-                       + "\"avatar\" : "  + sOut.headimgurl +  ","
-                       + "\"totalGameCard\" : "  + sOut.totalcard +  ","
-                       + "\"surplusGameCard\" : "  + sOut.currentcard +  ","
-                       + "\"isNew\" : "  + sOut.isNew +  ","
+                    "{ \"mySign \": false,"
+                    "\"userId\" : " + sOut.userId + ","
+                    "\"token\" : "  + sOut.token +  ","
+                    "\"nickName\" : "  + sOut.nickname +  ","
+                    "\"gender\" : "  + sOut.sex +  ","
+                    "\"avatar\" : "  + sOut.headimgurl +  ","
+                    "\"totalGameCard\" : "  + sOut.totalcard +  ","
+                    "\"surplusGameCard\" : "  + sOut.currentcard +  ","
+                    "\"isNew\" : "  + sOut.isNew +  ","
                     "}"
-                "}"
+                "}";
         else
             s = "{\"status\":-1,\"errCode\":-1,\"error\":\"ret -1\",\"data\":[]}";
 
@@ -227,8 +227,8 @@ struct WxUserinfoRes
     virtual void callback_wxchatLogin_exception(tars::Int32 ret)
     { 
         TLOGERROR("WxoauthCallback callback_wxchatLogin_exception ret:" << ret << endl); 
-
-        Wxoauth::async_response_wxchatLogin(_current, ret, "{\"status\":-1,\"errCode\":-2,\"error\":\"exception\",\"data\":[]}";);
+        WmsPlatform::WxUserinfoRes res;
+        Wxoauth::async_response_wxchatLogin(_current, ret, res);
     }
 
     TarsCurrentPtr _current;

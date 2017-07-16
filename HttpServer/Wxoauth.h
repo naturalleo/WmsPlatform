@@ -11,6 +11,7 @@
 #include <vector>
 #include "tup/Tars.h"
 using namespace std;
+#include "WxUserinfo.h"
 #include "servant/ServantProxy.h"
 #include "servant/Servant.h"
 #include "promise/promise.h"
@@ -107,7 +108,7 @@ namespace WmsPlatform
         virtual void callback_test_exception(tars::Int32 ret)
         { throw std::runtime_error("callback_test_exception() override incorrect."); }
 
-        virtual void callback_wxchatLogin(tars::Int32 ret,  const std::string& res)
+        virtual void callback_wxchatLogin(tars::Int32 ret,  const WmsPlatform::WxUserinfoRes& res)
         { throw std::runtime_error("callback_wxchatLogin() override incorrect."); }
         virtual void callback_wxchatLogin_exception(tars::Int32 ret)
         { throw std::runtime_error("callback_wxchatLogin_exception() override incorrect."); }
@@ -177,7 +178,7 @@ namespace WmsPlatform
                     tars::Int32 _ret;
                     _is.read(_ret, 0, true);
 
-                    std::string res;
+                    WmsPlatform::WxUserinfoRes res;
                     _is.read(res, 2, true);
                     CallbackThreadData * pCbtd = CallbackThreadData::getData();
                     assert(pCbtd != NULL);
@@ -237,7 +238,7 @@ namespace WmsPlatform
         {
         public:
             tars::Int32 _ret;
-            std::string res;
+            WmsPlatform::WxUserinfoRes res;
             map<std::string, std::string> _mRspContext;
         };
         
@@ -437,7 +438,7 @@ namespace WmsPlatform
                         tars::Int32 _ret;
                         _is.read(_ret, 0, true);
 
-                        std::string res;
+                        WmsPlatform::WxUserinfoRes res;
                         _is.read(res, 2, true);
                         setResponseContext(msg->response.context);
 
@@ -518,7 +519,7 @@ namespace WmsPlatform
             tars_invoke_async(tars::TARSNORMAL,"test", _os.getByteBuffer(), context, _mStatus, callback, true);
         }
 
-        tars::Int32 wxchatLogin(const WmsPlatform::WxoauthReq & req,std::string &res,const map<string, string> &context = TARS_CONTEXT(),map<string, string> * pResponseContext = NULL)
+        tars::Int32 wxchatLogin(const WmsPlatform::WxoauthReq & req,WmsPlatform::WxUserinfoRes &res,const map<string, string> &context = TARS_CONTEXT(),map<string, string> * pResponseContext = NULL)
         {
             tars::TarsOutputStream<tars::BufferWriter> _os;
             _os.write(req, 1);
@@ -613,8 +614,8 @@ namespace WmsPlatform
             }
         }
 
-        virtual tars::Int32 wxchatLogin(const WmsPlatform::WxoauthReq & req,std::string &res,tars::TarsCurrentPtr current) = 0;
-        static void async_response_wxchatLogin(tars::TarsCurrentPtr current, tars::Int32 _ret, const std::string &res)
+        virtual tars::Int32 wxchatLogin(const WmsPlatform::WxoauthReq & req,WmsPlatform::WxUserinfoRes &res,tars::TarsCurrentPtr current) = 0;
+        static void async_response_wxchatLogin(tars::TarsCurrentPtr current, tars::Int32 _ret, const WmsPlatform::WxUserinfoRes &res)
         {
             if (current->getRequestVersion() == TUPVERSION )
             {
@@ -689,7 +690,7 @@ namespace WmsPlatform
                     tars::TarsInputStream<tars::BufferReader> _is;
                     _is.setBuffer(_current->getRequestBuffer());
                     WmsPlatform::WxoauthReq req;
-                    std::string res;
+                    WmsPlatform::WxUserinfoRes res;
                     if (_current->getRequestVersion() == TUPVERSION)
                     {
                         UniAttribute<tars::BufferWriter, tars::BufferReader>  tarsAttr;
