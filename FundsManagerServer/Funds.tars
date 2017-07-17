@@ -8,7 +8,6 @@ struct FundsNewUserReq
     0 require  string userId;
     1 require  string appId;
     2 require  string appCode;
- 	3 require  string nickName; 
 };
 
 struct FundsUserInfoReq
@@ -23,7 +22,9 @@ struct FundsUserInfoReq
 struct FundsUserInfoRes
 {
     0 require  string userId;
-    1 require  string cards;  	
+    1 require string  totalcard;
+    2 require string  currentcard;
+
 };
 
 

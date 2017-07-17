@@ -10,9 +10,10 @@ int DbAgent::init()
 {
 	TLOGDEBUG("begin DbAgent init"<<endl);
 	try{
-        _mysqlReg.init("10.17.174.171", "linweixiong", "qipai123987", "db_tars_game");
+        //_mysqlReg.init("10.17.174.171", "linweixiong", "qipai123987", "db_tars_game");
         //_mysqlReg.init("192.168.1.103", "tars", "tars2015", "db_games");
         //_mysqlReg.connect();
+      _mysqlReg.init("192.168.1.103", "tars", "tars2015", "db_player");
 
      }catch(exception &ex)
      {
@@ -52,12 +53,23 @@ CREATE TABLE `t_user_funds` (
 
 */
 
-int DbAgent::addFunds(const WmsPlatform::FundsNewUserReq& sIn, std::string& sOut) 
+int DbAgent::insertFunds(const WmsPlatform::FundsNewUserReq& sIn, std::string& sOut) 
 {
     try
     {
+      string sSql = "insert into t_user_funds(`userId`, `addTime`, `updateTime`, `appId`, `appCode`)"
+                      "values"
+                      "( '" + sIn.userId + "',"
+                      " "   + TC_Common::tostr(TC_Common::now2ms()/1000) + ","
+                      " "   + TC_Common::tostr(TC_Common::now2ms()/1000) + ","
+                      "" + in.appId + " ,"
+                      "" + in.appCode + ")";
 
+      _mysqlReg.execute(sSql);
+
+      TLOGDEBUG(__FUNCTION__ << pthread_self() <<" affected: " << _mysqlReg.getAffectedRows() << endl);
       return 0;
+
     }
     catch (TC_Mysql_Exception& ex)
     {
@@ -71,10 +83,57 @@ int DbAgent::addFunds(const WmsPlatform::FundsNewUserReq& sIn, std::string& sOut
     }    
 }
 
+struct FundsUserInfoReq
+{
+    0 require  string userId;
+    1 require  string appId;  
+    2 require  string appCode;    
+};
+
+struct FundsUserInfoRes
+{
+    0 require  string userId;
+    1 require string  totalcard;
+    2 require string  currentcard;
+
+};
+
+struct FundsNewUserReq
+{
+    0 require  string userId;
+    1 require  string appId;
+    2 require  string appCode;
+};
+
 int DbAgent::getFunds(const WmsPlatform::FundsUserInfoReq& sIn, WmsPlatform::FundsUserInfoRes& sOut)
 {
     try
     {
+
+      string sSql = "select `userId`, `surplusGameCard`,`totalUseGameCard` from `t_user_funds` where userId = '" + sIn.userId + "' and appId = '" + sIn.appId + "and appCode = " + sIn.appCode +  "' limit 0,1";
+
+      tars::TC_Mysql::MysqlData item = _mysqlReg.queryRecord(sSql);
+
+
+      if (item.size() == 0)
+      {
+        string str;
+        FundsNewUserReq req;
+        req.userId   = sIn.userId;
+        req.appId    = sIn.appId;
+        req.appCode  = sIn.appCode;
+
+        insertFunds(req, str);
+
+
+      }
+      else
+      {
+        return TC_Common::strto<int>(item[0]["userId"]);
+      }    
+
+      if 
+
 
       return 0;
     }
