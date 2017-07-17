@@ -56,11 +56,11 @@ interface Funds
 {
     int test();
 
-	int addFunds(FundsNewUserReq req, out string res);
+	int addFunds(FundsNewUserReq req, out FundsUserInfoRes res);
 
 	int getFunds(FundsUserInfoReq req, out FundsUserInfoRes res);
 
-	int modifyFunds(FundsUserModifyReq req, out string res);
+	int modifyFunds(FundsUserModifyReq req, out FundsUserInfoRes res);
 
     int modifyFundsOther(FundsUserModifyOtherReq req, out FundsUserModifyOtherRes result) ;
 

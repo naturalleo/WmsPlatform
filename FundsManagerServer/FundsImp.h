@@ -3,7 +3,7 @@
 
 #include "servant/Application.h"
 #include "Funds.h"
-
+#include "DbAgent.h"
 /**
  *
  *
@@ -33,15 +33,16 @@ public:
 
 
 
-    virtual int addFunds(const WmsPlatform::FundsNewUserReq& sIn, std::string& sOut, tars::TarsCurrentPtr current);
+    virtual int addFunds(const WmsPlatform::FundsNewUserReq& sIn, WmsPlatform::FundsUserInfoRes& sOut, tars::TarsCurrentPtr current);
 
     virtual int getFunds(const WmsPlatform::FundsUserInfoReq& sIn, WmsPlatform::FundsUserInfoRes& sOut, tars::TarsCurrentPtr current);
 
-    virtual int modifyFunds(const WmsPlatform::FundsUserModifyReq& sIn, std::string& sOut, tars::TarsCurrentPtr current);
+    virtual int modifyFunds(const WmsPlatform::FundsUserModifyReq& sIn, WmsPlatform::FundsUserInfoRes& sOut, tars::TarsCurrentPtr current);
 
     virtual int modifyFundsOther(const WmsPlatform::FundsUserModifyOtherReq& sIn, WmsPlatform::FundsUserModifyOtherRes& sOut, tars::TarsCurrentPtr current);
         
-
+protected:
+    DbAgent _db;
 };
 /////////////////////////////////////////////////////
 #endif

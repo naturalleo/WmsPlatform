@@ -25,11 +25,11 @@ public:
 
     int init();
 
-  	int insertFunds(const WmsPlatform::FundsNewUserReq& sIn, std::string& sOut) ;
+  	int insertFunds(const WmsPlatform::FundsNewUserReq& sIn, WmsPlatform::FundsUserInfoRes& sOut) ;
 
     int getFunds(const WmsPlatform::FundsUserInfoReq& sIn, WmsPlatform::FundsUserInfoRes& sOut);
 
-    int modifyFunds(const WmsPlatform::FundsUserModifyReq& sIn, std::string& sOut);
+    int modifyFunds(const WmsPlatform::FundsUserModifyReq& sIn, WmsPlatform::FundsUserInfoRes& sOut);
     
 
 private:

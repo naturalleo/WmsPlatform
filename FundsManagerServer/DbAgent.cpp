@@ -13,7 +13,7 @@ int DbAgent::init()
         //_mysqlReg.init("10.17.174.171", "linweixiong", "qipai123987", "db_tars_game");
         //_mysqlReg.init("192.168.1.103", "tars", "tars2015", "db_games");
         //_mysqlReg.connect();
-      _mysqlReg.init("192.168.1.103", "tars", "tars2015", "db_player");
+      _mysqlReg.init("192.168.1.103", "tars", "tars2015", "db_funds");
 
      }catch(exception &ex)
      {
@@ -53,7 +53,7 @@ CREATE TABLE `t_user_funds` (
 
 */
 
-int DbAgent::insertFunds(const WmsPlatform::FundsNewUserReq& sIn, std::string& sOut) 
+int DbAgent::insertFunds(const WmsPlatform::FundsNewUserReq& sIn, WmsPlatform::FundsUserInfoRes& sOut) 
 {
     try
     {
@@ -66,6 +66,10 @@ int DbAgent::insertFunds(const WmsPlatform::FundsNewUserReq& sIn, std::string& s
                       "" + in.appCode + ")";
 
       _mysqlReg.execute(sSql);
+
+      sOut.userId = sIn.userId;
+      sOut.totalcard = "0";
+      sOut.currentcard = "0";
 
       TLOGDEBUG(__FUNCTION__ << pthread_self() <<" affected: " << _mysqlReg.getAffectedRows() << endl);
       return 0;
@@ -83,27 +87,7 @@ int DbAgent::insertFunds(const WmsPlatform::FundsNewUserReq& sIn, std::string& s
     }    
 }
 
-struct FundsUserInfoReq
-{
-    0 require  string userId;
-    1 require  string appId;  
-    2 require  string appCode;    
-};
 
-struct FundsUserInfoRes
-{
-    0 require  string userId;
-    1 require string  totalcard;
-    2 require string  currentcard;
-
-};
-
-struct FundsNewUserReq
-{
-    0 require  string userId;
-    1 require  string appId;
-    2 require  string appCode;
-};
 
 int DbAgent::getFunds(const WmsPlatform::FundsUserInfoReq& sIn, WmsPlatform::FundsUserInfoRes& sOut)
 {
@@ -125,11 +109,19 @@ int DbAgent::getFunds(const WmsPlatform::FundsUserInfoReq& sIn, WmsPlatform::Fun
 
         insertFunds(req, str);
 
+        sOut.userId      = sIn.userId;
+        sOut.totalcard   = 0;
+        sOut.currentcard = 0;
 
+        return 0;
       }
       else
       {
-        return TC_Common::strto<int>(item[0]["userId"]);
+        sOut.userId      = item[0]["userId"];
+        sOut.totalcard   = item[0]["totalUseGameCard"];
+        sOut.currentcard = item[0]["surplusGameCard"];
+
+        return 0;
       }    
 
       if 
@@ -149,10 +141,47 @@ int DbAgent::getFunds(const WmsPlatform::FundsUserInfoReq& sIn, WmsPlatform::Fun
     }
 }
 
-int DbAgent::modifyFunds(const WmsPlatform::FundsUserModifyReq& sIn, std::string& sOut)
+int DbAgent::modifyFunds(const WmsPlatform::FundsUserModifyReq& sIn, WmsPlatform::FundsUserInfoRes& sOut)
 {
     try
     {
+
+      FundsUserInfoReq req;
+      req.userId  = sIn.userId;
+      req.appId   = sIn.appId;
+      req.appCode = sIn.appCode;
+      if (getFunds(sIn, sOut) != 0)   
+        return -1;
+
+
+      if (TC_Common::strto<int>(sIn.cards) <= 0)
+        return -1;
+      if (FundsUserModifyReq.opcode == "add")
+      {
+        sSql = "update  t_user_funds" 
+                        "set surplusGameCard = surplusGameCard "   + sIn.cards + ","
+                        "set totalUseGameCard = totalUseGameCard " + sIn.cards + ","
+                        "where userId = '" + sIn.userId + "' and appId = '" + sIn.appId + "and appCode = " + sIn.appCode ;
+      }
+      else if (FundsUserModifyReq.opcode == "sub")
+      {
+        sSql = "update  t_user_funds" 
+                        "set surplusGameCard = surplusGameCard "   - sIn.cards + ","
+                        "set totalUseGameCard = totalUseGameCard " - sIn.cards + ","
+                        "where userId = '" + sIn.userId + "' and appId = '" + sIn.appId + "and appCode = " + sIn.appCode ;
+
+        if (TC_Common::strto<int>(sOut.currentcard) - TC_Common::strto<int>(sOut.cards) < 0)
+        {
+          TLOGDEBUG("DbAgent modifyFunds userId "<< sIn.userId<<"not enough" << sOut.currentcard<< ": " << sOut.cards << endl);
+          return -1;
+        }
+      }
+      else
+        return -1;
+
+      _mysqlReg.execute(sSql);
+
+      TLOGDEBUG(__FUNCTION__ << pthread_self() <<" affected: " << _mysqlReg.getAffectedRows() << endl);
 
       return 0 ;
     }
