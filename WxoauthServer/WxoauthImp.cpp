@@ -5,8 +5,7 @@
 
 
 using namespace std;
-const string WxoauthImp:: _basekey1 = "e4b,KyiniuApi>VmZg7J!y";
-const string WxoauthImp:: _basekey2 = "<zwrUG2^?vN;ixApp";
+
 //////////////////////////////////////////////////////
 void WxoauthImp::initialize()
 {
@@ -23,41 +22,6 @@ void WxoauthImp::destroy()
     //...
 }
 
-
-class WxUserinfoCallback : public WxUserinfoPrxCallback
-{
-
-public:
-    WxUserinfoCallback(TarsCurrentPtr &current)
-    : _current(current)
-    {}
-
-    virtual void callback_getWxUserinfo(tars::Int32 ret,  const WmsPlatform::WxUserinfoRes& sOut)
-    {
-        //HttpImp::async_response_doRequest(_current, ret, sOut);
-        TLOGDEBUG("callback_getWxUserinfo : " << ret  << endl);
-        TC_HttpResponse rsp;
-        vector<char> buffer;
-        string s = sOut.userId;
-        rsp.setResponse(s.c_str(),s.size());
-        rsp.encode(buffer);     
-
-
-        _current->sendResponse(&buffer.at(0),buffer.size());
-        TLOGDEBUG("callback_getWxUserinfo : " << s << s.size() << endl);
-       // _current->sendResponse(tars::TARSSERVERSUCCESS, buffer);    
-        //HttpImp::async_response_doRequest(_current, ret, buffer);
-    }
-    virtual void callback_getWxUserinfo_exception(tars::Int32 ret)
-    { 
-        TLOGERROR("WxoauthCallback callback_wxchatLogin_exception ret:" << ret << endl); 
-        WmsPlatform::WxUserinfoRes res;
-
-        WxUserinfo::async_response_getWxUserinfo(_current, ret, res);
-    }
-
-    TarsCurrentPtr _current;
-};
 
 
 /*
@@ -91,8 +55,6 @@ public:
     "headimgurl": "http://wx.qlogo.cn/mmopen/utpKYf69VAbCRDRlbUsPsdQN38DoibCkrU6SAMCSNx558eTaLVM8PyM6jlEGzOrH67hyZibIZPXu4BK1XNWzSXB3Cs4qpBBg18/0",
     "privilege": []
 }
-
-
 
 
 
@@ -161,6 +123,7 @@ int WxoauthImp::wxchatLogin(const WmsPlatform::WxoauthReq& sIn, WmsPlatform::WxU
                 req.openid = "oLDB1wGkAE10jbj9TJ9lVbQ_16rs";
                 req.appId = "1";
                 req.appGroupId = "1";
+                req.appCode = "klmgphz";
                 if (0 == getUseInfo(req, sOut))
                     return 0;
                 else
@@ -173,11 +136,12 @@ int WxoauthImp::wxchatLogin(const WmsPlatform::WxoauthReq& sIn, WmsPlatform::WxU
 		 else
 		 {
             WxUserinfoReq req;
-            req.unionId = (document["unionid"]).GetString();
-            req.headimgurl = (document["headimgurl"]).GetString();
-            req.nickname = (document["nickname"]).GetString();
-            req.sex = (document["sex"]).GetInt();
-            req.openid = (document["openid"]).GetString();
+            req.unionId     = (document["unionid"]).GetString();
+            req.headimgurl  = (document["headimgurl"]).GetString();
+            req.nickname    = (document["nickname"]).GetString();
+            req.sex         = (document["sex"]).GetInt();
+            req.openid      = (document["openid"]).GetString();
+            req.appCode     = sIn.appCode;
             if (0 == getUseInfo(req, sOut))
 		 		return 0;
             else
@@ -191,20 +155,6 @@ int WxoauthImp::wxchatLogin(const WmsPlatform::WxoauthReq& sIn, WmsPlatform::WxU
     }
     return -1;
 }
-
-/*
-struct WxUserinfoReq
-{
-    0 require  string unionId;
-    1 require  string appGroupId;
-    2 require  string headimgurl;
-    3 require  string nickname;
-    4 require  string sex;
-    5 require  string openId; 
-    6 require  string appId;  
-};
-
-*/
 
 
 
@@ -222,7 +172,6 @@ int WxoauthImp::getUseInfo(const WxUserinfoReq &req, WxUserinfoRes &res)
         	TLOGERROR("WxoauthImp getUseInfo iRet != 0: " << iRet);
         	return iRet;
         }
-
         return iRet;
     }
     catch(exception &ex)
@@ -230,15 +179,4 @@ int WxoauthImp::getUseInfo(const WxUserinfoReq &req, WxUserinfoRes &res)
         TLOGERROR("WxoauthImp::getUseInfo exception:" << ex.what() << endl);
     }
     return -1;
-}
-
-string WxoauthImp::getLoginToken(string figure)
-{
-    string token;
-    if (figure == "") 
-         figure = TC_Common::now2ms();
-
-    token = tars::TC_MD5::md5str(tars::TC_MD5::md5str(WxoauthImp::_basekey1 + figure) + WxoauthImp::_basekey2) ;
-
-    return token;
 }

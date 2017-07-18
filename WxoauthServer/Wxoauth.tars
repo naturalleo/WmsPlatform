@@ -9,8 +9,15 @@ struct WxoauthReq
 {
     0 require string openId;
     1 require string accessToken;
-    2 optional string refreshToken;
-    3 optional string wechatAppId;
+    2 require string appCode;
+    3 require string ip;
+    4 require string appId;
+    5 require string clientFrom;
+    6 optional string refreshToken;
+    7 optional string wechatAppId;
+    8 optional string userId ;
+    9 optional string token;
+
 };
 
 

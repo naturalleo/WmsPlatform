@@ -29,7 +29,7 @@ public:
 
     int generaterOrderID(const WmsPlatform::CreateRoomReq &in, string &order);
 
-
+    int updateUserToken(const WmsPlatform::WxoauthReq& req);
     
 
 

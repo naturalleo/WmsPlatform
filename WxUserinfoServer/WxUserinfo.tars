@@ -10,7 +10,8 @@ struct WxUserinfoReq
     3 require  string nickname;
     4 require  string sex;
     5 require  string openid; 
-    6 require  string appId;  
+    6 require  string appId;
+    7 require  string appCode;  
 };
 
 

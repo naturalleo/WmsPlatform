@@ -32,6 +32,8 @@ public:
     virtual int test(tars::TarsCurrentPtr current) { return 0;};
 
     virtual int generateOrder(const WmsPlatform::CreateRoomReq& sIn, std::string& sOut, tars::TarsCurrentPtr current);
+
+    virtual int updateUserToken(const WmsPlatform::WxoauthReq& req);
 protected:
     DbAgent _db;
 

@@ -32,6 +32,7 @@ public:
      */
     virtual int test(tars::TarsCurrentPtr current) { return 0;};
 
+    string getLoginToken(string figure = "");
 
     virtual int getWxUserinfo(const WmsPlatform::WxUserinfoReq& sIn, WmsPlatform::WxUserinfoRes& sOut, tars::TarsCurrentPtr current);
 
@@ -41,6 +42,9 @@ public:
 protected:
     DbAgent _db;
     FundsPrx  _FundsPrx;
+
+    static const string _basekey1;
+    static const string _basekey2;
 };
 /////////////////////////////////////////////////////
 #endif

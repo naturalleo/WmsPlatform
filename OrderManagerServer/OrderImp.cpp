@@ -41,3 +41,8 @@ int OrderImp::generateOrder(const WmsPlatform::CreateRoomReq &sReq, std::string 
 
     return 0;
 }
+
+int OrderImp::updateUserToken(const WmsPlatform::WxoauthReq& req)
+{
+    
+}

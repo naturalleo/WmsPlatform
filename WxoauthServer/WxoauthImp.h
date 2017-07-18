@@ -50,8 +50,7 @@ public:
 protected:
      WxUserinfoPrx  _wxuserinfoPrx;
 
-     static const string _basekey1;
-     static const string _basekey2;
+
 };
 /////////////////////////////////////////////////////
 #endif

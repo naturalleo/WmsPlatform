@@ -3,6 +3,9 @@
 
 using namespace std;
 
+
+const string WxUserinfoImp:: _basekey1 = "e4b,KyiniuApi>VmZg7J!y";
+const string WxUserinfoImp:: _basekey2 = "<zwrUG2^?vN;ixApp";
 //////////////////////////////////////////////////////
 void WxUserinfoImp::initialize()
 {
@@ -33,17 +36,19 @@ void WxUserinfoImp::destroy()
 
 /*
 
+
 struct WxUserinfoReq
 {
-    0 require  string unionid;
+    0 require  string unionId;
     1 require  string appGroupId;
     2 require  string headimgurl;
     3 require  string nickname;
     4 require  string sex;
     5 require  string openid; 
-    6 require  string appId;  
-    7 require  string appGroupId; 
+    6 require  string appId;
+    7 require  string appCode;  
 };
+
 
 
 struct WxUserinfoRes
@@ -62,6 +67,26 @@ struct WxUserinfoRes
 
 };
 
+
+struct FundsUserInfoReq
+{
+    0 require  string userId;
+    1 require  string appId;  
+    2 require  string appCode;      
+};
+
+
+
+struct FundsUserInfoRes
+{
+    0 require  string userId;
+    1 require string  totalcard;
+    2 require string  currentcard;
+
+};
+
+
+
 */
 
 int WxUserinfoImp::getWxUserinfo(const WmsPlatform::WxUserinfoReq& sIn, WmsPlatform::WxUserinfoRes& sOut, tars::TarsCurrentPtr current)
@@ -69,26 +94,45 @@ int WxUserinfoImp::getWxUserinfo(const WmsPlatform::WxUserinfoReq& sIn, WmsPlatf
 	TLOGDEBUG("getWxUserinfo : " << sIn.unionId << endl);
     try
     {
-    	 int iRet = _db.getDbUserinfo(sIn, sOut.userId);
-    	 sOut.headimgurl =  sIn.headimgurl ;
-    	 sOut.nickname   =  sIn.nickname ;
-    	 sOut.sex 		 =  sIn.sex ;
-    	 sOut.token      = "test"; // 后期MD5串化
-         sOut.totalcard = "20";
-         sOut.currentcard = "10";
-    	 if(iRet == 0) 
-    	 {
-    	 	sOut.isNew = "0";
-    	 }
-    	 else if (iRet == 1)
-    	 {
-    	 	sOut.isNew = "1";
-    	 }
-    	 else
-    	 {
-    	 	TLOGERROR("WxUserinfoImp getWxUserinfo iRet != 0: " << iRet);
-    	 	return -1;
-    	 }
+    	int iRet = _db.getDbUserinfo(sIn, sOut.userId);
+        if (iRet == -1)
+        {
+            TLOGERROR("WxUserinfoImp getWxUserinfo iRet != 0: " << iRet);
+            return -1;
+        }
+        else if(iRet == 0) 
+        {
+           sOut.isNew = "1";
+        }
+        else
+        {
+            sOut.isNew = "0";
+        }
+
+        FundsUserInfoReq req;
+        FundsUserInfoRes res;
+        req.userId   = sIn.userId ;
+        req.appId    = sIn.appId;
+        req.appCode  = sIn.appCode;
+
+
+        iRet = _FundsPrx->getFunds(req, res);
+        if (iRet == -1) 
+            return -1;
+
+
+    	sOut.headimgurl  =  sIn.headimgurl ;
+    	sOut.nickname    =  sIn.nickname ;
+    	sOut.sex 		 =  sIn.sex ;
+    	sOut.token       = getLoginToken(); // 后期MD5串化
+        sOut.totalcard   = res.totalcard;
+        sOut.currentcard = res.currentcard;
+ 
+    	else
+    	{
+    	   TLOGERROR("WxUserinfoImp getWxUserinfo iRet != 0: " << iRet);
+    	   return -1;
+    	}
     }
     catch(exception &ex)
     {
@@ -213,4 +257,15 @@ int WxUserinfoImp::updateWxUserCards(const WmsPlatform::WxUserExchangeReq& sIn, 
 
     
     return 0 ;
+}
+
+string WxUserinfoImp::getLoginToken(string figure)
+{
+    string token;
+    if (figure == "") 
+         figure = TC_Common::now2ms();
+
+    token = tars::TC_MD5::md5str(tars::TC_MD5::md5str(WxoauthImp::_basekey1 + figure) + WxoauthImp::_basekey2) ;
+
+    return token;
 }

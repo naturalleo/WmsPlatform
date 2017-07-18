@@ -91,7 +91,7 @@ void HttpImp::parseNormal(multimap<string, string> &mmpParams, const string& sBu
             {
                 sValue = "";
 
-                mmpParams.insert(multimap<string, string>::value_type(trim(sName), sValue));
+                mmpParams.insert(multimap<string, string>::value_type(TC_Common::trim(sName), sValue));
             }
             else
             {
@@ -102,7 +102,7 @@ void HttpImp::parseNormal(multimap<string, string> &mmpParams, const string& sBu
         {
             sValue = TC_Cgi::decodeURL(sTmp);
 
-            mmpParams.insert(multimap<string, string>::value_type(trim(sName), sValue));
+            mmpParams.insert(multimap<string, string>::value_type(TC_Common::trim(sName), sValue));
 
             iFlag = 0;
         }
@@ -373,11 +373,15 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
 
             current->setResponse(false);
             WxoauthReq req;
-            req.openId = "wxf0862d65306b025a";
-            req.accessToken = getValue(_para,"accessToken"); 
+            req.openId       = "wxf0862d65306b025a";
+            req.accessToken  = getValue(_para,"accessToken"); 
             req.refreshToken = getValue(_para,"refreshToken"); 
-            req.wechatAppId = getValue(_para,"wechatAppId"); 
-
+            req.wechatAppId  = getValue(_para,"wechatAppId"); 
+            req.appCode      = getValue(_para,"appCode"); 
+            req.ip           = request.getHost();
+            req.appId        = getValue(_para,"appId"); 
+            req.clientFrom   = getValue(_para,"loginFrom");
+             
 
             WmsPlatform::WxoauthPrxCallbackPtr cb = new WxoauthCallback(current);
             _wxoauthPrx->tars_set_timeout(3000)->async_wxchatLogin(cb,req);              

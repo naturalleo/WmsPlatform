@@ -22,7 +22,7 @@ interface Order
 {
     int test();
  	int generateOrder(CreateRoomReq req,  out string res);
-
+ 	int updateUserToken(WxoauthReq req);
 
 };
 
