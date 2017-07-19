@@ -1,4 +1,6 @@
 
+#include "Wxoauth.tars"
+
 module WmsPlatform
 {
 
@@ -22,7 +24,7 @@ interface Order
 {
     int test();
  	int generateOrder(CreateRoomReq req,  out string res);
- 	int updateUserToken(WxoauthReq req);
+ 	int updateUserToken(WxoauthReq req, string token);
 
 };
 

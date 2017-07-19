@@ -62,8 +62,8 @@ int DbAgent::insertFunds(const WmsPlatform::FundsNewUserReq& sIn, WmsPlatform::F
                       "( '" + sIn.userId + "',"
                       " "   + TC_Common::tostr(TC_Common::now2ms()/1000) + ","
                       " "   + TC_Common::tostr(TC_Common::now2ms()/1000) + ","
-                      "" + in.appId + " ,"
-                      "" + in.appCode + ")";
+                      "" + sIn.appId + " ,"
+                      "" + sIn.appCode + ")";
 
       _mysqlReg.execute(sSql);
 
@@ -107,11 +107,11 @@ int DbAgent::getFunds(const WmsPlatform::FundsUserInfoReq& sIn, WmsPlatform::Fun
         req.appId    = sIn.appId;
         req.appCode  = sIn.appCode;
 
-        insertFunds(req, str);
+        insertFunds(req, sOut);
 
         sOut.userId      = sIn.userId;
-        sOut.totalcard   = 0;
-        sOut.currentcard = 0;
+        sOut.totalcard   = "0";
+        sOut.currentcard = "0";
 
         return 0;
       }
@@ -122,12 +122,8 @@ int DbAgent::getFunds(const WmsPlatform::FundsUserInfoReq& sIn, WmsPlatform::Fun
         sOut.currentcard = item[0]["surplusGameCard"];
 
         return 0;
-      }    
+      }   
 
-      if 
-
-
-      return 0;
     }
     catch (TC_Mysql_Exception& ex)
     {
@@ -150,29 +146,30 @@ int DbAgent::modifyFunds(const WmsPlatform::FundsUserModifyReq& sIn, WmsPlatform
       req.userId  = sIn.userId;
       req.appId   = sIn.appId;
       req.appCode = sIn.appCode;
-      if (getFunds(sIn, sOut) != 0)   
+      if (getFunds(req, sOut) != 0)   
         return -1;
 
 
       if (TC_Common::strto<int>(sIn.cards) <= 0)
         return -1;
-      if (FundsUserModifyReq.opcode == "add")
+      string sSql;
+      if (sIn.opcode == "add")
       {
         sSql = "update  t_user_funds" 
-                        "set surplusGameCard = surplusGameCard "   + sIn.cards + ","
-                        "set totalUseGameCard = totalUseGameCard " + sIn.cards + ","
+                        "set surplusGameCard = surplusGameCard  + "   + sIn.cards + ","
+                        "set totalUseGameCard = totalUseGameCard + " + sIn.cards + ","
                         "where userId = '" + sIn.userId + "' and appId = '" + sIn.appId + "and appCode = " + sIn.appCode ;
       }
-      else if (FundsUserModifyReq.opcode == "sub")
+      else if (sIn.opcode == "sub")
       {
         sSql = "update  t_user_funds" 
-                        "set surplusGameCard = surplusGameCard "   - sIn.cards + ","
-                        "set totalUseGameCard = totalUseGameCard " - sIn.cards + ","
+                        "set surplusGameCard = surplusGameCard -"  + sIn.cards + ","
+                        "set totalUseGameCard = totalUseGameCard -" + sIn.cards + ","
                         "where userId = '" + sIn.userId + "' and appId = '" + sIn.appId + "and appCode = " + sIn.appCode ;
 
-        if (TC_Common::strto<int>(sOut.currentcard) - TC_Common::strto<int>(sOut.cards) < 0)
+        if (TC_Common::strto<int>(sOut.currentcard) - TC_Common::strto<int>(sIn.cards) < 0)
         {
-          TLOGDEBUG("DbAgent modifyFunds userId "<< sIn.userId<<"not enough" << sOut.currentcard<< ": " << sOut.cards << endl);
+          TLOGDEBUG("DbAgent modifyFunds userId "<< sIn.userId<<"not enough" << sOut.currentcard<< ": " << sIn.cards << endl);
           return -1;
         }
       }

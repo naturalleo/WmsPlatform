@@ -1,5 +1,7 @@
 #include "WxUserinfoImp.h"
 #include "servant/Application.h"
+#include "util/tc_md5.h"
+
 
 using namespace std;
 
@@ -111,14 +113,17 @@ int WxUserinfoImp::getWxUserinfo(const WmsPlatform::WxUserinfoReq& sIn, WmsPlatf
 
         FundsUserInfoReq req;
         FundsUserInfoRes res;
-        req.userId   = sIn.userId ;
+        req.userId   = sOut.userId ;
         req.appId    = sIn.appId;
         req.appCode  = sIn.appCode;
 
 
         iRet = _FundsPrx->getFunds(req, res);
         if (iRet == -1) 
-            return -1;
+        {
+           TLOGERROR("WxUserinfoImp getWxUserinfo iRet != 0: " << iRet);
+           return -1;
+        }
 
 
     	sOut.headimgurl  =  sIn.headimgurl ;
@@ -127,11 +132,6 @@ int WxUserinfoImp::getWxUserinfo(const WmsPlatform::WxUserinfoReq& sIn, WmsPlatf
         sOut.totalcard   = res.totalcard;
         sOut.currentcard = res.currentcard;
  
-    	else
-    	{
-    	   TLOGERROR("WxUserinfoImp getWxUserinfo iRet != 0: " << iRet);
-    	   return -1;
-    	}
     }
     catch(exception &ex)
     {
@@ -264,7 +264,7 @@ string WxUserinfoImp::getLoginToken(string figure)
     if (figure == "") 
          figure = TC_Common::now2ms();
 
-    token = tars::TC_MD5::md5str(tars::TC_MD5::md5str(WxoauthImp::_basekey1 + figure) + WxoauthImp::_basekey2) ;
+    token = tars::TC_MD5::md5str(tars::TC_MD5::md5str(WxUserinfoImp::_basekey1 + figure) + WxUserinfoImp::_basekey2) ;
 
     return token;
 }

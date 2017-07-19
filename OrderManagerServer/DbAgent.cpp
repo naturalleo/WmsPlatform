@@ -132,7 +132,7 @@ int DbAgent::generaterOrderID(const WmsPlatform::CreateRoomReq &in, string &orde
     return 0;
 }
 
-int DbAgent::updateUserToken(const WmsPlatform::WxoauthReq& req)
+int DbAgent::updateUserToken(const WmsPlatform::WxoauthReq& req, const string &token)
 {
     try
     {
@@ -141,7 +141,7 @@ int DbAgent::updateUserToken(const WmsPlatform::WxoauthReq& req)
       ostringstream oss("replace into t_user_login_log_");
       oss << TC_Common::tostr(pos) << "(userId, ip, addTime, appId, appCode, loginToken, clientFrom) values (" << req.userId << ","
           << "'" << req.ip << "'," << TC_Common::tostr(TC_Common::now2ms()/1000) << ", " << req.appId 
-          << "'" << req.appCode << "', '" << req.token << "'," << req. clientFrom << ")";
+          << "'" << req.appCode << "', '" << token << "'," << req. clientFrom << ")";
 
 
       _mysqlReg.execute(oss.str());

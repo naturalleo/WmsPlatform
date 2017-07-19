@@ -6,8 +6,8 @@
 
 using namespace std;
 
-const string WxUserinfoImp:: _basekey1 = "e4b,KyiniuApi>VmZg7J!y";
-const string WxUserinfoImp:: _basekey2 = "<zwrUG2^?vN;ixApp";
+const string WxoauthImp:: _basekey1 = "e4b,KyiniuApi>VmZg7J!y";
+const string WxoauthImp:: _basekey2 = "<zwrUG2^?vN;ixApp";
 //////////////////////////////////////////////////////
 void WxoauthImp::initialize()
 {
@@ -122,7 +122,7 @@ int WxoauthImp::wxchatLogin(const WmsPlatform::WxoauthReq& sIn, WmsPlatform::WxU
                 req.headimgurl = "http:\/\/wx.qlogo.cn\/mmhead\/PiajxSqBRaELiahujtxQMlC6R0dFaEzk4elicicr03afBHdRZmS1UL7DFg\/0";
                 req.nickname = "YK";
                 req.sex = "1";
-                req.openid = "oLDB1wGkAE10jbj9TJ9lVbQ_16rs";
+                req.openId = "oLDB1wGkAE10jbj9TJ9lVbQ_16rs";
                 req.appId = "1";
                 req.appGroupId = "1";
                 req.appCode = "klmgphz";
@@ -145,14 +145,14 @@ int WxoauthImp::wxchatLogin(const WmsPlatform::WxoauthReq& sIn, WmsPlatform::WxU
             req.headimgurl  = (document["headimgurl"]).GetString();
             req.nickname    = (document["nickname"]).GetString();
             req.sex         = (document["sex"]).GetInt();
-            req.openid      = (document["openid"]).GetString();
+            req.openId      = (document["openid"]).GetString();
             req.appCode     = sIn.appCode;
             if (0 == getUseInfo(req, sOut))
             {
-                sIn.token = getLoginToken();
-                if(0 == _orderPrx->updateUserToken(sIn))
+                string token = getLoginToken();
+                if(0 == _orderPrx->updateUserToken(sIn, token))
                 {
-                    sOut.token = sIn.token ;
+                    sOut.token = token ;
                     return 0;
                 }
             }
