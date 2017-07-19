@@ -6,13 +6,15 @@
 
 using namespace std;
 
+const string WxUserinfoImp:: _basekey1 = "e4b,KyiniuApi>VmZg7J!y";
+const string WxUserinfoImp:: _basekey2 = "<zwrUG2^?vN;ixApp";
 //////////////////////////////////////////////////////
 void WxoauthImp::initialize()
 {
     //initialize servant here:
     //... 
     _wxuserinfoPrx = Application::getCommunicator()->stringToProxy<WxUserinfoPrx>("WmsPlatform.WxUserinfoServer.WxUserinfoObj");
-
+    _orderPrx   = Application::getCommunicator()->stringToProxy<OrderPrx>("WmsPlatform.OrderManagerServer.OrderObj");
 }
 
 //////////////////////////////////////////////////////
@@ -124,6 +126,9 @@ int WxoauthImp::wxchatLogin(const WmsPlatform::WxoauthReq& sIn, WmsPlatform::WxU
                 req.appId = "1";
                 req.appGroupId = "1";
                 req.appCode = "klmgphz";
+                req.ip = sIn.ip;
+                req.clientFrom = sIn.clientFrom;
+                
                 if (0 == getUseInfo(req, sOut))
                     return 0;
                 else
@@ -143,7 +148,14 @@ int WxoauthImp::wxchatLogin(const WmsPlatform::WxoauthReq& sIn, WmsPlatform::WxU
             req.openid      = (document["openid"]).GetString();
             req.appCode     = sIn.appCode;
             if (0 == getUseInfo(req, sOut))
-		 		return 0;
+            {
+                sIn.token = getLoginToken();
+                if(0 == _orderPrx->updateUserToken(sIn))
+                {
+                    sOut.token = sIn.token ;
+                    return 0;
+                }
+            }
             else
                 return -1;
 		 }   		
@@ -179,4 +191,15 @@ int WxoauthImp::getUseInfo(const WxUserinfoReq &req, WxUserinfoRes &res)
         TLOGERROR("WxoauthImp::getUseInfo exception:" << ex.what() << endl);
     }
     return -1;
+}
+
+string WxoauthImp::getLoginToken(string figure)
+{
+    string token;
+    if (figure == "") 
+         figure = TC_Common::now2ms();
+
+    token = tars::TC_MD5::md5str(tars::TC_MD5::md5str(WxoauthImp::_basekey1 + figure) + WxoauthImp::_basekey2) ;
+
+    return token;
 }

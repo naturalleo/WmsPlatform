@@ -4,6 +4,8 @@
 #include "servant/Application.h"
 #include "Wxoauth.h"
 #include "WxUserinfo.h"
+#include "Order.h"
+
 #include "rapidjson/include/rapidjson/document.h"
 #include "rapidjson/include/rapidjson/writer.h"
 #include "rapidjson/include/rapidjson/stringbuffer.h"
@@ -48,8 +50,10 @@ public:
     virtual int wxchatLogin(const WmsPlatform::WxoauthReq& sIn, WmsPlatform::WxUserinfoRes& sOut, tars::TarsCurrentPtr current);
 
 protected:
-     WxUserinfoPrx  _wxuserinfoPrx;
-
+    WxUserinfoPrx  _wxuserinfoPrx;
+    WxoauthPrx  _wxoauthPrx;
+    static const string _basekey1;
+    static const string _basekey2;
 
 };
 /////////////////////////////////////////////////////

@@ -16,7 +16,6 @@ struct WxoauthReq
     6 optional string refreshToken;
     7 optional string wechatAppId;
     8 optional string userId ;
-    9 optional string token;
 
 };
 

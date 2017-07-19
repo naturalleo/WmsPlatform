@@ -134,16 +134,6 @@ int DbAgent::generaterOrderID(const WmsPlatform::CreateRoomReq &in, string &orde
 
 int DbAgent::updateUserToken(const WmsPlatform::WxoauthReq& req)
 {
-
-
-    int pos = TC_Common::strto<int>()
-
-    ostringstream oss("replace into");
-    oss <<
-
-    string sSql = "replace into t_registry_info (locator_id, servant, endpoint, last_heartbeat, present_state, tars_version) "
-                  "values ";
-
     try
     {
     

@@ -9,9 +9,12 @@ struct WxUserinfoReq
     2 require  string headimgurl;
     3 require  string nickname;
     4 require  string sex;
-    5 require  string openid; 
+    5 require  string openId; 
     6 require  string appId;
     7 require  string appCode;  
+    8 optional string ip;
+    9 optional string clientFrom;
+    
 };
 
 

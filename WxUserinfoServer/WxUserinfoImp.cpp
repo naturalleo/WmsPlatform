@@ -124,7 +124,6 @@ int WxUserinfoImp::getWxUserinfo(const WmsPlatform::WxUserinfoReq& sIn, WmsPlatf
     	sOut.headimgurl  =  sIn.headimgurl ;
     	sOut.nickname    =  sIn.nickname ;
     	sOut.sex 		 =  sIn.sex ;
-    	sOut.token       = getLoginToken(); // 后期MD5串化
         sOut.totalcard   = res.totalcard;
         sOut.currentcard = res.currentcard;
  
