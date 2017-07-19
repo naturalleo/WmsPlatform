@@ -32,17 +32,41 @@ void OrderImp::destroy()
 
 int OrderImp::generateOrder(const WmsPlatform::CreateRoomReq &sReq, std::string &sRsp, tars::TarsCurrentPtr current)
 {
-    TLOGDEBUG("generateOrder : " << sReq.userId << endl);
 
-    if (_db.generaterOrderID(sReq, sRsp) == -1)
+    TLOGDEBUG("addFunds : " << sIn.userId << endl);
+    try
     {
-        _db.generaterOrderID(sReq, sRsp);
+        if (_db.generaterOrderID(sReq, sRsp) == -1)
+        {
+            _db.generaterOrderID(sReq, sRsp);
+        }
     }
-
+    catch(exception &ex)
+    {
+        cout << ex.what() << endl;
+        return -1;
+    }
     return 0;
 }
 
+/*
+
+*/
+
 int OrderImp::updateUserToken(const WmsPlatform::WxoauthReq& req)
 {
-    
+    TLOGDEBUG("updateUserToken : " << sReq.userId << endl);
+
+    int _ret
+
+    try
+    {
+        _ret = _db.updateUserToken(req);   
+    }
+    catch(exception &ex)
+    {
+        cout << ex.what() << endl;
+        return -1;
+    }
+    return _ret;
 }
