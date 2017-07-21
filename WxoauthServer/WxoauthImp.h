@@ -42,7 +42,7 @@ public:
     virtual int test(tars::TarsCurrentPtr current) { return 0;};
 
 
-    int getUseInfo(const WxUserinfoReq &req, WxUserinfoRes & res);
+    int getUseInfo(const WxUserinfoReq &req, WmsPlatform::WxoauthReq sIn,  WxUserinfoRes & res);
 
     string getLoginToken(string figure = "");
 

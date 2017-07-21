@@ -129,7 +129,7 @@ int WxoauthImp::wxchatLogin(const WmsPlatform::WxoauthReq& sIn, WmsPlatform::WxU
                 req.ip = sIn.ip;
                 req.clientFrom = sIn.clientFrom;
                 
-                if (0 == getUseInfo(req, sOut))
+                if (0 == getUseInfo(req, sIn, sOut))
                     return 0;
                 else
                     return -1;
@@ -147,14 +147,14 @@ int WxoauthImp::wxchatLogin(const WmsPlatform::WxoauthReq& sIn, WmsPlatform::WxU
             req.sex         = (document["sex"]).GetInt();
             req.openId      = (document["openid"]).GetString();
             req.appCode     = sIn.appCode;
-            if (0 == getUseInfo(req, sOut))
+            if (0 == getUseInfo(req, sIn, sOut))
             {
-                string token = getLoginToken();
-                if(0 == _orderPrx->updateUserToken(sIn, token))
-                {
-                    sOut.token = token ;
+                //string token = getLoginToken();
+               // if(0 == _orderPrx->updateUserToken(sIn, sIn, token))
+               // {
+                //    sOut.token = token ;
                     return 0;
-                }
+               // }
             }
             else
                 return -1;
@@ -171,7 +171,7 @@ int WxoauthImp::wxchatLogin(const WmsPlatform::WxoauthReq& sIn, WmsPlatform::WxU
 
 
 
-int WxoauthImp::getUseInfo(const WxUserinfoReq &req, WxUserinfoRes &res)
+int WxoauthImp::getUseInfo(const WxUserinfoReq &req, WmsPlatform::WxoauthReq sIn, WxUserinfoRes &res)
 {
 
     try
@@ -181,8 +181,17 @@ int WxoauthImp::getUseInfo(const WxUserinfoReq &req, WxUserinfoRes &res)
 
         if(iRet != 0)
         {
-        	TLOGERROR("WxoauthImp getUseInfo iRet != 0: " << iRet);
+        	TLOGERROR("WxoauthImp getWxUserinfo iRet != 0: " << iRet);
         	return iRet;
+        }
+        string token = getLoginToken();
+        sIn.userId = res.userId ;
+        iRet = _orderPrx->updateUserToken(sIn, token);
+        res.token = token;
+        if(iRet != 0)
+        {
+            TLOGERROR("WxoauthImp updateUserToken iRet != 0: " << iRet);
+            return iRet;
         }
         return iRet;
     }
