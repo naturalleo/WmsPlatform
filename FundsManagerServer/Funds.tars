@@ -52,6 +52,14 @@ struct FundsUserModifyOtherRes
  
 };
 
+struct FundsCheckReq
+{
+    0 require  string userId;
+    1 require  string appId;  
+    2 require  string appCode; 
+    3 require  string cards ;     
+};
+
 interface Funds
 {
     int test();
@@ -59,6 +67,8 @@ interface Funds
 	int addFunds(FundsNewUserReq req, out FundsUserInfoRes res);
 
 	int getFunds(FundsUserInfoReq req, out FundsUserInfoRes res);
+
+    int checkFunds(FundsCheckReq req);
 
 	int modifyFunds(FundsUserModifyReq req, out FundsUserInfoRes res);
 

@@ -82,3 +82,30 @@ int FundsImp::modifyFundsOther(const WmsPlatform::FundsUserModifyOtherReq& sIn, 
 
 	return 0 ;
 }
+
+int FundsImp::checkFunds(const WmsPlatform::FundsCheckReq& sIn, tars::TarsCurrentPtr current)
+{
+    TLOGDEBUG("checkFunds : " << sIn.userId << endl);
+    try
+    {
+        FundsUserInfoReq req;
+        FundsUserInfoRes res;
+        req.userId  = sIn.userId ;
+        req.appId   = sIn.appId ;
+        req.appCode = sIn.appCode ;
+        
+        if (0 == _db.getFunds(req, res))
+        {
+            if (TC_Common::strto<int>(sIn.cards) <= TC_Common::strto<int>(res.currentcard))
+                return 0;
+        }
+
+        return -1;
+    }
+    catch(exception &ex)
+    {
+        cout << ex.what() << endl;
+        return -1;
+    }
+    return -1;   
+}

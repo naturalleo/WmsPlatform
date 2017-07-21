@@ -13,6 +13,7 @@ void OrderImp::initialize()
     {
 
         _db.init();   
+        _FundsPrx = Application::getCommunicator()->stringToProxy<FundsPrx>("WmsPlatform.FundsManagerServer.FundsObj");
         //string order = "";
     	//_db.generaterOrderID("hello",order);
    }
@@ -36,9 +37,19 @@ int OrderImp::generateOrder(const WmsPlatform::CreateRoomReq &sReq, std::string 
     TLOGDEBUG("addFunds : " << sReq.userId << endl);
     try
     {
-        if (_db.generaterOrderID(sReq, sRsp) == -1)
+        if (_db.generaterOrderID(sReq, sRsp) == 0)
         {
-            _db.generaterOrderID(sReq, sRsp);
+            FundsUserModifyReq req;
+            FundsUserInfoRes res;
+            req.userId = sReq.userId;
+            req.appId = sReq.appId;
+            req.appCode = sReq.appCode;
+            req.cards = sReq.useNum;
+            req.opcode = "sub";
+
+            if(_FundsPrx->modifyFunds(req, res) == 0 )
+                return 0;
+
         }
     }
     catch(exception &ex)
@@ -46,7 +57,7 @@ int OrderImp::generateOrder(const WmsPlatform::CreateRoomReq &sReq, std::string 
         cout << ex.what() << endl;
         return -1;
     }
-    return 0;
+    return -1;
 }
 
 /*

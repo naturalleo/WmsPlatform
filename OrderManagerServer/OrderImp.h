@@ -4,6 +4,7 @@
 #include "servant/Application.h"
 #include "Order.h"
 #include "DbAgent.h"
+#include "Funds.h"
 /**
  *
  *
@@ -37,6 +38,7 @@ public:
     virtual int updateUserToken(const WmsPlatform::WxoauthReq& req, const std::string& token, tars::TarsCurrentPtr current);
 protected:
     DbAgent _db;
+    FundsPrx  _FundsPrx;
 
 };
 /////////////////////////////////////////////////////

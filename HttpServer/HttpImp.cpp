@@ -20,7 +20,7 @@
 #include "util/tc_cgi.h"
 #include <cctype>
 #include <algorithm>
-
+#include <sstream>
 
 using namespace std;
 
@@ -32,6 +32,7 @@ void HttpImp::initialize()
     _orderPrx   = Application::getCommunicator()->stringToProxy<OrderPrx>("WmsPlatform.OrderManagerServer.OrderObj");
     _wxoauthPrx = Application::getCommunicator()->stringToProxy<WxoauthPrx>("WmsPlatform.WxoauthServer.WxoauthObj");
     _WxUserinfoPrx = Application::getCommunicator()->stringToProxy<WxUserinfoPrx>("WmsPlatform.WxUserinfoServer.WxUserinfoObj");
+    _FundsPrx = Application::getCommunicator()->stringToProxy<FundsPrx>("WmsPlatform.FundsManagerServer.FundsObj");
 }
 
 //////////////////////////////////////////////////////
@@ -111,6 +112,7 @@ void HttpImp::parseNormal(multimap<string, string> &mmpParams, const string& sBu
     }
 }
 
+
 class OrderCallback : public OrderPrxCallback
 {
 
@@ -125,7 +127,23 @@ public:
         TLOGDEBUG("callback_generateOrder : " << ret << sOut << endl);
         TC_HttpResponse rsp;
         vector<char> buffer;
-        string s="hello world";
+        string s ;
+
+        if (ret == 0 )
+        {
+            s = "{\"status\":1,\"errCode\":0,\"error\":\"\",\"data\":"
+                    "{"
+                    "\"orderCode\" : \""  + sOut +  "\","
+                    "\"isNew\" : \"0\" "
+                    "}"
+                "}";
+        }
+        else
+        {
+            s = "{\"status\":-1,\"errCode\":-1,\"error\":\"ret -1\",\"data\":[]}";
+        }
+
+
         rsp.setResponse(s.c_str(),s.size());
         rsp.encode(buffer);     
 
@@ -201,14 +219,14 @@ struct WxUserinfoRes
         if (0 == ret)
             s = "{\"status\":1,\"errCode\":0,\"error\":\"\",\"data\":"
                     "{ \"mySign \": false,"
-                    "\"userId\" : " + sOut.userId + ","
-                    "\"token\" : "  + sOut.token +  ","
-                    "\"nickName\" : "  + sOut.nickname +  ","
-                    "\"gender\" : "  + sOut.sex +  ","
-                    "\"avatar\" : "  + sOut.headimgurl +  ","
-                    "\"totalGameCard\" : "  + sOut.totalcard +  ","
-                    "\"surplusGameCard\" : "  + sOut.currentcard +  ","
-                    "\"isNew\" : "  + sOut.isNew +  ","
+                    "\"userId\" : \"" + sOut.userId + "\","
+                    "\"token\" : \""  + sOut.token +  "\","
+                    "\"nickName\" : \""  + sOut.nickname +  "\","
+                    "\"gender\" : \""  + sOut.sex +  "\","
+                    "\"avatar\" : \""  + sOut.headimgurl +  "\","
+                    "\"totalGameCard\" : \""  + sOut.totalcard +  "\","
+                    "\"surplusGameCard\" : \""  + sOut.currentcard +  "\","
+                    "\"isNew\" : "  + sOut.isNew +  " "
                     "}"
                 "}";
         else
@@ -288,11 +306,102 @@ public:
         WxUserinfo::async_response_getWxUserIsAgent(_current, ret, res);
     }
 
+    TarsCurrentPtr _current;
+};
+
+
+class FundsCallback : public FundsPrxCallback
+{
+
+public:
+    FundsCallback(TarsCurrentPtr &current, string data)
+    : _current(current),_data(data)
+    {}
+
+    virtual void callback_checkFunds(tars::Int32 ret)
+    {
+        //HttpImp::async_response_doRequest(_current, ret, sOut);
+        TLOGDEBUG("callback_checkFunds : " << ret  << endl);
+        TC_HttpResponse rsp;
+        vector<char> buffer;
+        string s;
+
+        if (ret == 0 )
+        {
+            s = "{\"status\":1,\"errCode\":0,\"error\":\"\",\"data\":"
+                    "{"
+                    "\"orderCode\" : \""  + _data +  "\","
+                    "\"isNew\" : \"0\" "
+                    "}"
+                "}";
+        }
+        else
+        {
+            s = "{\"status\":-1,\"errCode\":-1,\"error\":\"ret -1\",\"data\":[]}";
+        }
+
+
+        rsp.setResponse(s.c_str(),s.size());
+        rsp.encode(buffer);     
+
+        _current->sendResponse(&buffer.at(0),buffer.size());
+        TLOGDEBUG("callback_checkFunds : " << s << s.size() << endl);
+       // _current->sendResponse(tars::TARSSERVERSUCCESS, buffer);    
+        //HttpImp::async_response_doRequest(_current, ret, buffer);
+    }
+    virtual void callback_checkFunds_exception(tars::Int32 ret)
+    { 
+        TLOGERROR("FundsCallback callback_checkFunds_exception ret:" << ret << endl); 
+        Funds::async_response_checkFunds(_current, ret);
+    }
+
+
+
+    virtual void callback_modifyFunds(tars::Int32 ret, const WmsPlatform::FundsUserInfoRes& sOut)
+    {
+        //HttpImp::async_response_doRequest(_current, ret, sOut);
+        TLOGDEBUG("callback_modifyFunds : " << ret  << endl);
+        TC_HttpResponse rsp;
+        vector<char> buffer;
+        string s;
+
+        if (ret == 0 )
+        {
+            s = "{\"status\":1,\"errCode\":0,\"error\":\"\",\"data\":"
+                    "{"
+                    "\"orderCode\" : \""  + _data +  "\","
+                    "}"
+                "}";
+        }
+        else
+        {
+            s = "{\"status\":-1,\"errCode\":-1,\"error\":\"ret -1\",\"data\":[]}";
+        }
+
+
+        rsp.setResponse(s.c_str(),s.size());
+        rsp.encode(buffer);     
+
+        _current->sendResponse(&buffer.at(0),buffer.size());
+        TLOGDEBUG("callback_checkFunds : " << s << s.size() << endl);
+       // _current->sendResponse(tars::TARSSERVERSUCCESS, buffer);    
+        //HttpImp::async_response_doRequest(_current, ret, buffer);
+    }
+    virtual void callback_modifyFunds_exception(tars::Int32 ret)
+    { 
+        TLOGERROR("FundsCallback callback_checkFunds_exception ret:" << ret << endl); 
+        WmsPlatform::FundsUserInfoRes res;
+        Funds::async_response_modifyFunds(_current, ret, res);
+    }
+
+
 
 
 
     TarsCurrentPtr _current;
+    string _data;
 };
+
 
 bool HttpImp::isParamExist(const multimap<string, string> &mmpParams , const string& sName) const
 {
@@ -347,18 +456,43 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
         if (request.getRequestUrl() == "/GameService/addOrder")
         {
             current->setResponse(false);
-            CreateRoomReq req;
-            string res;
-            req.userId = "123";
-            req.appId = "123";
-            req.appCode = "123";
-            req.token = "123";
-            req.gameId = "123";
-            req.useNum = "123";
-            req.orderType = "123";    
-            WmsPlatform::OrderPrxCallbackPtr cb = new OrderCallback(current);
 
-            _orderPrx->tars_set_timeout(3000)->async_generateOrder(cb,req);        
+            FundsCheckReq req;
+            req.userId = getValue(_para,"userId");
+            req.appId = getValue(_para,"appId");
+            req.appCode = getValue(_para,"appCode");
+            req.cards = getValue(_para,"useNum");
+
+
+            ostringstream oss("");
+            oss <<"userId\%3D" << req.userId << "\%26appId\%3D" << req.appId << "\%26appCode\%3D" << req.appCode << "\%26useNum\%3D" << req.cards;
+
+
+            WmsPlatform::FundsPrxCallbackPtr cb = new FundsCallback(current, oss.str());
+            _FundsPrx->tars_set_timeout(3000)->async_checkFunds(cb,req);     
+                 
+        }
+        else if (request.getRequestUrl() == "/GameService/updateOrder")
+        {
+            current->setResponse(false);
+
+            string data = getValue(_para,"orderCode");
+            multimap<string, string> __para;
+
+            parseNormal(__para, data);
+
+
+            FundsUserModifyReq req;
+            req.userId = getValue(__para,"userId");
+            req.appId = getValue(__para,"appId");
+            req.appCode = getValue(__para,"appCode");
+            req.cards = getValue(__para,"useNum");
+            req.opcode = "sub" ;
+
+
+            WmsPlatform::FundsPrxCallbackPtr cb = new FundsCallback(current, data);
+            _FundsPrx->tars_set_timeout(3000)->async_modifyFunds(cb,req);     
+                 
         }
         else if (request.getRequestUrl() == "/user/thirdPartyLogin")
         {
@@ -385,30 +519,6 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
 
             WmsPlatform::WxoauthPrxCallbackPtr cb = new WxoauthCallback(current);
             _wxoauthPrx->tars_set_timeout(3000)->async_wxchatLogin(cb,req);              
-
-
-            //using rapidjson::Document;
-            //Document doc;
-            //using rapidjson::Value;
-           // Value item(Type::kObjectType);
-/*
-            rapidjson::StringBuffer jbuffer;
-            rapidjson::Writer<rapidjson::StringBuffer> writer(jbuffer);
-
-            writer.StartObject();
-
-            writer.Key("status");
-            writer.Int(1);
-            writer.EndObject();
-
-
-
-
-            TC_HttpResponse rsp;
-            string s = jbuffer.GetString();
-            rsp.setResponse(s.c_str(),s.size());
-            rsp.encode(buffer);
-*/
 
         }
         else if (request.getRequestUrl() == "/GameService/isAgent")

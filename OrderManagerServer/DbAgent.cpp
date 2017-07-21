@@ -70,7 +70,7 @@ int DbAgent::generaterOrderID(const WmsPlatform::CreateRoomReq &in, string &orde
 		string sSql = 
                 "insert into t_game_room_order (`orderCode`,`useGameCardNum`,`roomCateId`,`gameId`,`orderType`,`subOrderType`,`userId`,`appId`,`appCode`,`addTime`,`expTime`,`updateTime`,`status` ) values " 
                         "('" + TC_Common::tostr(id) + "' ," 
-                        " " + TC_Common::tostr(0) + " ,"
+                        " " + in.useNum + " ,"
                         " " + TC_Common::tostr(1) + " ,"
                         "'" + in.gameId + "' ,"
                         "'" + in.orderType + "' ,"  

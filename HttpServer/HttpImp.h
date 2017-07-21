@@ -21,6 +21,7 @@
 #include "Order.h"
 #include "Wxoauth.h"
 #include "WxUserinfo.h"
+#include "Funds.h"
 
 #include "rapidjson/include/rapidjson/document.h"
 #include "rapidjson/include/rapidjson/writer.h"
@@ -73,6 +74,7 @@ protected:
     OrderPrx    _orderPrx;
     WxoauthPrx  _wxoauthPrx;
     WxUserinfoPrx  _WxUserinfoPrx;
+    FundsPrx  _FundsPrx;
 };
 /////////////////////////////////////////////////////
 #endif
