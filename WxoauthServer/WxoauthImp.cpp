@@ -65,7 +65,7 @@ void WxoauthImp::destroy()
 
 
 
-int WxoauthImp::wxchatLogin(const WmsPlatform::WxoauthReq& sIn, WmsPlatform::WxUserinfoRes& sOut, tars::TarsCurrentPtr current)
+int WxoauthImp::wxchatLogin(const WmsPlatform::WxoauthReq& sIn, WmsPlatform::WxLoginUserinfoRes& sOut, tars::TarsCurrentPtr current)
 {
 
 	try
@@ -117,7 +117,7 @@ int WxoauthImp::wxchatLogin(const WmsPlatform::WxoauthReq& sIn, WmsPlatform::WxU
             {
                 // 后续补充
                 //sOut = "{\"status\":1,\"errCode\":10401,\"error\":\"winxin erro callback\",\"data\":[]}";
-                WxUserinfoReq req;
+                WxLoginUserinfoReq req;
                 req.unionId ="oPNdvwN0QlM_lYx1oxTdLVxWIxmM";
                 req.headimgurl = "http:\/\/wx.qlogo.cn\/mmhead\/PiajxSqBRaELiahujtxQMlC6R0dFaEzk4elicicr03afBHdRZmS1UL7DFg\/0";
                 req.nickname = "YK";
@@ -129,7 +129,7 @@ int WxoauthImp::wxchatLogin(const WmsPlatform::WxoauthReq& sIn, WmsPlatform::WxU
                 req.ip = sIn.ip;
                 req.clientFrom = sIn.clientFrom;
                 
-                if (0 == getUseInfo(req, sIn, sOut))
+                if (0 == getLoginUseInfo(req, sIn, sOut))
                     return 0;
                 else
                     return -1;
@@ -140,14 +140,14 @@ int WxoauthImp::wxchatLogin(const WmsPlatform::WxoauthReq& sIn, WmsPlatform::WxU
 		 }
 		 else
 		 {
-            WxUserinfoReq req;
+            WxLoginUserinfoReq req;
             req.unionId     = (document["unionid"]).GetString();
             req.headimgurl  = (document["headimgurl"]).GetString();
             req.nickname    = (document["nickname"]).GetString();
             req.sex         = (document["sex"]).GetInt();
             req.openId      = (document["openid"]).GetString();
             req.appCode     = sIn.appCode;
-            if (0 == getUseInfo(req, sIn, sOut))
+            if (0 == getLoginUseInfo(req, sIn, sOut))
             {
                 //string token = getLoginToken();
                // if(0 == _orderPrx->updateUserToken(sIn, sIn, token))
@@ -171,13 +171,13 @@ int WxoauthImp::wxchatLogin(const WmsPlatform::WxoauthReq& sIn, WmsPlatform::WxU
 
 
 
-int WxoauthImp::getUseInfo(const WxUserinfoReq &req, WmsPlatform::WxoauthReq sIn, WxUserinfoRes &res)
+int WxoauthImp::getLoginUseInfo(const WxLoginUserinfoReq &req, WmsPlatform::WxoauthReq sIn, WxLoginUserinfoRes &res)
 {
 
     try
     {
 
-	    int iRet = _wxuserinfoPrx->getWxUserinfo(req, res);
+	    int iRet = _wxuserinfoPrx->getLoginWxUserinfo(req, res);
 
         if(iRet != 0)
         {

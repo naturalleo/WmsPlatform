@@ -172,7 +172,7 @@ public:
     : _current(current)
     {}
 
-    virtual void callback_wxchatLogin(tars::Int32 ret,  const WmsPlatform::WxUserinfoRes& sOut)
+    virtual void callback_wxchatLogin(tars::Int32 ret,  const WmsPlatform::WxLoginUserinfoRes& sOut)
     {
         //HttpImp::async_response_doRequest(_current, ret, sOut);
         
@@ -245,7 +245,7 @@ struct WxUserinfoRes
     virtual void callback_wxchatLogin_exception(tars::Int32 ret)
     { 
         TLOGERROR("WxoauthCallback callback_wxchatLogin_exception ret:" << ret << endl); 
-        WmsPlatform::WxUserinfoRes res;
+        WmsPlatform::WxLoginUserinfoRes res;
         Wxoauth::async_response_wxchatLogin(_current, ret, res);
     }
 
@@ -305,6 +305,50 @@ public:
 
         WxUserinfo::async_response_getWxUserIsAgent(_current, ret, res);
     }
+
+
+    virtual void callback_getWxUserinfo(tars::Int32 ret,  const WmsPlatform::WxUserinfoRes& sOut)
+    {
+        //HttpImp::async_response_doRequest(_current, ret, sOut);
+        TLOGDEBUG("callback_getWxUserinfo : " << ret << endl);
+        TC_HttpResponse rsp;
+        vector<char> buffer;
+        string s;
+        if (0 == ret)
+            s = "{\"status\":1,\"errCode\":0,\"error\":\"\",\"data\":"
+                    "{"
+                    "\"userId\" : \"" + sOut.userId + "\","
+                    "\"nickName\" : \""  + sOut.nickname +  "\","
+                    "\"gender\" : \""  + sOut.sex +  "\","
+                    "\"avatar\" : \""  + sOut.headimgurl +  "\","                   
+                    "\"ip\" : \""  + sOut.ip +  "\"" 
+                    "}"
+                "}";
+
+        else
+            s = "{\"status\":-1,\"errCode\":-1,\"error\":\"ret -1\",\"data\":[]}";
+
+        rsp.setResponse(s.c_str(),s.size());
+        rsp.encode(buffer);     
+
+        _current->sendResponse(&buffer.at(0),buffer.size());
+        TLOGDEBUG("callback_getWxUserinfo : " << s << s.size() << endl);
+       // _current->sendResponse(tars::TARSSERVERSUCCESS, buffer);    
+        //HttpImp::async_response_doRequest(_current, ret, buffer);
+    }
+    virtual void callback_getWxUserinfo_exception(tars::Int32 ret)
+    { 
+        TLOGERROR("WxUserinfoCallback callback_getWxUserIsAgent_exception ret:" << ret << endl); 
+        WmsPlatform::WxUserinfoRes res;
+
+
+        WxUserinfo::async_response_getWxUserinfo(_current, ret, res);
+    }
+
+
+
+
+
 
     TarsCurrentPtr _current;
 };
@@ -530,6 +574,21 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
             WmsPlatform::WxUserinfoPrxCallbackPtr cb = new WxUserinfoCallback(current);
 
             _WxUserinfoPrx->tars_set_timeout(3000)->async_getWxUserIsAgent(cb,req);        
+        }
+        else if (request.getRequestUrl() == "/GameService/getUserInfo")
+        {
+
+            current->setResponse(false);
+            WxUserinfoReq req;
+            req.userId = getValue(_para,"userId");
+            req.appId = getValue(_para,"appId");
+            req.appCode = getValue(_para,"appCode");
+            req.token = getValue(_para,"token");
+            req.orderCode = getValue(_para,"orderCode");
+
+            WmsPlatform::WxUserinfoPrxCallbackPtr cb = new WxUserinfoCallback(current);
+
+            _WxUserinfoPrx->tars_set_timeout(3000)->async_getWxUserinfo(cb,req);        
         }
         else if (request.getRequestUrl() == "/GameService/ExchangeCards")
         {

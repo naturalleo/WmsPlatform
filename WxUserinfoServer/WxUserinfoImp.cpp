@@ -36,67 +36,13 @@ void WxUserinfoImp::destroy()
     //...
 }
 
-/*
 
-
-struct WxUserinfoReq
+int WxUserinfoImp::getLoginWxUserinfo(const WmsPlatform::WxLoginUserinfoReq& sIn, WmsPlatform::WxLoginUserinfoRes& sOut, tars::TarsCurrentPtr current)
 {
-    0 require  string unionId;
-    1 require  string appGroupId;
-    2 require  string headimgurl;
-    3 require  string nickname;
-    4 require  string sex;
-    5 require  string openid; 
-    6 require  string appId;
-    7 require  string appCode;  
-};
-
-
-
-struct WxUserinfoRes
-{
-    0 require  string userId;
-
-
-    1 require  string headimgurl;
-    2 require  string nickname;
-    3 require  string sex;  
-
-    4 require string isNew;
-    5 require string totalcard;
-    6 require string currentcard;
-    7 require string token;
-
-};
-
-
-struct FundsUserInfoReq
-{
-    0 require  string userId;
-    1 require  string appId;  
-    2 require  string appCode;      
-};
-
-
-
-struct FundsUserInfoRes
-{
-    0 require  string userId;
-    1 require string  totalcard;
-    2 require string  currentcard;
-
-};
-
-
-
-*/
-
-int WxUserinfoImp::getWxUserinfo(const WmsPlatform::WxUserinfoReq& sIn, WmsPlatform::WxUserinfoRes& sOut, tars::TarsCurrentPtr current)
-{
-	TLOGDEBUG("getWxUserinfo : " << sIn.unionId << endl);
+	TLOGDEBUG("getLoginWxUserinfo : " << sIn.unionId << endl);
     try
     {
-    	int iRet = _db.getDbUserinfo(sIn, sOut.userId);
+    	int iRet = _db.getLoginDbUserinfo(sIn, sOut.userId);
         if (iRet == -1)
         {
             TLOGERROR("WxUserinfoImp getWxUserinfo iRet != 0: " << iRet);
@@ -142,6 +88,26 @@ int WxUserinfoImp::getWxUserinfo(const WmsPlatform::WxUserinfoReq& sIn, WmsPlatf
     
 	return 0;
 }
+
+
+int WxUserinfoImp::getWxUserinfo(const WmsPlatform::WxUserinfoReq& sIn, WmsPlatform::WxUserinfoRes& sOut, tars::TarsCurrentPtr current)
+{
+    TLOGDEBUG("getWxUserinfo : " << sIn.userId << endl);
+    try
+    {
+        return  _db.getDbUserinfo(sIn, sOut);
+    }
+    catch(exception &ex)
+    {
+        cout << ex.what() << endl;
+        return -1;
+    }
+
+    
+    return 0;  
+}
+
+
 int WxUserinfoImp::getWxUserIsAgent(const WmsPlatform::WxUserisAgentReq& sIn, WmsPlatform::WxUserisAgentRes& sOut, tars::TarsCurrentPtr current)
 {
     TLOGDEBUG("getWxUserIsAgent : " << sIn.userId << endl);

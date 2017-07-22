@@ -24,11 +24,15 @@ public:
 
     int init();
 
-  	int isUniqueUser(const std::string unionId, const std::string appGroupId) ;
+  	int selectUserinfo(const std::string unionId, const std::string appGroupId, WxUserinfoRes &sOut) ;
 
-    int insertNewUser(const WmsPlatform::WxUserinfoReq &in, string &userId);
+    int selectUserinfo(const std::string userId, WxUserinfoRes &sOut) ;
 
-    int getDbUserinfo(const WmsPlatform::WxUserinfoReq &in, string &userId);
+    int insertNewUser(const WmsPlatform::WxLoginUserinfoReq &sIn);
+
+    int getDbUserinfo(const WmsPlatform::WxUserinfoReq &sIn, WxUserinfoRes &sOut);
+
+    int getLoginDbUserinfo(const WmsPlatform::WxLoginUserinfoReq &sIn, string &sOut);
     
     int isUserAgent(const std::string userId ,int &result);
 

@@ -42,12 +42,12 @@ public:
     virtual int test(tars::TarsCurrentPtr current) { return 0;};
 
 
-    int getUseInfo(const WxUserinfoReq &req, WmsPlatform::WxoauthReq sIn,  WxUserinfoRes & res);
+    int getLoginUseInfo(const WxLoginUserinfoReq &req, WmsPlatform::WxoauthReq sIn,  WxLoginUserinfoRes & res);
 
     string getLoginToken(string figure = "");
 
 
-    virtual int wxchatLogin(const WmsPlatform::WxoauthReq& sIn, WmsPlatform::WxUserinfoRes& sOut, tars::TarsCurrentPtr current);
+    virtual int wxchatLogin(const WmsPlatform::WxoauthReq& sIn, WmsPlatform::WxLoginUserinfoRes& sOut, tars::TarsCurrentPtr current);
 
 protected:
     WxUserinfoPrx  _wxuserinfoPrx;

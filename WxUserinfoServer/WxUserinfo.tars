@@ -2,7 +2,7 @@
 module WmsPlatform
 {
 
-struct WxUserinfoReq
+struct WxLoginUserinfoReq
 {
     0 require  string unionId;
     1 require  string appGroupId;
@@ -18,7 +18,7 @@ struct WxUserinfoReq
 };
 
 
-struct WxUserinfoRes
+struct WxLoginUserinfoRes
 {
     0 require  string userId;
 
@@ -65,9 +65,32 @@ struct WxUserExchangeRes
 
 
 
+struct WxUserinfoReq
+{
+    0 require  string userId;
+    1 require  string appId;
+    2 require  string appCode;
+    3 require  string token;
+    4 require  string orderCode;
+
+};
+
+struct WxUserinfoRes
+{
+    0 require  string userId;
+    1 require  string headimgurl;
+    2 require  string nickname;
+    3 require  string sex;
+    4 require  string ip;
+};
+
+
+
 interface WxUserinfo
 {
     int test();
+
+    int getLoginWxUserinfo(WxLoginUserinfoReq req, out WxLoginUserinfoRes res);
 
     int getWxUserinfo(WxUserinfoReq req, out WxUserinfoRes res);
 

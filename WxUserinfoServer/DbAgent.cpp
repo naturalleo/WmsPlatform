@@ -24,12 +24,11 @@ int DbAgent::init()
 }
 
 
-
-int DbAgent::isUniqueUser(const std::string unionId, const std::string appGroupId) 
+int DbAgent::selectUserinfo(const std::string unionId, const std::string appGroupId, WxUserinfoRes &sOut) 
 {
     try
     {
-        string sSql = "select `userId` from `t_user` where unionId = '" + unionId + "' and appGroupId = '" + appGroupId + "' limit 0,1";
+        string sSql = "select `userId`, `nickName`, `avatar`, `gender`, `lastLoginIp` from `t_user` where unionId = '" + unionId + "' and appGroupId = '" + appGroupId + "' limit 0,1";
         tars::TC_Mysql::MysqlData item = _mysqlReg.queryRecord(sSql);
         if (item.size() == 0)
         {
@@ -37,7 +36,14 @@ int DbAgent::isUniqueUser(const std::string unionId, const std::string appGroupI
         }
         else
         {
-            return TC_Common::strto<int>(item[0]["userId"]);
+            sOut.userId     = item[0]["userId"];
+            sOut.headimgurl = item[0]["avatar"];
+            sOut.nickname   = item[0]["nickName"];
+            sOut.sex        = item[0]["gender"];
+            sOut.ip         = item[0]["lastLoginIp"];
+            TLOGDEBUG("selectUserinfo sOut.userId  : " <<  sOut.userId  <<endl);
+            TLOGDEBUG("selectUserinfo sOut.headimgurl  : "<<  sOut.headimgurl  <<endl);
+            return 1;
         }
     }
     catch (TC_Mysql_Exception& ex)
@@ -51,63 +57,50 @@ int DbAgent::isUniqueUser(const std::string unionId, const std::string appGroupI
         return -1;
     }
 }
-
-/*
-
-struct WxUserinfoReq
-{
-    0 require  string unionid;
-    1 require  string appGroupId;
-    2 require  string headimgurl;
-    3 require  string nickname;
-    4 require  string sex;
-    5 require  string openid;    
-};
-
-CREATE TABLE `t_user` (
-  `userId` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '用户ID',
-  `nickName` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '昵称',
-  `avatar` varchar(255) NOT NULL DEFAULT '' COMMENT '头像',
-  `phoneNumber` varchar(13) NOT NULL DEFAULT '' COMMENT '手机号码',
-  `password` varchar(34) NOT NULL COMMENT '密码',
-  `gender` tinyint(3) unsigned NOT NULL DEFAULT '1' COMMENT '性别 1 男 2 女',
-  `regTime` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '注册时间',
-  `regIp` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '注册IP',
-  `loginTimes` int(10) unsigned NOT NULL DEFAULT '1' COMMENT '登录次数',
-  `lastLoginTime` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '最近登录时间',
-  `lastLoginIp` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '最近登录IP',
-  `status` tinyint(3) unsigned NOT NULL DEFAULT '1' COMMENT '状态 0 锁定 1 正常',
-  `userType` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '用户类型 0 普通 1 vip1 2 vip2  10 普通测试账号 11 访客账号 ',
-  `appId` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '应用ID',
-  `appCode` varchar(12) NOT NULL DEFAULT '' COMMENT '应用Code',
-  `regFrom` tinyint(3) unsigned NOT NULL DEFAULT '1' COMMENT '注册来源 0 未知 1 微信 2手机',
-  `clientFrom` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '客户端来源0未知 1 IOS 2 Android',
-  `chanId` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '渠道来源 0 未知',
-  `openId` varchar(28) NOT NULL DEFAULT '' COMMENT '微信公众平台OpenID 一个平台对应一个Openid',
-  `unionId` varchar(29) NOT NULL DEFAULT '' COMMENT '微信开发平台UnionID 一个开发者平台对应一个ID',
-  `appGroupId` smallint(5) unsigned NOT NULL DEFAULT '0' COMMENT '应用分组ID 房卡通用为一组',
-  PRIMARY KEY (`userId`),
-  KEY `appId` (`appId`,`regFrom`)
-) ENGINE=InnoDB AUTO_INCREMENT=2000726 DEFAULT CHARSET=utf8 COMMENT='用户模块-用户主表';
-struct WxUserinfoReq
-{
-    0 require  string unionid;
-    1 require  string appGroupId;
-    2 require  string headimgurl;
-    3 require  string nickname;
-    4 require  string sex;
-    5 require  string openid; 
-    6 require  string appId;  
-};
-
-
-*/
-
-int DbAgent::insertNewUser(const WmsPlatform::WxUserinfoReq &in, string &userId)
+int DbAgent::selectUserinfo(const std::string userId, WxUserinfoRes &sOut)
 {
     try
     {
-        string sSql = "insert into t_user(`nickName`,`avatar`, `password`, `gender`, `regTime`, `loginTimes`, `lastLoginTime`,`status`, `userType`, `appId`, `unionId`, `appGroupId`)"
+        string sSql = "select `userId`, `nickName`, `avatar`, `gender`, `lastLoginIp` from `t_user` where userId = '" + userId + "' limit 0,1";
+
+        tars::TC_Mysql::MysqlData item = _mysqlReg.queryRecord(sSql);
+        if (item.size() == 0)
+        {
+            return 0;
+        }
+        else
+        {
+
+            sOut.userId = item[0]["userId"];
+            sOut.headimgurl = item[0]["avatar"];
+            sOut.nickname = item[0]["nickName"];
+            sOut.sex = item[0]["gender"];
+            sOut.ip = item[0]["lastLoginIp"];
+
+
+            return 1;
+        }
+    }
+    catch (TC_Mysql_Exception& ex)
+    {
+        TLOGERROR(__FUNCTION__ << " exception: " << ex.what() << endl);
+        return -1;
+    }
+    catch (exception& ex)
+    {
+        TLOGERROR(__FUNCTION__ << " exception: " << ex.what() << endl);
+        return -1;
+    }   
+
+}
+
+
+
+int DbAgent::insertNewUser(const WmsPlatform::WxLoginUserinfoReq &in)
+{
+    try
+    {
+        string sSql = "insert into t_user(`nickName`,`avatar`, `password`, `gender`, `regTime`, `loginTimes`, `lastLoginTime`,`status`, `userType`, `appId`, `unionId`, `appCode`, `appGroupId`)"
                             "values"
                             "( '" + in.nickname + "',"
                             "'"   + in.headimgurl + "',"
@@ -120,6 +113,7 @@ int DbAgent::insertNewUser(const WmsPlatform::WxUserinfoReq &in, string &userId)
                             "0 ,"
                             "" + in.appId + " ,"
                             "'" + in.unionId + "' ,"
+                            "'" + in.appCode + "' ,"
                             "" + in.appGroupId + ")";
 
         _mysqlReg.execute(sSql);
@@ -139,24 +133,54 @@ int DbAgent::insertNewUser(const WmsPlatform::WxUserinfoReq &in, string &userId)
     }
 }
 
+int DbAgent::getLoginDbUserinfo(const WmsPlatform::WxLoginUserinfoReq &sIn, string &sOut )
+{
+    try
+    {   
+        WxUserinfoRes res;
 
-int DbAgent::getDbUserinfo(const WmsPlatform::WxUserinfoReq &in, string &userId)
+        if (selectUserinfo(sIn.unionId , sIn.appGroupId, res) == 0)
+        {
+
+            insertNewUser(sIn);
+            selectUserinfo(sIn.unionId , sIn.appGroupId, res);
+        }
+        else if (selectUserinfo(sIn.unionId , sIn.appGroupId, res) == -1)
+        {
+            TLOGERROR(" DbAgent::getLoginDbUserinfo exception: " << -1 << endl);
+            return -1 ;
+        }
+        TLOGDEBUG("getLoginDbUserinfo uid : "<<  res.userId <<endl);
+        sOut = res.userId ;
+        return 0;
+    }
+    catch (TC_Mysql_Exception& ex)
+    {
+        TLOGERROR(__FUNCTION__ << " exception: " << ex.what() << endl);
+        return -1;
+    }
+    catch (exception& ex)
+    {
+        TLOGERROR(__FUNCTION__ << " exception: " << ex.what() << endl);
+        return -1;
+    }
+
+}
+
+
+int DbAgent::getDbUserinfo(const WmsPlatform::WxUserinfoReq &sIn, WxUserinfoRes &sOut )
 {
     try
     {
-        int uid;
-        if ((uid = isUniqueUser(in.unionId , in.appGroupId)) == 0)
+        if (selectUserinfo(sIn.userId, sOut) == 1)
         {
-            insertNewUser(in,userId);
-            uid = isUniqueUser(in.unionId , in.appGroupId);
+            return 0 ;
         }
-        else if ((uid = isUniqueUser(in.unionId , in.appGroupId)) == -1)
+        else
         {
             TLOGERROR(" DbAgent::getDbUserinfo exception: " << -1 << endl);
             return -1 ;
         }
-
-        userId = TC_Common::tostr(uid);
     }
     catch (TC_Mysql_Exception& ex)
     {
@@ -170,6 +194,7 @@ int DbAgent::getDbUserinfo(const WmsPlatform::WxUserinfoReq &in, string &userId)
     }
     return 0;
 }
+
 
 int DbAgent::isUserAgent(const std::string userId ,int &result)
 {
