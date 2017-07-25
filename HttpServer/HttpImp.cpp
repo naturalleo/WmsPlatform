@@ -497,7 +497,8 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
 
         TLOGDEBUG("doRequest" << TC_Common::tostr(_para) << endl);
 
-        if (request.getRequestUrl() == "/GameService/addOrder")
+        if (request.getRequestUrl() == "/GameService/addOrder" && isParamExist(_para, "userId") && isParamExist(_para, "appId") && isParamExist(_para, "appCode") 
+            && isParamExist(_para, "useNum") )
         {
             current->setResponse(false);
 
@@ -516,7 +517,7 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
             _FundsPrx->tars_set_timeout(3000)->async_checkFunds(cb,req);     
                  
         }
-        else if (request.getRequestUrl() == "/GameService/updateOrder")
+        else if (request.getRequestUrl() == "/GameService/updateOrder" && isParamExist(_para, "orderCode"))
         {
             current->setResponse(false);
 
@@ -538,7 +539,8 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
             _FundsPrx->tars_set_timeout(3000)->async_modifyFunds(cb,req);     
                  
         }
-        else if (request.getRequestUrl() == "/user/thirdPartyLogin")
+        else if (request.getRequestUrl() == "/user/thirdPartyLogin" && isParamExist(_para, "accessToken") && isParamExist(_para, "refreshToken") 
+            &&　isParamExist(_para, "wechatAppId") && isParamExist(_para, "appCode") && isParamExist(_para, "appId") && isParamExist(_para, "loginFrom"))
         {
             if (!isParamExist(_para,"accessToken"))
                {
@@ -575,7 +577,8 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
 
             _WxUserinfoPrx->tars_set_timeout(3000)->async_getWxUserIsAgent(cb,req);        
         }
-        else if (request.getRequestUrl() == "/GameService/getUserInfo")
+        else if (request.getRequestUrl() == "/GameService/getUserInfo" && isParamExist(_para, "userId") && isParamExist(_para, "appId") && isParamExist(_para, "appCode") && isParamExist(_para, "token")
+            && isParamExist(_para, "orderCode") )
         {
 
             current->setResponse(false);
@@ -605,7 +608,7 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
         else
         {
             TC_HttpResponse rsp;
-            string s = "hello come from WmsPlatform HttpServer";
+            string s = "{\"status\": -2 }";
             rsp.setResponse(s.c_str(),s.size());
             rsp.encode(buffer);           
         }
