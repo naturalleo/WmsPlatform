@@ -37,7 +37,7 @@ void WxoauthImp::destroy()
 "status":"1","token":"46455a42e42b059fe7446fd7dea6c478","gender":"1","nickName":"klgdmj_guest_2000211","avatar":"",
 "totalGameCard":"105","surplusGameCard":"62","isNew":0,"ip":"10.17.191.3","shareList":[],"w":true}}
 
-
+                                                                                     
 
 
 //微信请求数据
@@ -86,7 +86,7 @@ int WxoauthImp::wxchatLogin(const WmsPlatform::WxoauthReq& sIn, WmsPlatform::WxL
 	    int iRet = stHttpReq.doRequest(stHttpRep, 3000);
 	    if(iRet != 0)
 	    {
-	        TLOGERROR("WxoauthImp wxchatLogin iRet!=0 : " << url << endl);
+	        TLOGERROR("WxoauthImp wxchatLogin iRet!=0 : " << iRet << endl);
 	        return -1;
 	    }
 
@@ -140,13 +140,17 @@ int WxoauthImp::wxchatLogin(const WmsPlatform::WxoauthReq& sIn, WmsPlatform::WxL
 		 }
 		 else
 		 {
+
+
             WxLoginUserinfoReq req;
             req.unionId     = (document["unionid"]).GetString();
             req.headimgurl  = (document["headimgurl"]).GetString();
             req.nickname    = (document["nickname"]).GetString();
-            req.sex         = (document["sex"]).GetInt();
+            req.sex         = TC_Common::tostr((document["sex"]).GetInt());
             req.openId      = (document["openid"]).GetString();
             req.appCode     = sIn.appCode;
+            req.appId       = sIn.appId;
+            req.appGroupId  = "1";
             if (0 == getLoginUseInfo(req, sIn, sOut))
             {
                 //string token = getLoginToken();

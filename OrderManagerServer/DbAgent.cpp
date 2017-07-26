@@ -10,8 +10,9 @@ int DbAgent::init()
 {
 	TLOGDEBUG("begin DbAgent init"<<endl);
 	try{
-        _mysqlReg.init("10.17.174.171", "linweixiong", "qipai123987", "db_tars_game");
+        //_mysqlReg.init("10.17.174.171", "linweixiong", "qipai123987", "db_tars_game");
         //_mysqlReg.init("192.168.1.103", "tars", "tars2015", "db_games");
+         _mysqlReg.init("10.66.205.133", "root", "QDi9zPVycg", "db_game");
         //_mysqlReg.connect();
 
      }catch(exception &ex)
