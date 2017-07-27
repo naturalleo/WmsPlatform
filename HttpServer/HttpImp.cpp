@@ -608,7 +608,7 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
         else
         {
             TC_HttpResponse rsp;
-            string s = "{\"status\": -2 }";
+            string s = "{\"status\": 2 }";
             rsp.setResponse(s.c_str(),s.size());
             rsp.encode(buffer);           
         }
