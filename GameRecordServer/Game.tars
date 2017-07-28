@@ -1,0 +1,106 @@
+
+module WmsPlatform
+{
+
+struct GameRecordReq
+{
+	string appID;
+	string appCode;
+	string userId;
+	string token;
+};
+
+struct GameRecordItem
+{
+	string ID;
+	string room_id;
+	string owner;
+	string end_time;
+	string game_num;
+	string chair_1_uid;
+	string chair_1_name;
+	string chair_1_point;
+	string chair_1_avatar;
+
+	string chair_2_uid;
+	string chair_2_name;
+	string chair_2_point;
+	string chair_2_avatar;
+
+	string chair_3_uid;
+	string chair_3_name;
+	string chair_3_point;
+	string chair_3_avatar;
+
+	string chair_4_uid;
+	string chair_4_name;
+	string chair_4_point;
+	string chair_4_avatar;
+
+};
+
+struct GameRecordDetailReq
+{
+	string appID;
+	string appCode;
+	string userId;
+	string token;
+	string room_id;
+	string owner;
+};
+
+struct GameRecordDetailItem
+{
+	string room_id;
+	string owner;
+	string game_index;
+	string end_time;
+	string chair_1_uid;
+	string chair_1_point;
+
+	string chair_2_uid;
+	string chair_2_point;
+
+	string chair_3_uid;
+	string chair_3_point;	
+
+	string chair_4_uid;
+	string chair_4_point;
+
+	string share_code;
+
+};
+
+
+
+struct GameShareRecordReq
+{
+	string appID;
+	string appCode;
+	string userId;
+	string token;
+	string shareCode;
+};
+
+struct GameShareRecordRes
+{
+	string game_action;
+	string game_result;
+
+};
+
+
+
+interface Game
+{
+    int test();
+
+    int getPlayerGameRecord(GameRecordReq req, out vector<GameRecordItem> res);
+
+    int getPlayerGameDetailRecord(GameRecordDetailReq req, out vector<GameRecordDetailItem> res);
+
+    int getPlayerShareRecord(GameShareRecordReq req, out string res);
+
+};
+
+}; 
