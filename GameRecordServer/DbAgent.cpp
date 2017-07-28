@@ -154,7 +154,7 @@ int DbAgent::getGameSharesRecord(const WmsPlatform::GameShareRecordReq& sIn, Wms
 {
     try
     {
-
+      //SELECT t1.*,t2.config FROM game_result_log AS t1 LEFT JOIN build_room_log AS t2 ON t1.room_id=t2.room_id  WHERE t1.ID=155703;
 
       return 0 ;
     }
