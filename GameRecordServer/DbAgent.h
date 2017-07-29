@@ -8,7 +8,8 @@
 #include "util/tc_mysql.h"
 #include "util/tc_file.h"
 #include "servant/TarsLogger.h"
-#include "Funds.h"
+#include "Game.h"
+
 
 
 using namespace WmsPlatform;
@@ -25,9 +26,9 @@ public:
 
     int init();
 
-  	int getGameRecord(const WmsPlatform::GameRecordReq& sIn, map<string, GameRecordItem>& sOut) ;
+  	int getGameRecord(const WmsPlatform::GameRecordReq& sIn, vector<GameRecordItem>& sOut) ;
 
-    int getGameRecordDetail(const WmsPlatform::GameRecordDetailReq& sIn, map<string, GameRecordDetailItem>& sOut);
+    int getGameRecordDetail(const WmsPlatform::GameRecordDetailReq& sIn, vector<GameRecordDetailItem>& sOut);
 
     int getGameSharesRecord(const WmsPlatform::GameShareRecordReq& sIn, WmsPlatform::GameShareRecordRes& sOut);
     

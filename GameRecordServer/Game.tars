@@ -4,70 +4,73 @@ module WmsPlatform
 
 struct GameRecordReq
 {
-	string appID;
-	string appCode;
-	string userId;
-	string token;
+	0 require string appId;
+	1 require string appCode;
+	2 require string userId;
+	3 require string token;
 };
 
 struct GameRecordItem
 {
-	string ID;
-	string room_id;
-	string owner;
-	string end_time;
-	string game_num;
-	string chair_1_uid;
-	string chair_1_name;
-	string chair_1_point;
-	string chair_1_avatar;
+	1 require string room_id;
+	2 require string owner;
+	3 require string end_time;
+	4 require string game_num;
+	5 require string chair_1_uid;
+	6 require string chair_1_name;
+	7 require string chair_1_point;
+	8 require string chair_1_avatar;
 
-	string chair_2_uid;
-	string chair_2_name;
-	string chair_2_point;
-	string chair_2_avatar;
+	9 require string chair_2_uid;
+	10 require string chair_2_name;
+	11 require string chair_2_point;
+	12 require string chair_2_avatar;
 
-	string chair_3_uid;
-	string chair_3_name;
-	string chair_3_point;
-	string chair_3_avatar;
+	13 require string chair_3_uid;
+	14 require string chair_3_name;
+	15 require string chair_3_point;
+	16 require string chair_3_avatar;
 
-	string chair_4_uid;
-	string chair_4_name;
-	string chair_4_point;
-	string chair_4_avatar;
+	17 require string chair_4_uid;
+	18 require string chair_4_name;
+	19 require string chair_4_point;
+	20 require string chair_4_avatar;
+
+	21 requirs string shareCode;
 
 };
 
 struct GameRecordDetailReq
 {
-	string appID;
-	string appCode;
-	string userId;
-	string token;
-	string room_id;
-	string owner;
+	0 require string appId;
+	1 require string appCode;
+	2 require string userId;
+	3 require string token;
+	4 require string room_id;
+	5 require string owner;
 };
 
 struct GameRecordDetailItem
 {
-	string room_id;
-	string owner;
-	string game_index;
-	string end_time;
-	string chair_1_uid;
-	string chair_1_point;
+	0 require string room_id;
+	1 require string owner;
+	2 require string game_index;
+	3 require string end_time;
+	4 require string chair_1_uid;
+	5 require string chair_1_point;
 
-	string chair_2_uid;
-	string chair_2_point;
+	6 require string chair_2_uid;
+	7 require string chair_2_point;
 
-	string chair_3_uid;
-	string chair_3_point;	
+	8 require string chair_3_uid;
+	9 require string chair_3_point;	
 
-	string chair_4_uid;
-	string chair_4_point;
+	10 require string chair_4_uid;
+	11 require string chair_4_point;
 
-	string share_code;
+	12 require string share_code;
+	13 require string config;
+	14 require  string game_action;
 
 };
 
@@ -75,17 +78,17 @@ struct GameRecordDetailItem
 
 struct GameShareRecordReq
 {
-	string appID;
-	string appCode;
-	string userId;
-	string token;
-	string shareCode;
+	0 require string appID;
+	1 require string appCode;
+	2 require string userId;
+	3 require string token;
+	4 require string shareCode;
 };
 
 struct GameShareRecordRes
 {
-	string game_action;
-	string game_result;
+	0 require string game_action;
+	1 require string game_result;
 
 };
 

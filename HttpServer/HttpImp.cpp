@@ -33,6 +33,7 @@ void HttpImp::initialize()
     _wxoauthPrx = Application::getCommunicator()->stringToProxy<WxoauthPrx>("WmsPlatform.WxoauthServer.WxoauthObj");
     _WxUserinfoPrx = Application::getCommunicator()->stringToProxy<WxUserinfoPrx>("WmsPlatform.WxUserinfoServer.WxUserinfoObj");
     _FundsPrx = Application::getCommunicator()->stringToProxy<FundsPrx>("WmsPlatform.FundsManagerServer.FundsObj");
+    _GamePrx = Application::getCommunicator()->stringToProxy<FundsPrx>("WmsPlatform.GameRecordServer.GameObj");
 }
 
 //////////////////////////////////////////////////////
@@ -113,338 +114,6 @@ void HttpImp::parseNormal(multimap<string, string> &mmpParams, const string& sBu
 }
 
 
-class OrderCallback : public OrderPrxCallback
-{
-
-public:
-    OrderCallback(TarsCurrentPtr &current)
-    : _current(current)
-    {}
-
-    virtual void callback_generateOrder(tars::Int32 ret,  const std::string& sOut)
-    {
-        //HttpImp::async_response_doRequest(_current, ret, sOut);
-        TLOGDEBUG("callback_generateOrder : " << ret << sOut << endl);
-        TC_HttpResponse rsp;
-        vector<char> buffer;
-        string s ;
-
-        if (ret == 0 )
-        {
-            s = "{\"status\":1,\"errCode\":0,\"error\":\"\",\"data\":"
-                    "{"
-                    "\"orderCode\" : \""  + sOut +  "\","
-                    "\"isNew\" : \"0\" "
-                    "}"
-                "}";
-        }
-        else
-        {
-            s = "{\"status\":-1,\"errCode\":-1,\"error\":\"ret -1\",\"data\":[]}";
-        }
-
-
-        rsp.setResponse(s.c_str(),s.size());
-        rsp.encode(buffer);     
-
-
-        _current->sendResponse(&buffer.at(0),buffer.size());
-        TLOGDEBUG("callback_generateOrder : " << s << s.size() << endl);
-       // _current->sendResponse(tars::TARSSERVERSUCCESS, buffer);    
-        //HttpImp::async_response_doRequest(_current, ret, buffer);
-    }
-    virtual void callback_generateOrder_exception(tars::Int32 ret)
-    { 
-        TLOGERROR("OrderCallback callback_generateOrder_exception ret:" << ret << endl); 
-
-        Order::async_response_generateOrder(_current, ret, "");
-    }
-
-    TarsCurrentPtr _current;
-};
-
-
-class WxoauthCallback : public WxoauthPrxCallback
-{
-
-public:
-    WxoauthCallback(TarsCurrentPtr &current)
-    : _current(current)
-    {}
-
-    virtual void callback_wxchatLogin(tars::Int32 ret,  const WmsPlatform::WxLoginUserinfoRes& sOut)
-    {
-        //HttpImp::async_response_doRequest(_current, ret, sOut);
-        
-
-        TLOGDEBUG("callback_wxchatLogin : " << ret << endl);
-/*
-
-    "mySign": false,
-    "userId": "32",
-    "token": "4856fa1d4e94d488683c1e9655de767e",
-    "nickName": "Rocky-江树琪",
-    "gender": "1",
-    "avatar": "http://wx.qlogo.cn/mmopen/nMLdCrVfKelB8YQPB3wGXibgBHznlibX7mjW4zRcBZ9zQib73ZqXZPmgU9cDO50TsnXnb9yTSm8DFR36jtGshTxL6bQcdtj1icx1/0",
-    "totalGameCard": "70",
-    "surplusGameCard": "70",
-    "isNew": 0,
-    "ip": "127.0.0.1",
-    "isRefreshToken": true,
-    "wechatAccessToken": "4HQbp4Z3lbrU5brjTMrdm_dqsc2vW4_COZSRjQmOzzKAQSiUSmkfDlE_axAHI2AnmnkrPpBAMRXdb4UgYWRgqUu3emgplByniqNE1YN14c0",
-    "wechatRefreshToken": "4HQbp4Z3lbrU5brjTMrdm2JZUpPXkbxNAY0A61aU3J_6gdsAIrB9IPdVzg-Et_LEtgZ_LVm7t17Qxc0kYEDlRkAItw386WpQ4mvqU_zhEO4",
-
-struct WxUserinfoRes
-{
-    0 require  string userId;
-
-
-    1 require  string headimgurl;
-    2 require  string nickname;
-    3 require  string sex;  
-
-    4 require string isNew;
-    5 require string totalcard;
-    6 require string currentcard;
-    7 require string token;
-
-};
-
- */
-
-
-        TC_HttpResponse rsp;
-        vector<char> buffer;
-        string s ;
-        if (0 == ret)
-            s = "{\"status\":1,\"errCode\":0,\"error\":\"\",\"data\":"
-                    "{ \"mySign \": false,"
-                    "\"userId\" : \"" + sOut.userId + "\","
-                    "\"token\" : \""  + sOut.token +  "\","
-                    "\"nickName\" : \""  + sOut.nickname +  "\","
-                    "\"gender\" : \""  + sOut.sex +  "\","
-                    "\"avatar\" : \""  + sOut.headimgurl +  "\","
-                    "\"totalGameCard\" : \""  + sOut.totalcard +  "\","
-                    "\"surplusGameCard\" : \""  + sOut.currentcard +  "\","
-                    "\"isNew\" : "  + sOut.isNew +  " "
-                    "}"
-                "}";
-        else
-            s = "{\"status\":-1,\"errCode\":-1,\"error\":\"ret -1\",\"data\":[]}";
-
-
-        rsp.setResponse(s.c_str(),s.size());
-        rsp.encode(buffer);     
-
-
-        _current->sendResponse(&buffer.at(0),buffer.size());
-        TLOGDEBUG("callback_wxchatLogin : " << s << s.size() << endl);
-       // _current->sendResponse(tars::TARSSERVERSUCCESS, buffer);    
-        //HttpImp::async_response_doRequest(_current, ret, buffer);
-    }
-    virtual void callback_wxchatLogin_exception(tars::Int32 ret)
-    { 
-        TLOGERROR("WxoauthCallback callback_wxchatLogin_exception ret:" << ret << endl); 
-        WmsPlatform::WxLoginUserinfoRes res;
-        Wxoauth::async_response_wxchatLogin(_current, ret, res);
-    }
-
-    TarsCurrentPtr _current;
-};
-
-class WxUserinfoCallback : public WxUserinfoPrxCallback
-{
-
-public:
-    WxUserinfoCallback(TarsCurrentPtr &current)
-    : _current(current)
-    {}
-
-    virtual void callback_updateWxUserCards(tars::Int32 ret,  const WmsPlatform::WxUserExchangeRes& sOut)
-    {
-        //HttpImp::async_response_doRequest(_current, ret, sOut);
-        TLOGDEBUG("callback_updateWxUserCards : " << ret  << endl);
-        TC_HttpResponse rsp;
-        vector<char> buffer;
-        string s="hello world";
-        rsp.setResponse(s.c_str(),s.size());
-        rsp.encode(buffer);     
-
-        _current->sendResponse(&buffer.at(0),buffer.size());
-        TLOGDEBUG("callback_updateWxUserCards : " << s << s.size() << endl);
-       // _current->sendResponse(tars::TARSSERVERSUCCESS, buffer);    
-        //HttpImp::async_response_doRequest(_current, ret, buffer);
-    }
-    virtual void callback_updateWxUserCards_exception(tars::Int32 ret)
-    { 
-        TLOGERROR("WxUserinfoCallback callback_updateWxUserCards_exception ret:" << ret << endl); 
-        WmsPlatform::WxUserExchangeRes res;
-        WxUserinfo::async_response_updateWxUserCards(_current, ret, res);
-    }
-
-    virtual void callback_getWxUserIsAgent(tars::Int32 ret,  const WmsPlatform::WxUserisAgentRes& sOut)
-    {
-        //HttpImp::async_response_doRequest(_current, ret, sOut);
-        TLOGDEBUG("callback_getWxUserIsAgent : " << ret << endl);
-        TC_HttpResponse rsp;
-        vector<char> buffer;
-        string s="hello world";
-        rsp.setResponse(s.c_str(),s.size());
-        rsp.encode(buffer);     
-
-        _current->sendResponse(&buffer.at(0),buffer.size());
-        TLOGDEBUG("callback_getWxUserIsAgent : " << s << s.size() << endl);
-       // _current->sendResponse(tars::TARSSERVERSUCCESS, buffer);    
-        //HttpImp::async_response_doRequest(_current, ret, buffer);
-    }
-    virtual void callback_getWxUserIsAgent_exception(tars::Int32 ret)
-    { 
-        TLOGERROR("WxUserinfoCallback callback_getWxUserIsAgent_exception ret:" << ret << endl); 
-        WmsPlatform::WxUserisAgentRes res;
-
-
-        WxUserinfo::async_response_getWxUserIsAgent(_current, ret, res);
-    }
-
-
-    virtual void callback_getWxUserinfo(tars::Int32 ret,  const WmsPlatform::WxUserinfoRes& sOut)
-    {
-        //HttpImp::async_response_doRequest(_current, ret, sOut);
-        TLOGDEBUG("callback_getWxUserinfo : " << ret << endl);
-        TC_HttpResponse rsp;
-        vector<char> buffer;
-        string s;
-        if (0 == ret)
-            s = "{\"status\":1,\"errCode\":0,\"error\":\"\",\"data\":"
-                    "{"
-                    "\"userId\" : \"" + sOut.userId + "\","
-                    "\"nickName\" : \""  + sOut.nickname +  "\","
-                    "\"gender\" : \""  + sOut.sex +  "\","
-                    "\"avatar\" : \""  + sOut.headimgurl +  "\","                   
-                    "\"ip\" : \""  + sOut.ip +  "\"" 
-                    "}"
-                "}";
-
-        else
-            s = "{\"status\":-1,\"errCode\":-1,\"error\":\"ret -1\",\"data\":[]}";
-
-        rsp.setResponse(s.c_str(),s.size());
-        rsp.encode(buffer);     
-
-        _current->sendResponse(&buffer.at(0),buffer.size());
-        TLOGDEBUG("callback_getWxUserinfo : " << s << s.size() << endl);
-       // _current->sendResponse(tars::TARSSERVERSUCCESS, buffer);    
-        //HttpImp::async_response_doRequest(_current, ret, buffer);
-    }
-    virtual void callback_getWxUserinfo_exception(tars::Int32 ret)
-    { 
-        TLOGERROR("WxUserinfoCallback callback_getWxUserIsAgent_exception ret:" << ret << endl); 
-        WmsPlatform::WxUserinfoRes res;
-
-
-        WxUserinfo::async_response_getWxUserinfo(_current, ret, res);
-    }
-
-
-
-
-
-
-    TarsCurrentPtr _current;
-};
-
-
-class FundsCallback : public FundsPrxCallback
-{
-
-public:
-    FundsCallback(TarsCurrentPtr &current, string data)
-    : _current(current),_data(data)
-    {}
-
-    virtual void callback_checkFunds(tars::Int32 ret)
-    {
-        //HttpImp::async_response_doRequest(_current, ret, sOut);
-        TLOGDEBUG("callback_checkFunds : " << ret  << endl);
-        TC_HttpResponse rsp;
-        vector<char> buffer;
-        string s;
-
-        if (ret == 0 )
-        {
-            s = "{\"status\":1,\"errCode\":0,\"error\":\"\",\"data\":"
-                    "{"
-                    "\"orderCode\" : \""  + _data +  "\","
-                    "\"isNew\" : \"0\" "
-                    "}"
-                "}";
-        }
-        else
-        {
-            s = "{\"status\":-1,\"errCode\":-1,\"error\":\"ret -1\",\"data\":[]}";
-        }
-
-
-        rsp.setResponse(s.c_str(),s.size());
-        rsp.encode(buffer);     
-
-        _current->sendResponse(&buffer.at(0),buffer.size());
-        TLOGDEBUG("callback_checkFunds : " << s << s.size() << endl);
-       // _current->sendResponse(tars::TARSSERVERSUCCESS, buffer);    
-        //HttpImp::async_response_doRequest(_current, ret, buffer);
-    }
-    virtual void callback_checkFunds_exception(tars::Int32 ret)
-    { 
-        TLOGERROR("FundsCallback callback_checkFunds_exception ret:" << ret << endl); 
-        Funds::async_response_checkFunds(_current, ret);
-    }
-
-
-
-    virtual void callback_modifyFunds(tars::Int32 ret, const WmsPlatform::FundsUserInfoRes& sOut)
-    {
-        //HttpImp::async_response_doRequest(_current, ret, sOut);
-        TLOGDEBUG("callback_modifyFunds : " << ret  << endl);
-        TC_HttpResponse rsp;
-        vector<char> buffer;
-        string s;
-
-        if (ret == 0 )
-        {
-            s = "{\"status\":1,\"errCode\":0,\"error\":\"\",\"data\":"
-                    "{"
-                    "\"orderCode\" : \""  + _data +  "\","
-                    "}"
-                "}";
-        }
-        else
-        {
-            s = "{\"status\":-1,\"errCode\":-1,\"error\":\"ret -1\",\"data\":[]}";
-        }
-
-
-        rsp.setResponse(s.c_str(),s.size());
-        rsp.encode(buffer);     
-
-        _current->sendResponse(&buffer.at(0),buffer.size());
-        TLOGDEBUG("callback_checkFunds : " << s << s.size() << endl);
-       // _current->sendResponse(tars::TARSSERVERSUCCESS, buffer);    
-        //HttpImp::async_response_doRequest(_current, ret, buffer);
-    }
-    virtual void callback_modifyFunds_exception(tars::Int32 ret)
-    { 
-        TLOGERROR("FundsCallback callback_checkFunds_exception ret:" << ret << endl); 
-        WmsPlatform::FundsUserInfoRes res;
-        Funds::async_response_modifyFunds(_current, ret, res);
-    }
-
-
-
-
-
-    TarsCurrentPtr _current;
-    string _data;
-};
 
 
 bool HttpImp::isParamExist(const multimap<string, string> &mmpParams , const string& sName) const
@@ -593,6 +262,38 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
 
             _WxUserinfoPrx->tars_set_timeout(3000)->async_getWxUserinfo(cb,req);        
         }
+        else if (request.getRequestUrl() == "/GameService/getResultLst" && isParamExist(_para, "appId") && isParamExist(_para, "appCode") && isParamExist(_para, "userId") && isParamExist(_para, "token"))
+        {
+
+            current->setResponse(false);
+            GameRecordReq req;
+            req.appId = getValue(_para,"appId");
+            req.appCode = getValue(_para,"appCode");
+            req.userId = getValue(_para,"userId");
+            req.token = getValue(_para,"token");
+
+            WmsPlatform::GamePrxCallbackPtr cb = new GameCallback(current);
+
+            _GamePrx->tars_set_timeout(3000)->async_getPlayerGameRecord(cb,req);        
+        }
+        else if (request.getRequestUrl() == "/GameService/getResultDetail" && isParamExist(_para, "appId") && isParamExist(_para, "appCode") && isParamExist(_para, "userId") && isParamExist(_para, "token")
+            && isParamExist(_para, "room_id") && isParamExist(_para, "owner") )
+        {
+
+            current->setResponse(false);
+            GameRecordDetailReq req;
+            req.appId = getValue(_para,"appId");
+            req.appCode = getValue(_para,"appCode");
+            req.userId = getValue(_para,"userId");
+            req.token = getValue(_para,"token");
+            req.room_id = getValue(_para,"room_id");
+            req.owner = getValue(_para,"owner");
+
+            WmsPlatform::GamePrxCallbackPtr cb = new GameCallback(current);
+
+            _GamePrx->tars_set_timeout(3000)->async_getPlayerGameDetailRecord(cb,req);        
+        }
+
         else if (request.getRequestUrl() == "/GameService/ExchangeCards")
         {
             current->setResponse(false);
@@ -613,18 +314,6 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
             rsp.encode(buffer);           
         }
 
-        //_orderPrx->generateOrder(req, res);
-
-        //TLOGDEBUG("res : " << res << endl);
-
-        //TLOGDEBUG("sBuf : " << sBuf << endl);
-        //TLOGDEBUG("getRequest : 111111111" << request.getRequest() << endl);
-        // TC_HttpResponse rsp;
-        // string s="hello";
-        //rsp.setResponse(s.c_str(),s.size());
-        //rsp.encode(buffer);       
-
-
 
     }
     catch(exception &ex)
@@ -636,103 +325,3 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
 }
 
 
-/*
-要实现以下接口实现
-客户端与后台通信API
-    App第三方登录注册
-    请求示例：
-    http://192.168.1.103:40002/User/thirdPartyLogin?nettype=4&loginFrom=10&appId=1&chanId=0&osVer=6.0&model=EVA-AL10&clientFrom=2&wechatAppId=wxb0c1087c2a499493&
-    accessToken=iAr1JDqg%5F4Tp%5FekZi8LbJlF3zDhSH7AIMthWANt64n9ZGNTlrhnmjy-Fl9wEzRVlLsPnAen4R3Vyq1uxMCH64d34LUJ77Mll8gUmVEwAq8k&openId=oUJxOv-hvRQlKQn7JzE-l4OsFzFw&
-    appCode=klmj&clientVer=0.1&uuId=A2053CBF562A3521863E95C94CDE5FB6&refreshToken=4HQbp4Z3lbrU5brjTMrdm2JZUpPXkbxNAY0A61aU3J%5F6gdsAIrB9IPdVzg-Et%5FLEtgZ%5FLVm7t17Qx
-    c0kYEDlRkAItw386WpQ4mvqU%5FzhEO4&operator=1&macAddr=f8%3A23%3Ab2%3Ade%3Aa1%3Ac9&imei=862187033177835&sign=aa2db44c817e92a2befb8ce953de27124528f060
-    返回值：
-{
-  "status": 1,
-  "errCode": 0,
-  "error": "",
-  "data": {
-    "mySign": false,
-    "userId": "32",
-    "token": "4856fa1d4e94d488683c1e9655de767e",
-    "nickName": "Rocky-江树琪",
-    "gender": "1",
-    "avatar": "http://wx.qlogo.cn/mmopen/nMLdCrVfKelB8YQPB3wGXibgBHznlibX7mjW4zRcBZ9zQib73ZqXZPmgU9cDO50TsnXnb9yTSm8DFR36jtGshTxL6bQcdtj1icx1/0",
-    "totalGameCard": "70",
-    "surplusGameCard": "70",
-    "isNew": 0,
-    "ip": "127.0.0.1",
-    "isRefreshToken": true,
-    "wechatAccessToken": "4HQbp4Z3lbrU5brjTMrdm_dqsc2vW4_COZSRjQmOzzKAQSiUSmkfDlE_axAHI2AnmnkrPpBAMRXdb4UgYWRgqUu3emgplByniqNE1YN14c0",
-    "wechatRefreshToken": "4HQbp4Z3lbrU5brjTMrdm2JZUpPXkbxNAY0A61aU3J_6gdsAIrB9IPdVzg-Et_LEtgZ_LVm7t17Qxc0kYEDlRkAItw386WpQ4mvqU_zhEO4",
-    "shareList": {
-      "roomShare": {
-        "shareId": "2",
-        "shareType": "2",
-        "title": "",
-        "desc": "",
-        "link": "",
-        "img": ""
-      },
-      "mainShare": {
-        "shareId": "1",
-        "shareType": "1",
-        "title": "【快来麻将】",
-        "desc": "快来麻将是一款完美还原的\r\n湖南本土麻将，玩法齐全。",
-        "link": "http://www.baidu.com/",
-        "img": "https://www.baidu.com/img/bd_logo1.png"
-      }
-    }
-  }
-}
-
-    获取用户最新余额信息
-    请求示例：
-    http://10.17.174.171:8192/User/getFunds?appId=1&appCode=klmj&clientFrom=1&userId=12&uuId=2342342343243243&token=oKfGns9KeLBhut0uSp56f9pR-4RE&sign=f1c5614a5abbcc9f6e8fe45f02f6640bab3018c9
-    返回值：
-    {
-      "status": 1,
-      "errCode": 0,
-      "error": "没有错误",
-      "data": {
-        "userId": "12",
-        "totalGameCard": "3",
-        "surplusGameCard": "3",
-        "ip": "127.0.0.1"
-      }
-    }
-游戏服务器与后台通信API
-    创建游戏房间订单
-    请求示例：
-    http://10.17.174.171:8192/GameService/addOrder?appId=1&appCode=klmj&clientFrom=1&userId=13&token=569553243e028c6711f2a53e6bf6c4d3&gameId=1&useNum=1&orderType=1
-    返回值：
-    {
-      "status": 1,
-      "errCode": 0,
-      "error": "没有错误",
-      "data": {
-        "isNew": "1",
-        "userId": "13",
-        "nickName": "郑凯斌",
-        "avatar": "http://wx.qlogo.cn/mmopen/Q3auHgzwzM4WXv9zEF7tpJlkmXtEbDkJO3LZZjREcy3ic4YN8a3s5jpASmEib79mKAg7xxIdZZmd8EicxPcSRMRfw/0",
-        "orderCode": "6177007419",
-        "errTxt": "",
-        "ip": "10.17.174.110"
-      }
-    }
-
-    更新游戏房间订单状态
-    请求示例：
-    http://10.17.174.171:8192/GameService/updateOrder?status=used&orderCode=6177002443&roomId=123
-    返回值：
-    {
-      "status": 1,
-      "errCode": 0,
-      "error": "没有错误",
-      "data": {
-        "orderCode": "6177002443"
-      }
-    }
-
-
-
-*/

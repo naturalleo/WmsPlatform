@@ -14,7 +14,7 @@ int DbAgent::init()
         //_mysqlReg.init("192.168.1.103", "tars", "tars2015", "db_games");
         //_mysqlReg.connect();
         //_mysqlReg.init("192.168.1.103", "tars", "tars2015", "db_funds");
-        _mysqlReg.init("10.66.205.133", "root", "QDi9zPVycg", "db_huhan");
+        _mysqlReg.init("10.66.205.133", "root", "QDi9zPVycg", "db_huhan_stat");
 
      }catch(exception &ex)
      {
@@ -31,7 +31,7 @@ int DbAgent::getGameRecord(const WmsPlatform::GameRecordReq& sIn, vector<GameRec
     try
     {
       string sSql = "SELECT r.* FROM player_history_log AS p LEFT JOIN room_result_log AS r ON p.room_id_index=r.ID"
-                    "WHERE p.uid =" + sIn.userId  "AND r.game_num >0  HAVING r.ID>0 and r.chair_2_uid>0 ORDER BY p.room_id_index DESC LIMIT 10";
+                    "WHERE p.uid =" + sIn.userId + "AND r.game_num >0  HAVING r.ID>0 and r.chair_2_uid>0 ORDER BY p.room_id_index DESC LIMIT 10";
 
       tars::TC_Mysql::MysqlData item = _mysqlReg.queryRecord(sSql);
 
@@ -43,10 +43,10 @@ int DbAgent::getGameRecord(const WmsPlatform::GameRecordReq& sIn, vector<GameRec
       }
       else
       {
-        for (int i = 0 ; i < item.size(); ++i)
+        for (size_t i = 0 ; i < item.size(); ++i)
         {
           GameRecordItem t;
-          t.ID               = item[i]["userId"];
+          t.shareCode        = item[i]["userId"];
           t.room_id          = item[i]["room_id"];
           t.owner            = item[i]["owner"];
           t.end_time         = item[i]["end_time"];
@@ -113,13 +113,15 @@ int DbAgent::getGameRecordDetail(const WmsPlatform::GameRecordDetailReq& sIn, ve
       }
       else
       {
-        for (int i = 0 ; i < item.size(); ++i)
+        for (size_t i = 0 ; i < item.size(); ++i)
         {
           GameRecordDetailItem t;
           t.room_id          = item[i]["room_id"];
           t.owner            = item[i]["owner"];
           t.game_index       = item[i]["game_index"];
           t.end_time         = item[i]["end_time"];
+          t.config           = item[i]["config"]; 
+          t.game_action      = item[i]["game_action"]; 
 
           t.chair_1_uid      = item[i]["chair_1_uid"];
           t.chair_1_point    = item[i]["chair_1_point"];     
@@ -132,12 +134,14 @@ int DbAgent::getGameRecordDetail(const WmsPlatform::GameRecordDetailReq& sIn, ve
           t.chair_3_point    = item[i]["chair_3_point"];     
 
           t.chair_4_uid      = item[i]["chair_4_uid"];
-          t.chair_4_point    = item[i]["chair_4_point"];     
+          t.chair_4_point    = item[i]["chair_4_point"]; 
 
           sOut.push_back(t);
         }
 
     }
+    return 0;
+  }
     catch (TC_Mysql_Exception& ex)
     {
         TLOGERROR(__FUNCTION__ << " exception: " << ex.what() << endl);
