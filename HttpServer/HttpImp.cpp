@@ -29,11 +29,11 @@ void HttpImp::initialize()
 {
     //initialize servant here:
     //...
-    _orderPrx   = Application::getCommunicator()->stringToProxy<OrderPrx>("WmsPlatform.OrderManagerServer.OrderObj");
-    _wxoauthPrx = Application::getCommunicator()->stringToProxy<WxoauthPrx>("WmsPlatform.WxoauthServer.WxoauthObj");
-    _WxUserinfoPrx = Application::getCommunicator()->stringToProxy<WxUserinfoPrx>("WmsPlatform.WxUserinfoServer.WxUserinfoObj");
-    _FundsPrx = Application::getCommunicator()->stringToProxy<FundsPrx>("WmsPlatform.FundsManagerServer.FundsObj");
-    _GamePrx = Application::getCommunicator()->stringToProxy<FundsPrx>("WmsPlatform.GameRecordServer.GameObj");
+    _orderPrx       = Application::getCommunicator()->stringToProxy<OrderPrx>("WmsPlatform.OrderManagerServer.OrderObj");
+    _wxoauthPrx     = Application::getCommunicator()->stringToProxy<WxoauthPrx>("WmsPlatform.WxoauthServer.WxoauthObj");
+    _WxUserinfoPrx  = Application::getCommunicator()->stringToProxy<WxUserinfoPrx>("WmsPlatform.WxUserinfoServer.WxUserinfoObj");
+    _FundsPrx       = Application::getCommunicator()->stringToProxy<FundsPrx>("WmsPlatform.FundsManagerServer.FundsObj");
+    _GamePrx        = Application::getCommunicator()->stringToProxy<GamePrx>("WmsPlatform.GameRecordServer.GameObj");
 }
 
 //////////////////////////////////////////////////////
@@ -231,7 +231,6 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
             req.appId        = getValue(_para,"appId"); 
             req.clientFrom   = getValue(_para,"loginFrom");
              
-
             WmsPlatform::WxoauthPrxCallbackPtr cb = new WxoauthCallback(current);
             _wxoauthPrx->tars_set_timeout(3000)->async_wxchatLogin(cb,req);              
 
@@ -242,8 +241,8 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
             WxUserisAgentReq req;
             string res;
             req.userId = "123";  
-            WmsPlatform::WxUserinfoPrxCallbackPtr cb = new WxUserinfoCallback(current);
 
+            WmsPlatform::WxUserinfoPrxCallbackPtr cb = new WxUserinfoCallback(current);
             _WxUserinfoPrx->tars_set_timeout(3000)->async_getWxUserIsAgent(cb,req);        
         }
         else if (request.getRequestUrl() == "/GameService/getUserInfo" && isParamExist(_para, "userId") && isParamExist(_para, "appId") && isParamExist(_para, "appCode") && isParamExist(_para, "token")
@@ -259,7 +258,6 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
             req.orderCode = getValue(_para,"orderCode");
 
             WmsPlatform::WxUserinfoPrxCallbackPtr cb = new WxUserinfoCallback(current);
-
             _WxUserinfoPrx->tars_set_timeout(3000)->async_getWxUserinfo(cb,req);        
         }
         else if (request.getRequestUrl() == "/GameService/getResultLst" && isParamExist(_para, "appId") && isParamExist(_para, "appCode") && isParamExist(_para, "userId") && isParamExist(_para, "token"))
@@ -273,7 +271,6 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
             req.token = getValue(_para,"token");
 
             WmsPlatform::GamePrxCallbackPtr cb = new GameCallback(current);
-
             _GamePrx->tars_set_timeout(3000)->async_getPlayerGameRecord(cb,req);        
         }
         else if (request.getRequestUrl() == "/GameService/getResultDetail" && isParamExist(_para, "appId") && isParamExist(_para, "appCode") && isParamExist(_para, "userId") && isParamExist(_para, "token")
@@ -290,7 +287,6 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
             req.owner = getValue(_para,"owner");
 
             WmsPlatform::GamePrxCallbackPtr cb = new GameCallback(current);
-
             _GamePrx->tars_set_timeout(3000)->async_getPlayerGameDetailRecord(cb,req);        
         }
 
@@ -302,8 +298,8 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
             req.otherId = "123";
             req.opcode = "add";
             req.cards = "1";
-            WmsPlatform::WxUserinfoPrxCallbackPtr cb = new WxUserinfoCallback(current);
 
+            WmsPlatform::WxUserinfoPrxCallbackPtr cb = new WxUserinfoCallback(current);
             _WxUserinfoPrx->tars_set_timeout(3000)->async_updateWxUserCards(cb,req);        
         }
         else

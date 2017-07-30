@@ -129,7 +129,6 @@ int DbAgent::getGameRecordDetail(const WmsPlatform::GameRecordDetailReq& sIn, ve
           t.chair_2_uid      = item[i]["chair_2_uid"];
           t.chair_2_point    = item[i]["chair_2_point"];     
 
-
           t.chair_3_uid      = item[i]["chair_3_uid"];
           t.chair_3_point    = item[i]["chair_3_point"];     
 

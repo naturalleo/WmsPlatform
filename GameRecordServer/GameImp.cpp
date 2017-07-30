@@ -33,6 +33,7 @@ int GameImp::getPlayerGameRecord(const WmsPlatform::GameRecordReq& sIn, vector<G
     }
 
 }
+
 int GameImp::getPlayerGameDetailRecord(const WmsPlatform::GameRecordDetailReq& sIn, vector<GameRecordDetailItem>& sOut, tars::TarsCurrentPtr current)
 {
 	TLOGDEBUG("getPlayerGameDetailRecord : " << endl);
