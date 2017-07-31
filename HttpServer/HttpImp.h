@@ -395,7 +395,8 @@ public:
         if (ret == 0 )
         {
             s = "{\"status\":1,\"errCode\":0,\"error\":\"\",\"data\":{";
-            for(vector<GameRecordItem>::iterator itr = sOut.begin(); itr != sOut.end(); ++itr)
+            vector<GameRecordItem>::const_iterator itr;
+            for(itr = sOut.begin(); itr != sOut.end(); ++itr)
                 {
                     s+= (itr == sOut.begin() ? string(""):string(", ")) +
                         "{" 
@@ -446,14 +447,14 @@ public:
     { 
         TLOGERROR("callback_getPlayerGameRecordr_exception ret:" << ret << endl); 
         vector<GameRecordItem> res;
-        Order::async_response_getPlayerGameRecord(_current, ret, res);
+        Game::async_response_getPlayerGameRecord(_current, ret, res);
     }
 
 
     virtual void callback_getPlayerGameDetailRecord(tars::Int32 ret,  const vector<GameRecordDetailItem>& sOut)
     {
         //HttpImp::async_response_doRequest(_current, ret, sOut);
-        TLOGDEBUG("callback_getPlayerGameDetailRecord : " << ret << sOut << endl);
+        TLOGDEBUG("callback_getPlayerGameDetailRecord : " << ret  << endl);
         TC_HttpResponse rsp;
         vector<char> buffer;
         string s ;
@@ -461,7 +462,7 @@ public:
         if (ret == 0 )
         {
            s = "{\"status\":1,\"errCode\":0,\"error\":\"\",\"data\":{";
-            for(vector<GameRecordDetailItem>::iterator itr = sOut.begin(); itr != sOut.end(); ++itr)
+            for(vector<GameRecordDetailItem>::const_iterator itr = sOut.begin(); itr != sOut.end(); ++itr)
                 {
                     s+= (itr == sOut.begin() ? string(""):string(", ")) +
                         "{" 
@@ -469,7 +470,7 @@ public:
                             + "\"owner\": \""          + itr->owner + "\", "
                             + "\"end_time\": \""       + itr->end_time + "\", "
                             + "\"game_index\": \""     + itr->game_index + "\", "
-                            + "\"shareCode\": \""      + itr->shareCode + "\", "
+                            + "\"shareCode\": \""      + itr->share_code + "\", "
                             + "\"config\": \""         + itr->config + "\", "
                             + "\"game_action\": \""    + itr->game_action + "\", "
 
@@ -508,7 +509,7 @@ public:
     { 
         TLOGERROR("callback_getPlayerGameDetailRecord_exception ret:" << ret << endl); 
         vector<GameRecordDetailItem> res;
-        Order::async_response_getPlayerGameDetailRecord(_current, ret, res);
+        Game::async_response_getPlayerGameDetailRecord(_current, ret, res);
     }
 
 

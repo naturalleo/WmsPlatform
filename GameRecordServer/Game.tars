@@ -36,7 +36,7 @@ struct GameRecordItem
 	19 require string chair_4_point;
 	20 require string chair_4_avatar;
 
-	21 requirs string shareCode;
+	21 require string shareCode;
 
 };
 

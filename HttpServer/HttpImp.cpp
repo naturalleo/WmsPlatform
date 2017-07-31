@@ -208,8 +208,7 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
             _FundsPrx->tars_set_timeout(3000)->async_modifyFunds(cb,req);     
                  
         }
-        else if (request.getRequestUrl() == "/user/thirdPartyLogin" && isParamExist(_para, "accessToken") && isParamExist(_para, "refreshToken") 
-            &&　isParamExist(_para, "wechatAppId") && isParamExist(_para, "appCode") && isParamExist(_para, "appId") && isParamExist(_para, "loginFrom"))
+        else if (request.getRequestUrl() == "/user/thirdPartyLogin" && isParamExist(_para, "accessToken") && isParamExist(_para, "refreshToken") && isParamExist(_para, "wechatAppId") && isParamExist(_para, "appCode") && isParamExist(_para, "appId") && isParamExist(_para, "loginFrom"))
         {
             if (!isParamExist(_para,"accessToken"))
                {
