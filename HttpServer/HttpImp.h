@@ -163,6 +163,8 @@ public:
                     "\"isNew\" : "  + sOut.isNew +  " "
                     "}"
                 "}";
+        else if(1 == ret)
+            s = "{\"status\":1,\"errCode\":10402,\"error\":\"ret 1\",\"data\":[]}";
         else
             s = "{\"status\":-1,\"errCode\":-1,\"error\":\"ret -1\",\"data\":[]}";
 

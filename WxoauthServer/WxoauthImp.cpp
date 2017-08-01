@@ -79,6 +79,7 @@ int WxoauthImp::wxchatLogin(const WmsPlatform::WxoauthReq& sIn, WmsPlatform::WxL
             {
                 // 后续补充
                 //sOut = "{\"status\":1,\"errCode\":10401,\"error\":\"winxin erro callback\",\"data\":[]}";
+                /*
                 WxLoginUserinfoReq req;
                 req.unionId ="oPNdvwN0QlM_lYx1oxTdLVxWIxmM";
                 req.headimgurl = "http:\/\/wx.qlogo.cn\/mmhead\/PiajxSqBRaELiahujtxQMlC6R0dFaEzk4elicicr03afBHdRZmS1UL7DFg\/0";
@@ -95,8 +96,9 @@ int WxoauthImp::wxchatLogin(const WmsPlatform::WxoauthReq& sIn, WmsPlatform::WxL
                     return 0;
                 else
                     return -1;
-            
-               // return -1;               
+                */
+               
+               return 1;               
             }
 
 		 }
