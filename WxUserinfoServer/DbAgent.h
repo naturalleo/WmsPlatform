@@ -28,7 +28,7 @@ public:
 
     int selectUserinfo(const std::string userId, WxUserinfoRes &sOut) ;
 
-    int insertNewUser(const WmsPlatform::WxLoginUserinfoReq &sIn);
+    int insertNewUser(const WmsPlatform::WxLoginUserinfoReq &sIn, std::string &uid);
 
     int getDbUserinfo(const WmsPlatform::WxUserinfoReq &sIn, WxUserinfoRes &sOut);
 

@@ -244,8 +244,7 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
             WmsPlatform::WxUserinfoPrxCallbackPtr cb = new WxUserinfoCallback(current);
             _WxUserinfoPrx->tars_set_timeout(3000)->async_getWxUserIsAgent(cb,req);        
         }
-        else if (request.getRequestUrl() == "/GameService/getUserInfo" && isParamExist(_para, "userId") && isParamExist(_para, "appId") && isParamExist(_para, "appCode") && isParamExist(_para, "token")
-            && isParamExist(_para, "orderCode") )
+        else if (request.getRequestUrl() == "/GameService/getUserInfo" && isParamExist(_para, "userId") && isParamExist(_para, "appId") && isParamExist(_para, "appCode") && isParamExist(_para, "token") )
         {
 
             current->setResponse(false);

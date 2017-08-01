@@ -97,7 +97,7 @@ int DbAgent::selectUserinfo(const std::string userId, WxUserinfoRes &sOut)
 
 
 
-int DbAgent::insertNewUser(const WmsPlatform::WxLoginUserinfoReq &in)
+int DbAgent::insertNewUser(const WmsPlatform::WxLoginUserinfoReq &in, std::string &uid)
 {
     try
     {
@@ -119,8 +119,8 @@ int DbAgent::insertNewUser(const WmsPlatform::WxLoginUserinfoReq &in)
                             "" + in.appGroupId + ")";
 
         _mysqlReg.execute(sSql);
-
-        TLOGDEBUG(__FUNCTION__ << pthread_self() <<" affected: " << _mysqlReg.getAffectedRows() << endl);
+        uid = _mysqlReg.lastInsertID();
+        TLOGDEBUG(__FUNCTION__ << pthread_self() <<" affected: " << _mysqlReg.getAffectedRows() << "last id " << _mysqlReg.lastInsertID()  << endl);
         return 0;
     }
     catch (TC_Mysql_Exception& ex)
@@ -140,14 +140,13 @@ int DbAgent::getLoginDbUserinfo(const WmsPlatform::WxLoginUserinfoReq &sIn, stri
     try
     {   
         WxUserinfoRes res;
-
-        if (selectUserinfo(sIn.unionId , sIn.appGroupId, res) == 0)
+        int ret = selectUserinfo(sIn.unionId , sIn.appGroupId, res);
+        if ( ret == 0)
         {
-
-            insertNewUser(sIn);
-            selectUserinfo(sIn.unionId , sIn.appGroupId, res);
+            if (insertNewUser(sIn, sOut) == 0)
+                return 1;
         }
-        else if (selectUserinfo(sIn.unionId , sIn.appGroupId, res) == -1)
+        else if (ret == -1)
         {
             TLOGERROR(" DbAgent::getLoginDbUserinfo exception: " << -1 << endl);
             return -1 ;
