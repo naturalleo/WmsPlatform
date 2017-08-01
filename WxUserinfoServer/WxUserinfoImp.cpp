@@ -48,7 +48,7 @@ int WxUserinfoImp::getLoginWxUserinfo(const WmsPlatform::WxLoginUserinfoReq& sIn
             TLOGERROR("WxUserinfoImp getWxUserinfo iRet != 0: " << iRet);
             return -1;
         }
-        else if(iRet == 0) 
+        else if(iRet == 1) 
         {
            sOut.isNew = "1";
         }

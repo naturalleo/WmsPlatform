@@ -13,6 +13,7 @@
 
 
 using namespace WmsPlatform;
+using namespace std;
 /**
  *  数据库操作类
  */
@@ -33,9 +34,20 @@ public:
     int getGameSharesRecord(const WmsPlatform::GameShareRecordReq& sIn, WmsPlatform::GameShareRecordRes& sOut);
     
 
+    string specialStrChange(string &s);
+
 private:
     //mysql连接对象
     tars::TC_Mysql _mysqlReg;
+
+    static map<string, string> createLib()
+    {
+        map<string,string> lib;
+        lib["\""] = "\\\"";
+        return lib;
+    }
+
+    static const map<string, string> _charLib;
 
 };
 

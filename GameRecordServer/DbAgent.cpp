@@ -6,6 +6,8 @@
 using namespace std;
 using namespace tars;
 
+const map<string, string> DbAgent::_charLib = DbAgent::createLib();
+
 int DbAgent::init()
 {
 	TLOGDEBUG("begin DbAgent init"<<endl);
@@ -31,7 +33,7 @@ int DbAgent::getGameRecord(const WmsPlatform::GameRecordReq& sIn, vector<GameRec
     try
     {
       string sSql = "SELECT r.* FROM player_history_log AS p LEFT JOIN room_result_log AS r ON p.room_id_index=r.ID"
-                    "WHERE p.uid =" + sIn.userId + "AND r.game_num >0  HAVING r.ID>0 and r.chair_2_uid>0 ORDER BY p.room_id_index DESC LIMIT 10";
+                    " WHERE p.uid =" + sIn.userId + " AND r.game_num >0  HAVING r.ID>0 and r.chair_2_uid>0 ORDER BY p.room_id_index DESC LIMIT 10";
 
       tars::TC_Mysql::MysqlData item = _mysqlReg.queryRecord(sSql);
 
@@ -46,7 +48,7 @@ int DbAgent::getGameRecord(const WmsPlatform::GameRecordReq& sIn, vector<GameRec
         for (size_t i = 0 ; i < item.size(); ++i)
         {
           GameRecordItem t;
-          t.shareCode        = item[i]["userId"];
+          t.shareCode        = item[i]["ID"];
           t.room_id          = item[i]["room_id"];
           t.owner            = item[i]["owner"];
           t.end_time         = item[i]["end_time"];
@@ -55,22 +57,22 @@ int DbAgent::getGameRecord(const WmsPlatform::GameRecordReq& sIn, vector<GameRec
           t.chair_1_uid      = item[i]["chair_1_uid"];
           t.chair_1_name     = item[i]["chair_1_name"];
           t.chair_1_point    = item[i]["chair_1_point"];     
-          t.chair_1_avatar   = item[i]["chair_1_avatar"]; 
+          t.chair_1_avatar   = ""; 
 
           t.chair_2_uid      = item[i]["chair_2_uid"];
           t.chair_2_name     = item[i]["chair_2_name"];
           t.chair_2_point    = item[i]["chair_2_point"];     
-          t.chair_2_avatar   = item[i]["chair_2_avatar"]; 
+          t.chair_2_avatar   = ""; 
 
           t.chair_3_uid      = item[i]["chair_3_uid"];
           t.chair_3_name     = item[i]["chair_3_name"];
           t.chair_3_point    = item[i]["chair_3_point"];     
-          t.chair_3_avatar   = item[i]["chair_3_avatar"]; 
+          t.chair_3_avatar   = ""; 
 
           t.chair_4_uid      = item[i]["chair_4_uid"];
           t.chair_4_name     = item[i]["chair_4_name"];
           t.chair_4_point    = item[i]["chair_4_point"];     
-          t.chair_4_avatar   = item[i]["chair_4_avatar"]; 
+          t.chair_4_avatar   = "";
 
           sOut.push_back(t);
         }
@@ -92,6 +94,10 @@ int DbAgent::getGameRecord(const WmsPlatform::GameRecordReq& sIn, vector<GameRec
     }    
 }
 
+string DbAgent::specialStrChange(string &s)
+{
+  return tars::TC_Common::replace(s, DbAgent::_charLib);
+}
 
 
 int DbAgent::getGameRecordDetail(const WmsPlatform::GameRecordDetailReq& sIn, vector<GameRecordDetailItem>& sOut)
@@ -100,8 +106,8 @@ int DbAgent::getGameRecordDetail(const WmsPlatform::GameRecordDetailReq& sIn, ve
     {
 
       string sSql = "SELECT t1.*,t2.config FROM game_result_log AS t1 LEFT JOIN build_room_log AS t2 ON t1.room_id=t2.room_id"
-                    "WHERE t1.room_id =" + sIn.room_id+ " AND t1.owner = " + sIn.owner + ""
-                    "AND (t1.chair_1_uid =" +  sIn.userId + "OR t1.chair_2_uid = " +  sIn.userId + " OR t1.chair_3_uid = " +  sIn.userId + " OR  t1.chair_4_uid = " +  sIn.userId + ") ORDER BY t1.game_index;";
+                    " WHERE t1.room_id =" + sIn.room_id+ " AND t1.owner = " + sIn.owner + " "
+                    "AND (t1.chair_1_uid =" +  sIn.userId + " OR t1.chair_2_uid = " +  sIn.userId + " OR t1.chair_3_uid = " +  sIn.userId + " OR  t1.chair_4_uid = " +  sIn.userId + ") ORDER BY t1.game_index;";
 
      tars::TC_Mysql::MysqlData item = _mysqlReg.queryRecord(sSql);
 
@@ -116,12 +122,14 @@ int DbAgent::getGameRecordDetail(const WmsPlatform::GameRecordDetailReq& sIn, ve
         for (size_t i = 0 ; i < item.size(); ++i)
         {
           GameRecordDetailItem t;
+          string json_1 = item[i]["config"];
+          string json_2 = item[i]["game_action"];
           t.room_id          = item[i]["room_id"];
           t.owner            = item[i]["owner"];
           t.game_index       = item[i]["game_index"];
           t.end_time         = item[i]["end_time"];
-          t.config           = item[i]["config"]; 
-          t.game_action      = item[i]["game_action"]; 
+          t.config           = specialStrChange(json_1); 
+          t.game_action      = specialStrChange(json_2); 
 
           t.chair_1_uid      = item[i]["chair_1_uid"];
           t.chair_1_point    = item[i]["chair_1_point"];     

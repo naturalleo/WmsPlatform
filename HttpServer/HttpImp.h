@@ -394,7 +394,7 @@ public:
 
         if (ret == 0 )
         {
-            s = "{\"status\":1,\"errCode\":0,\"error\":\"\",\"data\":{";
+            s = "{\"status\":1,\"errCode\":0,\"error\":\"\",\"data\":[";
             vector<GameRecordItem>::const_iterator itr;
             for(itr = sOut.begin(); itr != sOut.end(); ++itr)
                 {
@@ -426,7 +426,7 @@ public:
                             + "\"chair_4_avatar\": \"" + itr->chair_4_avatar + "\""
                         "}";
                 }
-                s += "}}";
+                s += "]}";
         }
         else
         {
@@ -439,7 +439,7 @@ public:
 
 
         _current->sendResponse(&buffer.at(0),buffer.size());
-        TLOGDEBUG("callback_generateOrder : " << s << s.size() << endl);
+        TLOGDEBUG("callback_getPlayerGameRecord : " << s.size() << endl);
        // _current->sendResponse(tars::TARSSERVERSUCCESS, buffer);    
         //HttpImp::async_response_doRequest(_current, ret, buffer);
     }
@@ -461,7 +461,7 @@ public:
 
         if (ret == 0 )
         {
-           s = "{\"status\":1,\"errCode\":0,\"error\":\"\",\"data\":{";
+           s = "{\"status\":1,\"errCode\":0,\"error\":\"\",\"data\":[";
             for(vector<GameRecordDetailItem>::const_iterator itr = sOut.begin(); itr != sOut.end(); ++itr)
                 {
                     s+= (itr == sOut.begin() ? string(""):string(", ")) +
@@ -488,7 +488,7 @@ public:
                             + "\"chair_4_point\": \""  + itr->chair_4_point + "\" "
                         "}";
                 }
-                s += "}}";
+                s += "]}";
         }
         else
         {
@@ -501,7 +501,7 @@ public:
 
 
         _current->sendResponse(&buffer.at(0),buffer.size());
-        TLOGDEBUG("callback_generateOrder : " << s << s.size() << endl);
+        TLOGDEBUG("callback_getPlayerGameDetailRecord : " << s.size() << endl);
        // _current->sendResponse(tars::TARSSERVERSUCCESS, buffer);    
         //HttpImp::async_response_doRequest(_current, ret, buffer);
     }

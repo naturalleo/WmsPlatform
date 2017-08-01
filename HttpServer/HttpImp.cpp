@@ -221,12 +221,15 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
 
             current->setResponse(false);
             WxoauthReq req;
+
+            TLOGDEBUG("thirdPartyLogin domain : " << current->getIp() << endl);
+
             req.openId       = "wxf0862d65306b025a";
             req.accessToken  = getValue(_para,"accessToken"); 
             req.refreshToken = getValue(_para,"refreshToken"); 
             req.wechatAppId  = getValue(_para,"wechatAppId"); 
             req.appCode      = getValue(_para,"appCode"); 
-            req.ip           = request.getHost();
+            req.ip           = current->getIp();
             req.appId        = getValue(_para,"appId"); 
             req.clientFrom   = getValue(_para,"loginFrom");
              
@@ -258,7 +261,7 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
             WmsPlatform::WxUserinfoPrxCallbackPtr cb = new WxUserinfoCallback(current);
             _WxUserinfoPrx->tars_set_timeout(3000)->async_getWxUserinfo(cb,req);        
         }
-        else if (request.getRequestUrl() == "/GameService/getResultLst" && isParamExist(_para, "appId") && isParamExist(_para, "appCode") && isParamExist(_para, "userId") && isParamExist(_para, "token"))
+        else if (request.getRequestUrl() == "/Game/getResultLst" && isParamExist(_para, "appId") && isParamExist(_para, "appCode") && isParamExist(_para, "userId") && isParamExist(_para, "token"))
         {
 
             current->setResponse(false);
@@ -271,8 +274,8 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
             WmsPlatform::GamePrxCallbackPtr cb = new GameCallback(current);
             _GamePrx->tars_set_timeout(3000)->async_getPlayerGameRecord(cb,req);        
         }
-        else if (request.getRequestUrl() == "/GameService/getResultDetail" && isParamExist(_para, "appId") && isParamExist(_para, "appCode") && isParamExist(_para, "userId") && isParamExist(_para, "token")
-            && isParamExist(_para, "room_id") && isParamExist(_para, "owner") )
+        else if (request.getRequestUrl() == "/Game/getResultDetail" && isParamExist(_para, "appId") && isParamExist(_para, "appCode") && isParamExist(_para, "userId") && isParamExist(_para, "token")
+            && isParamExist(_para, "roomId") && isParamExist(_para, "owner") )
         {
 
             current->setResponse(false);
@@ -281,7 +284,7 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
             req.appCode = getValue(_para,"appCode");
             req.userId = getValue(_para,"userId");
             req.token = getValue(_para,"token");
-            req.room_id = getValue(_para,"room_id");
+            req.room_id = getValue(_para,"roomId");
             req.owner = getValue(_para,"owner");
 
             WmsPlatform::GamePrxCallbackPtr cb = new GameCallback(current);
