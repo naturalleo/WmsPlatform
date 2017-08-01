@@ -208,6 +208,21 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
             _FundsPrx->tars_set_timeout(3000)->async_modifyFunds(cb,req);     
                  
         }
+        else if (request.getRequestUrl() == "/user/getFunds" && isParamExist(_para, "userId") && isParamExist(_para, "appId") && isParamExist(_para, "appCode") )
+        {
+            current->setResponse(false);
+
+
+            FundsUserInfoReq req;
+            req.userId = getValue(_para,"userId");
+            req.appId = getValue(_para,"appId");
+            req.appCode = getValue(_para,"appCode");
+
+
+            WmsPlatform::FundsPrxCallbackPtr cb = new FundsCallback(current);
+            _FundsPrx->tars_set_timeout(3000)->async_getFunds(cb,req);     
+                 
+        }
         else if (request.getRequestUrl() == "/user/thirdPartyLogin" && isParamExist(_para, "accessToken") && isParamExist(_para, "refreshToken") && isParamExist(_para, "wechatAppId") && isParamExist(_para, "appCode") && isParamExist(_para, "appId") && isParamExist(_para, "loginFrom"))
         {
             if (!isParamExist(_para,"accessToken"))

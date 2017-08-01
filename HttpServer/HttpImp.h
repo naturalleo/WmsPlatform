@@ -156,6 +156,7 @@ public:
                     "\"token\" : \""  + sOut.token +  "\","
                     "\"nickName\" : \""  + sOut.nickname +  "\","
                     "\"gender\" : \""  + sOut.sex +  "\","
+                    "\"ip\" : \""  + _current->getIp() +  "\","
                     "\"avatar\" : \""  + sOut.headimgurl +  "\","
                     "\"totalGameCard\" : \""  + sOut.totalcard +  "\","
                     "\"surplusGameCard\" : \""  + sOut.currentcard +  "\","
@@ -291,7 +292,7 @@ class FundsCallback : public FundsPrxCallback
 {
 
 public:
-    FundsCallback(TarsCurrentPtr &current, string data)
+    FundsCallback(TarsCurrentPtr &current, string data ="")
     : _current(current),_data(data)
     {}
 
@@ -370,6 +371,48 @@ public:
         WmsPlatform::FundsUserInfoRes res;
         Funds::async_response_modifyFunds(_current, ret, res);
     }
+
+    virtual void callback_getFunds(tars::Int32 ret, const WmsPlatform::FundsUserInfoRes& sOut)
+    {
+        //HttpImp::async_response_doRequest(_current, ret, sOut);
+        TLOGDEBUG("callback_getFunds : " << ret  << "ip : "<<_current->getIp()<< endl);
+        TC_HttpResponse rsp;
+        vector<char> buffer;
+        string s;
+
+        if (ret == 0 )
+        {
+            s = "{\"status\":1,\"errCode\":0,\"error\":\"\",\"data\":"
+                    "{"
+                    "\"userId\" : \""  + sOut.userId +  "\","
+                    "\"ip\" : \""  + _current->getIp() +  "\","
+                    "\"totalGameCard\" : \""  + sOut.totalcard +  "\","
+                    "\"surplusGameCard\" : \""  + sOut.currentcard +  "\""
+                    "}"
+                "}";
+        }
+        else
+        {
+            s = "{\"status\":-1,\"errCode\":-1,\"error\":\"ret -1\",\"data\":[]}";
+        }
+
+
+        rsp.setResponse(s.c_str(),s.size());
+        rsp.encode(buffer);     
+
+        _current->sendResponse(&buffer.at(0),buffer.size());
+        TLOGDEBUG("callback_getFunds : " << s << s.size() << endl);
+       // _current->sendResponse(tars::TARSSERVERSUCCESS, buffer);    
+        //HttpImp::async_response_doRequest(_current, ret, buffer);
+    }
+    virtual void callback_getFunds_exception(tars::Int32 ret)
+    { 
+        TLOGERROR("FundsCallback callback_getFunds_exception ret:" << ret << endl); 
+        WmsPlatform::FundsUserInfoRes res;
+        Funds::async_response_modifyFunds(_current, ret, res);
+    }
+
+
 
     TarsCurrentPtr _current;
     string _data;
