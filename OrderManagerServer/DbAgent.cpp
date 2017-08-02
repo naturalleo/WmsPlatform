@@ -34,31 +34,6 @@ uint64_t DbAgent::generaterID()
     return id;
 }
 
-/*
-
-
-
-CREATE TABLE `t_user_login_log_0` (
-`loginId`  int(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
-`userId`  int(10) UNSIGNED NOT NULL COMMENT '用户ID' ,
-`ip`  int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '登录IP' ,
-`addTime`  int(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '登录时间' ,
-`appId`  int(10) UNSIGNED NOT NULL COMMENT '应用ID' ,
-`appCode`  varchar(12) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '应用Code' ,
-`loginToken`  char(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '登录时候Token' ,
-`clientFrom`  tinyint(4) UNSIGNED NOT NULL DEFAULT 0 COMMENT '登录来源 未知 0 Iphone 1 - Android 2' ,
-PRIMARY KEY (`loginId`),
-INDEX `userId` (`userId`) USING BTREE 
-)
-ENGINE=InnoDB
-DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
-COMMENT='用户模块-用户登录日志【根据用户ID取模】'
-AUTO_INCREMENT=309
-*/
-
-
-
-
 
 
 int DbAgent::generaterOrderID(const WmsPlatform::CreateRoomReq &in, string &order)
@@ -121,6 +96,120 @@ int DbAgent::updateUserToken(const WmsPlatform::WxoauthReq& req, const string &t
 
       _mysqlReg.execute(oss.str());
 
+      TLOGDEBUG(__FUNCTION__ << pthread_self() <<" affected: " << _mysqlReg.getAffectedRows() << endl);
+      return 0;
+
+    }
+    catch (TC_Mysql_Exception& ex)
+    {
+        TLOGERROR(__FUNCTION__ << " exception: " << ex.what() << endl);
+        return -1;
+    }
+    catch (exception& ex)
+    {
+        TLOGERROR(__FUNCTION__ << " exception: " << ex.what() << endl);
+        return -1;
+    }   
+}
+
+
+int DbAgent::checkUserToken(const WxUserinfoReq &req, string &ip)
+{
+    try
+    {
+    
+      int pos = TC_Common::strto<int>(req.userId) % 10 ;
+      ostringstream oss("");
+      oss << "select ip from t_user_login_log_"<< TC_Common::tostr(pos) << " where userId = "<< req.userId << " and "
+          << "appId = " << req.appId << " and appCode = '" << req.appCode << "' and loginToken = '" << req.token << "'" ;
+
+      TC_Mysql::MysqlData item = _mysqlReg.queryRecord(oss.str());
+      if (item.size() == 0)
+      {
+          return 1;
+      }
+      else
+      {
+        ip = item[0]["ip"];
+        return 0 ;
+      }
+
+      TLOGDEBUG(__FUNCTION__ << pthread_self() <<" affected: " << _mysqlReg.getAffectedRows() << endl);
+      return 0;
+
+    }
+    catch (TC_Mysql_Exception& ex)
+    {
+        TLOGERROR(__FUNCTION__ << " exception: " << ex.what() << endl);
+        return -1;
+    }
+    catch (exception& ex)
+    {
+        TLOGERROR(__FUNCTION__ << " exception: " << ex.what() << endl);
+        return -1;
+    }   
+}
+
+int DbAgent::reportSuggestion(const ReportSuggestionReq &req)
+{
+    try
+    {
+  
+    string sSql = 
+                "insert into t_suggestion (`userId`,`appId`,`appCode`,`clientFrom`,`version`,`suggestType`,`title`,`content`,`status`,`contacts`,`addTime`,`updateTime`) values " 
+                        "(" + req.userId + " ," 
+                        " " + req.appId + " ,"
+                        " '" + req.appCode + "' ,"
+                        " " + req.clientFrom + " ,"
+                        " '" + req.clientVer + "' ,"
+                        " " + req.suggestType + " ,"
+                        " '" + req.title + "' ,"
+                        " '" + req.content + "' ,"
+                        " 0 ,"
+                        " '" + req.contacts + "' ,"
+                        " " + TC_Common::tostr(TC_Common::now2ms()/1000) + " ,"
+                        " " + TC_Common::tostr(TC_Common::now2ms()/1000) + " )" ;
+
+    _mysqlReg.execute(sSql);
+
+    TLOGDEBUG(__FUNCTION__ << pthread_self() <<" affected: " << _mysqlReg.getAffectedRows() << endl);
+    }
+    catch (TC_Mysql_Exception& ex)
+    {
+        TLOGERROR(__FUNCTION__ << " exception: " << ex.what() << endl);
+        return -1;
+    }
+    catch (exception& ex)
+    {
+        TLOGERROR(__FUNCTION__ << " exception: " << ex.what() << endl);
+        return -1;
+    }
+
+    return 0;
+}
+
+int DbAgent::sysNotice(const SysNoticeReq& req, SysNoticeRes& res)
+{
+    try
+    {
+    
+      ostringstream oss("");
+      oss << "select aId, title, `desc`, content from t_article  where appId = "<< req.appId << " and "
+          << " appCode = '" << req.appCode << "' and catId = 2  order by sort asc limit 0,1"  ;
+
+
+      TC_Mysql::MysqlData item = _mysqlReg.queryRecord(oss.str());
+      if (item.size() == 0)
+      {
+          return 1;
+      }
+      else
+      {
+       res.aId = item[0]["aId"];
+       res.title = item[0]["title"];
+       res.desc = item[0]["desc"];
+       res.content = item[0]["content"];
+      }
       TLOGDEBUG(__FUNCTION__ << pthread_self() <<" affected: " << _mysqlReg.getAffectedRows() << endl);
       return 0;
 

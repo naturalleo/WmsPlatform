@@ -9,6 +9,9 @@
  *
  *
  */
+
+using namespace WmsPlatform;
+
 class OrderImp : public WmsPlatform::Order
 {
 public:
@@ -36,6 +39,15 @@ public:
     virtual int generateOrder(const WmsPlatform::CreateRoomReq& sIn, std::string& sOut, tars::TarsCurrentPtr current);
 
     virtual int updateUserToken(const WmsPlatform::WxoauthReq& req, const std::string& token, tars::TarsCurrentPtr current);
+
+
+    virtual int checkUserToken(const WmsPlatform::WxUserinfoReq& req, std::string& ip, tars::TarsCurrentPtr current);
+
+
+    virtual int reportSuggestion(const ReportSuggestionReq &req, tars::TarsCurrentPtr current);
+
+
+    virtual int sysNotice(const SysNoticeReq& req, SysNoticeRes& res, tars::TarsCurrentPtr current);
 protected:
     DbAgent _db;
     FundsPrx  _FundsPrx;

@@ -20,6 +20,7 @@ void WxUserinfoImp::initialize()
 
     	 _db.init();
          _FundsPrx = Application::getCommunicator()->stringToProxy<FundsPrx>("WmsPlatform.FundsManagerServer.FundsObj");
+         _OrderPrx = Application::getCommunicator()->stringToProxy<OrderPrx>("WmsPlatform.OrderManagerServer.OrderObj");
         //string order = "";
     	//_db.generaterOrderID("hello",order);
     }
@@ -95,7 +96,20 @@ int WxUserinfoImp::getWxUserinfo(const WmsPlatform::WxUserinfoReq& sIn, WmsPlatf
     TLOGDEBUG("getWxUserinfo : " << sIn.userId << endl);
     try
     {
-        return  _db.getDbUserinfo(sIn, sOut);
+        int ret = _db.getDbUserinfo(sIn, sOut);
+
+        if (ret != 0) 
+            return ret;
+        string ip ; 
+
+        ret = _OrderPrx->checkUserToken(sIn, ip);
+
+        if (ret != 0)
+            return ret;
+
+        sOut.ip = ip;
+
+        return  0 ;
     }
     catch(exception &ex)
     {

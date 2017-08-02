@@ -128,6 +128,84 @@ public:
         Order::async_response_generateOrder(_current, ret, "");
     }
 
+   virtual void callback_reportSuggestion(tars::Int32 ret)
+    {
+        //HttpImp::async_response_doRequest(_current, ret, sOut);
+        TLOGDEBUG("callback_reportSuggestion : " << ret << endl);
+        TC_HttpResponse rsp;
+        vector<char> buffer;
+        string s ;
+
+        if (ret == 0 )
+        {
+            s = "{\"status\":1,\"errCode\":0,\"error\":\"\",\"data\": \"\"}";
+        }
+        else
+        {
+            s = "{\"status\":-1,\"errCode\":-1,\"error\":\"ret -1\",\"data\":[]}";
+        }
+
+
+        rsp.setResponse(s.c_str(),s.size());
+        rsp.encode(buffer);     
+
+
+        _current->sendResponse(&buffer.at(0),buffer.size());
+        TLOGDEBUG("callback_reportSuggestion : " << s << s.size() << endl);
+       // _current->sendResponse(tars::TARSSERVERSUCCESS, buffer);    
+        //HttpImp::async_response_doRequest(_current, ret, buffer);
+    }
+    virtual void callback_reportSuggestion_exception(tars::Int32 ret)
+    { 
+        TLOGERROR("OrderCallback callback_reportSuggestion_exception ret:" << ret << endl); 
+
+        Order::async_response_reportSuggestion(_current, ret);
+    }
+
+   virtual void callback_sysNotice(tars::Int32 ret, const SysNoticeRes& res)
+    {
+        //HttpImp::async_response_doRequest(_current, ret, sOut);
+        TLOGDEBUG("callback_sysNotice : " << ret << endl);
+        TC_HttpResponse rsp;
+        vector<char> buffer;
+        string s ;
+
+        if (ret == 0 )
+        {
+            s = "{\"status\":1,\"errCode\":0,\"error\":\"\",\"data\":"
+                    "{"
+                       "\"list\": ["
+                        "{"
+                            "\"aId\": \"" + res.aId + "\","
+                            "\"title\": \"" + res.title + "\","
+                            "\"desc\": \"" + res.desc + "\""
+                       "}]" 
+                    "}"
+                "}";
+        }
+        else
+        {
+            s = "{\"status\":-1,\"errCode\":-1,\"error\":\"ret -1\",\"data\":[]}";
+        }
+
+
+        rsp.setResponse(s.c_str(),s.size());
+        rsp.encode(buffer);     
+
+
+        _current->sendResponse(&buffer.at(0),buffer.size());
+        TLOGDEBUG("callback_sysNotice : " << s << s.size() << endl);
+       // _current->sendResponse(tars::TARSSERVERSUCCESS, buffer);    
+        //HttpImp::async_response_doRequest(_current, ret, buffer);
+    }
+    virtual void callback_sysNotice_exception(tars::Int32 ret)
+    { 
+        TLOGERROR("OrderCallback callback_sysNotice_exception ret:" << ret << endl); 
+        SysNoticeRes res;
+        Order::async_response_sysNotice(_current, ret, res);
+    }
+
+
     TarsCurrentPtr _current;
 };
 

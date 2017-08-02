@@ -271,7 +271,7 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
             req.appId = getValue(_para,"appId");
             req.appCode = getValue(_para,"appCode");
             req.token = getValue(_para,"token");
-            req.orderCode = getValue(_para,"orderCode");
+            //req.orderCode = getValue(_para,"orderCode");
 
             WmsPlatform::WxUserinfoPrxCallbackPtr cb = new WxUserinfoCallback(current);
             _WxUserinfoPrx->tars_set_timeout(3000)->async_getWxUserinfo(cb,req);        
@@ -305,7 +305,35 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
             WmsPlatform::GamePrxCallbackPtr cb = new GameCallback(current);
             _GamePrx->tars_set_timeout(3000)->async_getPlayerGameDetailRecord(cb,req);        
         }
+        else if (request.getRequestUrl() == "/Suggestion/add")
+        {
+            current->setResponse(false);
+            ReportSuggestionReq req;
+            req.appId = getValue(_para,"appId");
+            req.appCode = getValue(_para,"appCode");
+            req.userId = getValue(_para,"userId");
+            req.clientFrom = getValue(_para,"clientFrom");
+            req.clientVer = getValue(_para,"clientVer");
+            req.contacts = getValue(_para,"contacts");
+            req.content = getValue(_para,"content");
+            req.suggestType = getValue(_para,"suggestType");
+            req.title = getValue(_para,"title");
 
+            WmsPlatform::OrderPrxCallbackPtr cb = new OrderCallback(current);
+            _orderPrx->tars_set_timeout(3000)->async_reportSuggestion(cb,req);        
+        }
+        else if (request.getRequestUrl() == "/Article/lst")
+        {
+            current->setResponse(false);
+            SysNoticeReq req;
+            req.appId = getValue(_para,"appId");
+            req.appCode = getValue(_para,"appCode");
+            req.artCat = getValue(_para,"artCat");
+
+
+            WmsPlatform::OrderPrxCallbackPtr cb = new OrderCallback(current);
+            _orderPrx->tars_set_timeout(3000)->async_sysNotice(cb,req);        
+        }
         else if (request.getRequestUrl() == "/GameService/ExchangeCards")
         {
             current->setResponse(false);

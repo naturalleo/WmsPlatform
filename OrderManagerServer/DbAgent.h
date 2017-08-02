@@ -31,7 +31,11 @@ public:
 
     int updateUserToken(const WmsPlatform::WxoauthReq& req, const string &token);
     
+    int checkUserToken(const WxUserinfoReq &req, string &ip);
 
+    int reportSuggestion(const ReportSuggestionReq &req);
+
+    int sysNotice(const SysNoticeReq& req, SysNoticeRes& res);
 
 private:
     //mysql连接对象

@@ -1,5 +1,6 @@
 
 #include "Wxoauth.tars"
+#include "WxUserinfo.tars"
 
 module WmsPlatform
 {
@@ -20,11 +21,54 @@ struct CreateRoomReq
 
 
 
+struct ReportSuggestionReq
+{
+	0 require string userId;
+    1 require string appId;
+    2 require string appCode;
+    3 require string clientFrom;
+    4 require string clientVer;
+    5 require string contacts;
+    6 require string content;	
+	7 require string suggestType;
+	8 require string title;
+
+};
+
+
+
+struct SysNoticeReq
+{
+    1 require string appId;
+    2 require string appCode;
+    3 require string artCat; 
+      		
+};
+
+struct SysNoticeRes
+{
+    1 require string aId;
+    2 require string title;
+    3 require string desc; 
+    4 require string content; 
+    5 require string url; 
+
+};
+
+
+
+
 interface Order
 {
     int test();
  	int generateOrder(CreateRoomReq req,  out string res);
  	int updateUserToken(WxoauthReq req, string token);
+
+ 	int checkUserToken(WxUserinfoReq req, out string ip);
+
+ 	int reportSuggestion(ReportSuggestionReq req);
+
+ 	int sysNotice(SysNoticeReq req, out SysNoticeRes res);
 
 };
 

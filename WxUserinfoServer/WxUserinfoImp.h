@@ -5,6 +5,8 @@
 #include "WxUserinfo.h"
 #include "DbAgent.h"
 #include "Funds.h"
+#include "Order.h"
+
 /**
  *
  *
@@ -45,6 +47,8 @@ public:
 protected:
     DbAgent _db;
     FundsPrx  _FundsPrx;
+    OrderPrx  _OrderPrx;
+
 
     static const string _basekey1;
     static const string _basekey2;

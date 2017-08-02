@@ -81,3 +81,55 @@ int OrderImp::updateUserToken(const WmsPlatform::WxoauthReq& sReq, const std::st
     }
     return _ret;
 }
+
+
+int OrderImp::checkUserToken(const WmsPlatform::WxUserinfoReq& sReq, std::string& ip, tars::TarsCurrentPtr current)
+{
+    TLOGDEBUG("checkUserToken : " << sReq.userId << endl);
+
+    int _ret;
+    try
+    {
+        _ret = _db.checkUserToken(sReq, ip);   
+    }
+    catch(exception &ex)
+    {
+        cout << ex.what() << endl;
+        return -1;
+    }
+    return _ret;
+}
+
+int OrderImp::reportSuggestion(const ReportSuggestionReq &sReq, tars::TarsCurrentPtr current)
+{
+    TLOGDEBUG("reportSuggestion : " << sReq.userId << endl);
+
+    int _ret;
+    try
+    {
+        _ret = _db.reportSuggestion(sReq);   
+    }
+    catch(exception &ex)
+    {
+        cout << ex.what() << endl;
+        return -1;
+    }
+    return _ret;
+}
+
+int OrderImp::sysNotice(const SysNoticeReq& sReq, SysNoticeRes& res, tars::TarsCurrentPtr current)
+{
+    TLOGDEBUG("sysNotice : " << endl);
+
+    int _ret;
+    try
+    {
+        _ret = _db.sysNotice(sReq, res);   
+    }
+    catch(exception &ex)
+    {
+        cout << ex.what() << endl;
+        return -1;
+    }
+    return _ret;
+}
