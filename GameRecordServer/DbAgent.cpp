@@ -57,22 +57,22 @@ int DbAgent::getGameRecord(const WmsPlatform::GameRecordReq& sIn, vector<GameRec
           t.chair_1_uid      = item[i]["chair_1_uid"];
           t.chair_1_name     = item[i]["chair_1_name"];
           t.chair_1_point    = item[i]["chair_1_point"];     
-          t.chair_1_avatar   = ""; 
+          t.chair_1_avatar   = item[i]["chair_1_image"]; 
 
           t.chair_2_uid      = item[i]["chair_2_uid"];
           t.chair_2_name     = item[i]["chair_2_name"];
           t.chair_2_point    = item[i]["chair_2_point"];     
-          t.chair_2_avatar   = ""; 
+          t.chair_2_avatar   = item[i]["chair_2_image"]; 
 
           t.chair_3_uid      = item[i]["chair_3_uid"];
           t.chair_3_name     = item[i]["chair_3_name"];
           t.chair_3_point    = item[i]["chair_3_point"];     
-          t.chair_3_avatar   = ""; 
+          t.chair_3_avatar   = item[i]["chair_3_image"]; 
 
           t.chair_4_uid      = item[i]["chair_4_uid"];
           t.chair_4_name     = item[i]["chair_4_name"];
           t.chair_4_point    = item[i]["chair_4_point"];     
-          t.chair_4_avatar   = "";
+          t.chair_4_avatar   = item[i]["chair_4_image"];
 
           sOut.push_back(t);
         }

@@ -177,6 +177,8 @@ int DbAgent::modifyFunds(const WmsPlatform::FundsUserModifyReq& sIn, WmsPlatform
       else
         return -1;
 
+      TLOGDEBUG("modifyFunds sql: " << sSql << endl);
+
       _mysqlReg.execute(sSql);
 
       TLOGDEBUG(__FUNCTION__ << pthread_self() <<" affected: " << _mysqlReg.getAffectedRows() << endl);

@@ -201,12 +201,17 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
             req.appId = getValue(__para,"appId");
             req.appCode = getValue(__para,"appCode");
             req.cards = getValue(__para,"useNum");
-            req.opcode = "sub" ;
+
+             TLOGDEBUG("updateOrder 2222222222222222222222222" << TC_Common::tostr(__para) << endl);
+
+            if (getValue(_para,"status") == "used")
+            {
+                req.opcode = "sub" ;
 
 
-            WmsPlatform::FundsPrxCallbackPtr cb = new FundsCallback(current, data);
-            _FundsPrx->tars_set_timeout(3000)->async_modifyFunds(cb,req);     
-                 
+                WmsPlatform::FundsPrxCallbackPtr cb = new FundsCallback(current, data);
+                _FundsPrx->tars_set_timeout(3000)->async_modifyFunds(cb,req);  
+            }    
         }
         else if (request.getRequestUrl() == "/user/getFunds" && isParamExist(_para, "userId") && isParamExist(_para, "appId") && isParamExist(_para, "appCode") )
         {
@@ -349,7 +354,7 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
         else
         {
             TC_HttpResponse rsp;
-            string s = "{\"status\": 2 }";
+            string s = "{测试}";
             rsp.setResponse(s.c_str(),s.size());
             rsp.encode(buffer);           
         }

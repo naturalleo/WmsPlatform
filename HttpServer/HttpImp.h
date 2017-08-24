@@ -24,6 +24,7 @@
 #include "Funds.h"
 #include "Game.h"
 #include <vector>
+#include "util/tc_encoder.h"
 
 #include "rapidjson/include/rapidjson/document.h"
 #include "rapidjson/include/rapidjson/writer.h"
@@ -242,7 +243,7 @@ public:
                     "}"
                 "}";
         else if(1 == ret)
-            s = "{\"status\":1,\"errCode\":10402,\"error\":\"ret 1\",\"data\":[]}";
+            s = "{\"status\":1,\"errCode\":10402,\"error\":\"微信登录失效,请重新登录\",\"data\":[]}";
         else
             s = "{\"status\":-1,\"errCode\":-1,\"error\":\"ret -1\",\"data\":[]}";
 

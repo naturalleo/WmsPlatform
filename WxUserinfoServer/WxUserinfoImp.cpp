@@ -64,6 +64,7 @@ int WxUserinfoImp::getLoginWxUserinfo(const WmsPlatform::WxLoginUserinfoReq& sIn
         req.appId    = sIn.appId;
         req.appCode  = sIn.appCode;
 
+        TLOGDEBUG("getLoginWxUserinfo req.userId : " << req.userId << endl);
 
         iRet = _FundsPrx->getFunds(req, res);
         if (iRet == -1) 

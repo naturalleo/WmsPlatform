@@ -119,8 +119,8 @@ int DbAgent::insertNewUser(const WmsPlatform::WxLoginUserinfoReq &in, std::strin
                             "" + in.appGroupId + ")";
 
         _mysqlReg.execute(sSql);
-        uid = _mysqlReg.lastInsertID();
-        TLOGDEBUG(__FUNCTION__ << pthread_self() <<" affected: " << _mysqlReg.getAffectedRows() << "last id " << _mysqlReg.lastInsertID()  << endl);
+        uid = TC_Common::tostr(_mysqlReg.lastInsertID());
+        TLOGDEBUG(__FUNCTION__ << pthread_self() <<" affected: " << _mysqlReg.getAffectedRows() << "uid: "<< uid <<"last id :" << _mysqlReg.lastInsertID()  << endl);
         return 0;
     }
     catch (TC_Mysql_Exception& ex)
@@ -144,7 +144,10 @@ int DbAgent::getLoginDbUserinfo(const WmsPlatform::WxLoginUserinfoReq &sIn, stri
         if ( ret == 0)
         {
             if (insertNewUser(sIn, sOut) == 0)
+            {
+                TLOGDEBUG("getLoginDbUserinfo insertNewUser uid : "<<  sOut << endl);
                 return 1;
+            }
         }
         else if (ret == -1)
         {
