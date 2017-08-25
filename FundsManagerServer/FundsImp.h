@@ -44,6 +44,8 @@ public:
     virtual int checkFunds(const WmsPlatform::FundsCheckReq& req, tars::TarsCurrentPtr current);
         
 protected:
+    void loadconf();
+    
     DbAgent _db;
 };
 /////////////////////////////////////////////////////

@@ -3,12 +3,24 @@
 
 using namespace std;
 
+extern TC_Config * g_pconf;
+
 //////////////////////////////////////////////////////
 void GameImp::initialize()
 {
     //initialize servant here:
     //...
-    _db.init();  
+    TLOGDEBUG("begin GameImp initialize"<<endl);
+    try
+    {
+        loadconf();
+        //string order = "";
+        //_db.generaterOrderID("hello",order);
+    }
+    catch(exception &ex)
+    {
+        cout << ex.what() << endl;
+    }
 }
 
 //////////////////////////////////////////////////////
@@ -16,6 +28,13 @@ void GameImp::destroy()
 {
     //destroy servant here:
     //...
+}
+
+void GameImp::loadconf()
+{
+    TC_DBConf tcDBConf;
+    tcDBConf.loadFromMap(g_pconf->getDomainMap("/tars/db"));
+    _db.init(tcDBConf);
 }
 
 int GameImp::getPlayerGameRecord(const WmsPlatform::GameRecordReq& sIn, vector<GameRecordItem>& sOut, tars::TarsCurrentPtr current)

@@ -27,6 +27,8 @@ public:
 
     int init();
 
+    int init(TC_DBConf conf);
+
   	int getGameRecord(const WmsPlatform::GameRecordReq& sIn, vector<GameRecordItem>& sOut) ;
 
     int getGameRecordDetail(const WmsPlatform::GameRecordDetailReq& sIn, vector<GameRecordDetailItem>& sOut);

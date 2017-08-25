@@ -25,6 +25,8 @@ public:
 
     int init();
 
+    int init(TC_DBConf conf);
+
     uint64_t generaterID();
 
     int generaterOrderID(const WmsPlatform::CreateRoomReq &in, string &order);

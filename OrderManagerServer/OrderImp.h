@@ -49,6 +49,7 @@ public:
 
     virtual int sysNotice(const SysNoticeReq& req, SysNoticeRes& res, tars::TarsCurrentPtr current);
 protected:
+    void loadconf();
     DbAgent _db;
     FundsPrx  _FundsPrx;
 

@@ -2,7 +2,7 @@
 #include "servant/Application.h"
 
 using namespace std;
-
+extern TC_Config * g_pconf;
 //////////////////////////////////////////////////////
 void OrderImp::initialize()
 {
@@ -12,7 +12,7 @@ void OrderImp::initialize()
     try
     {
 
-        _db.init();   
+        loadconf();   
         _FundsPrx = Application::getCommunicator()->stringToProxy<FundsPrx>("WmsPlatform.FundsManagerServer.FundsObj");
         //string order = "";
     	//_db.generaterOrderID("hello",order);
@@ -29,6 +29,14 @@ void OrderImp::destroy()
 {
     //destroy servant here:
     //...
+}
+
+
+void OrderImp::loadconf()
+{
+    TC_DBConf tcDBConf;
+    tcDBConf.loadFromMap(g_pconf->getDomainMap("/tars/db"));
+    _db.init(tcDBConf);
 }
 
 int OrderImp::generateOrder(const WmsPlatform::CreateRoomReq &sReq, std::string &sRsp, tars::TarsCurrentPtr current)
