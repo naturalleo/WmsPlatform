@@ -2,9 +2,9 @@
 #define _WxoauthImp_H_
 
 #include "servant/Application.h"
-#include "Wxoauth.h"
-#include "WxUserinfo.h"
-#include "Order.h"
+#include "../WxoauthServer/Wxoauth.h"
+#include "../WxUserinfoServer/WxUserinfo.h"
+#include "../OrderManagerServer/Order.h"
 
 #include "rapidjson/include/rapidjson/document.h"
 #include "rapidjson/include/rapidjson/writer.h"

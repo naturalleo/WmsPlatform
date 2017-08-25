@@ -189,53 +189,66 @@ int WxUserinfoImp::updateWxUserCards(const WmsPlatform::WxUserExchangeReq& sIn, 
     TLOGDEBUG("updateWxUserCards : " << sIn.userId << endl);
     try
     {
-         int result = 0;
-         int iRet = _db.isUserAgent(sIn.userId, result) ;
-         if(iRet == 0) 
-         {
-            sOut.errorCode = 0 ;
+        WxUserinfoReq req;
+        req.userId = sIn.userId;
+        req.appId = sIn.appId;
+        req.appCode = sIn.appCode;
+        req.token = sIn.token;
+        string ip ; 
+        if (_OrderPrx->checkUserToken(req, ip) != 0)
+        {
+            sOut.errorCode = -1;
+            TLOGERROR("房卡转让：玩家token校验失败，不能转让房卡!");
+            return -1;
+        }
 
+        int result = 0;
+        int iRet = _db.isUserAgent(sIn.userId, result) ;
+        if(iRet == 0) 
+        {
+            sOut.errorCode = 0 ;
             if (result == 0) // 表明是代理身份
             {
                 FundsUserModifyOtherReq req;
                 req.userId = sIn.userId;
                 req.otherId = sIn.otherId;
                 req.cards = sIn.cards;
-                req.opcode = sIn.opcode;
+                req.appId = sIn.appId;
+                req.appCode = sIn.appCode;
+                
                 FundsUserModifyOtherRes res;
-                if (_FundsPrx->modifyFundsOther(req, res) != -1)
+                if (_FundsPrx->modifyFundsOther(req, res) == 0)
                 {
                     sOut.errorCode = 0;
-                    sOut.userId = sIn.userId;
-                    sOut.cards = res.cards;
+                    sOut.userId = res.userId;
+                    sOut.totalcard = res.cards;
+                    sOut.currentcard = res.cards;
                 }
                 else
                 {
                     sOut.errorCode = -1;
                 }
-
             }
             else
             {
                 sOut.errorCode = -1 ;
+                TLOGERROR("房卡转让：玩家不是代理，不能转让房卡!");
             }
             return 0;
-         }
-         else
-         {
-             sOut.errorCode = -1 ;
-
-            TLOGERROR("WxUserinfoImp getWxUserIsAgent iRet != 0: " << iRet);
+        }
+        else
+        {
+            sOut.errorCode = -1 ;
+            TLOGERROR("房卡转让：异常操作，在数据库中找不到该操作玩家: "<< sIn.userId << endl);
+            TLOGERROR("WxUserinfoImp getWxUserIsAgent iRet != 0: " << iRet << endl);
             return -1;
-         }
+        }
     }
     catch(exception &ex)
     {
         cout << ex.what() << endl;
         return -1;
-    }
-
-    
+    } 
     return 0 ;
 }
 

@@ -18,11 +18,11 @@
 #define _HttpImp_H_
 
 #include "servant/Application.h"
-#include "Order.h"
-#include "Wxoauth.h"
-#include "WxUserinfo.h"
-#include "Funds.h"
-#include "Game.h"
+#include "../OrderManagerServer/Order.h"
+#include "../WxoauthServer/Wxoauth.h"
+#include "../WxUserinfoServer/WxUserinfo.h"
+#include "../FundsManagerServer/Funds.h"
+#include "../GameRecordServer/Game.h"
 #include <vector>
 #include "util/tc_encoder.h"
 

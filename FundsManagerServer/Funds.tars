@@ -42,14 +42,14 @@ struct FundsUserModifyOtherReq
 {
     0 require  string userId;
     1 require  string otherId; 
-    2 require  string cards ;
-    3 require  string opcode;      
+    2 require  string cards ;   
+    3 require  string appId;  
+    4 require  string appCode;       
 };
 struct FundsUserModifyOtherRes
 {
     0 require  string userId;
     1 require  string cards ;
- 
 };
 
 struct FundsCheckReq

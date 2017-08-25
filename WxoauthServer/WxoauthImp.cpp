@@ -141,10 +141,8 @@ int WxoauthImp::wxchatLogin(const WmsPlatform::WxoauthReq& sIn, WmsPlatform::WxL
 
 int WxoauthImp::getLoginUseInfo(const WxLoginUserinfoReq &req, WmsPlatform::WxoauthReq sIn, WxLoginUserinfoRes &res)
 {
-
     try
     {
-
 	    int iRet = _wxuserinfoPrx->getLoginWxUserinfo(req, res);
 
         if(iRet != 0)

@@ -202,7 +202,7 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
             req.appCode = getValue(__para,"appCode");
             req.cards = getValue(__para,"useNum");
 
-             TLOGDEBUG("updateOrder 2222222222222222222222222" << TC_Common::tostr(__para) << endl);
+            TLOGDEBUG("updateOrder 2222222222222222222222222" << TC_Common::tostr(__para) << endl);
 
             if (getValue(_para,"status") == "used")
             {
@@ -343,10 +343,13 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
         {
             current->setResponse(false);
             WxUserExchangeReq req;
-            req.userId = "123";  
-            req.otherId = "123";
-            req.opcode = "add";
-            req.cards = "1";
+
+
+            req.userId = getValue(_para,"userId");  
+            req.otherId = getValue(_para,"otherId"); 
+            req.cards = getValue(_para,"cards");
+            req.appId = getValue(_para,"appId");
+            req.appCode = getValue(_para,"appCode");    
 
             WmsPlatform::WxUserinfoPrxCallbackPtr cb = new WxUserinfoCallback(current);
             _WxUserinfoPrx->tars_set_timeout(3000)->async_updateWxUserCards(cb,req);        

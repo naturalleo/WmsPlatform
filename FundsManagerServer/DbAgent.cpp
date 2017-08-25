@@ -142,7 +142,6 @@ int DbAgent::modifyFunds(const WmsPlatform::FundsUserModifyReq& sIn, WmsPlatform
 {
     try
     {
-
       FundsUserInfoReq req;
       req.userId  = sIn.userId;
       req.appId   = sIn.appId;
@@ -196,3 +195,71 @@ int DbAgent::modifyFunds(const WmsPlatform::FundsUserModifyReq& sIn, WmsPlatform
         return -1;
     }
 }
+
+int DbAgent::modifyFundsOther(const WmsPlatform::FundsUserModifyOtherReq& sIn, WmsPlatform::FundsUserModifyOtherRes& sOut)
+{
+    try
+    {
+        FundsUserInfoReq req;
+        req.userId  = sIn.userId;
+        req.appId   = sIn.appId;
+        req.appCode = sIn.appCode;
+
+        FundsUserInfoRes res;
+        if (getFunds(req, res) != 0)
+        {
+            TLOGDEBUG("转让房卡：找不到操作转让的玩家，userId=" << sIn.userId <<" appId="<< sIn.appId << " appCode="<< sIn.appCode <<endl); 
+            return -2;
+        }  
+        if (TC_Common::strto<int>(res.currentcard) - TC_Common::strto<int>(sIn.cards) < 0)
+        {
+          TLOGDEBUG("转让房卡：房卡不足，转让失败！userId=" << sIn.userId <<" appId="<< sIn.appId << " appCode="<< sIn.appCode <<" cards="<< sIn.cards << " currentCards="<< res.currentcard << endl); 
+          return -3;
+        }
+
+        FundsUserInfoReq req1;
+        req1.userId  = sIn.otherId;
+        req1.appId   = sIn.appId;
+        req1.appCode = sIn.appCode;
+        FundsUserInfoRes res1;  
+        if (getFunds(req1, res1) != 0)
+        {
+            TLOGDEBUG("转让房卡：找不到被转让的玩家/该玩家不是这省份的游戏，otherId=" << sIn.otherId <<" appId="<< sIn.appId << " appCode="<< sIn.appCode <<endl); 
+            return -4;
+        }   
+
+        string sSql1 = "";
+        sSql1 = "update  t_user_funds " 
+                        "set surplusGameCard = surplusGameCard  - "   + sIn.cards + ","
+                        "totalUseGameCard = totalUseGameCard - " + sIn.cards + " "
+                        " where userId = '" + sIn.userId + "' and appId = " + sIn.appId + " and appCode = \'" + sIn.appCode + "\'";
+        _mysqlReg.execute(sSql1);
+
+
+        string sSql2 = "";
+        sSql2 = "update  t_user_funds " 
+                        "set surplusGameCard = surplusGameCard  + "   + sIn.cards + ","
+                        "totalUseGameCard = totalUseGameCard + " + sIn.cards + " "
+                        " where userId = '" + sIn.otherId + "' and appId = " + sIn.appId + " and appCode = \'" + sIn.appCode + "\'";
+        _mysqlReg.execute(sSql2);
+
+        sOut.userId = sIn.userId;
+        int currentCards = TC_Common::strto<int>(sIn.cards) - TC_Common::strto<int>(res.currentcard);
+        char buf[64] ={};
+        sprintf(buf,"%d",currentCards);
+        sOut.cards = buf;
+        
+        return 0;
+    }
+    catch (TC_Mysql_Exception& ex)
+    {
+        TLOGERROR(__FUNCTION__ << " exception: " << ex.what() << endl);
+        return -1;
+    }
+    catch (exception& ex)
+    {
+        TLOGERROR(__FUNCTION__ << " exception: " << ex.what() << endl);
+        return -1;
+    }
+}
+

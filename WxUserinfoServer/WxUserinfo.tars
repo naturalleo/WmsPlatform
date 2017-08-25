@@ -21,12 +21,9 @@ struct WxLoginUserinfoReq
 struct WxLoginUserinfoRes
 {
     0 require  string userId;
-
-
     1 require  string headimgurl;
     2 require  string nickname;
     3 require  string sex;  
-
     4 require string isNew;
     5 require string totalcard;
     6 require string currentcard;
@@ -51,16 +48,18 @@ struct WxUserExchangeReq
 {
     0 require  string userId;
     1 require  string otherId;
-    2 require  string opcode ;
-    3 require  string cards;
-
+    2 require  string cards;
+    3 require  string appId;
+    4 require  string appCode;
+    5 require  string token;     
 };
 
 struct WxUserExchangeRes
 {
     0 require  int errorCode;
     1 require  string userId;
-    2 require  string cards;
+    2 require  string totalcard;
+    3 require  string currentcard;
 };
 
 

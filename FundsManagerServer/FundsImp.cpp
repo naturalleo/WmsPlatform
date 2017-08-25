@@ -75,11 +75,19 @@ int FundsImp::modifyFunds(const WmsPlatform::FundsUserModifyReq& sIn, WmsPlatfor
     }
 	return 0;
 }
+
 int FundsImp::modifyFundsOther(const WmsPlatform::FundsUserModifyOtherReq& sIn, WmsPlatform::FundsUserModifyOtherRes& sOut, tars::TarsCurrentPtr current)
 {
-
-
-
+    TLOGDEBUG("modifyFundsOther : " << sIn.userId << endl);   
+    try
+    {
+         return _db.modifyFundsOther(sIn, sOut);
+    }
+    catch(exception &ex)
+    {
+        cout << ex.what() << endl;
+        return -1;
+    }
 	return 0 ;
 }
 

@@ -31,7 +31,7 @@ public:
 
     int modifyFunds(const WmsPlatform::FundsUserModifyReq& sIn, WmsPlatform::FundsUserInfoRes& sOut);
     
-
+    int modifyFundsOther(const WmsPlatform::FundsUserModifyOtherReq& sIn, WmsPlatform::FundsUserModifyOtherRes& sOut);
 private:
     //mysql连接对象
     tars::TC_Mysql _mysqlReg;

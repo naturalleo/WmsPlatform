@@ -1,6 +1,6 @@
 
-#include "Wxoauth.tars"
-#include "WxUserinfo.tars"
+#include "../WxoauthServer/Wxoauth.tars"
+#include "../WxUserinfoServer/WxUserinfo.tars"
 
 module WmsPlatform
 {
