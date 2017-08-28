@@ -74,9 +74,11 @@ int DbAgent::insertFunds(const WmsPlatform::FundsNewUserReq& sIn, WmsPlatform::F
 {
     try
     {
-      string sSql = "insert into t_user_funds(`userId`, `addTime`, `updateTime`, `appId`, `appCode`)"
+      string sSql = "insert into t_user_funds(`userId`,`surplusGameCard`,`totalUseGameCard`, `addTime`, `updateTime`, `appId`, `appCode`)"
                       "values"
                       "( '" + sIn.userId + "',"
+                      " "   + TC_Common::tostr(10) + ","
+                      " "   + TC_Common::tostr(10) + ","
                       " "   + TC_Common::tostr(TC_Common::now2ms()/1000) + ","
                       " "   + TC_Common::tostr(TC_Common::now2ms()/1000) + ","
                       "" + sIn.appId + " ,"
@@ -85,8 +87,8 @@ int DbAgent::insertFunds(const WmsPlatform::FundsNewUserReq& sIn, WmsPlatform::F
       _mysqlReg.execute(sSql);
 
       sOut.userId = sIn.userId;
-      sOut.totalcard = "0";
-      sOut.currentcard = "0";
+      sOut.totalcard = "10";
+      sOut.currentcard = "10";
 
       TLOGDEBUG(__FUNCTION__ << pthread_self() <<" affected: " << _mysqlReg.getAffectedRows() << endl);
       return 0;
@@ -125,11 +127,6 @@ int DbAgent::getFunds(const WmsPlatform::FundsUserInfoReq& sIn, WmsPlatform::Fun
         req.appCode  = sIn.appCode;
 
         insertFunds(req, sOut);
-
-        sOut.userId      = sIn.userId;
-        sOut.totalcard   = "0";
-        sOut.currentcard = "0";
-
         return 0;
       }
       else
@@ -261,9 +258,7 @@ int DbAgent::modifyFundsOther(const WmsPlatform::FundsUserModifyOtherReq& sIn, W
 
         sOut.userId = sIn.userId;
         int currentCards = TC_Common::strto<int>(sIn.cards) - TC_Common::strto<int>(res.currentcard);
-        char buf[64] ={};
-        sprintf(buf,"%d",currentCards);
-        sOut.cards = buf;
+        sOut.cards = TC_Common::tostr(currentCards);
         
         return 0;
     }
