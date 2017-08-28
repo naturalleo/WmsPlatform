@@ -4,7 +4,7 @@
 using namespace std;
 
 OrderManagerServer g_app;
-
+TC_Config * g_pconf;
 /////////////////////////////////////////////////////////////////
 void
 OrderManagerServer::initialize()
@@ -27,6 +27,7 @@ main(int argc, char* argv[])
 {
     try
     {
+        g_pconf =  & g_app.getConfig();
         g_app.main(argc, argv);
         g_app.waitForShutdown();
     }

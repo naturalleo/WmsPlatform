@@ -4,7 +4,7 @@
 using namespace std;
 
 WxUserinfoServer g_app;
-
+TC_Config * g_pconf;
 /////////////////////////////////////////////////////////////////
 void
 WxUserinfoServer::initialize()

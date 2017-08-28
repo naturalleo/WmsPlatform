@@ -25,6 +25,8 @@ public:
 
     int init();
 
+    int init(TC_DBConf conf);
+
   	int insertFunds(const WmsPlatform::FundsNewUserReq& sIn, WmsPlatform::FundsUserInfoRes& sOut) ;
 
     int getFunds(const WmsPlatform::FundsUserInfoReq& sIn, WmsPlatform::FundsUserInfoRes& sOut);

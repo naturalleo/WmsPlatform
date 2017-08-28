@@ -46,6 +46,9 @@ public:
     virtual int updateWxUserCards(const WmsPlatform::WxUserExchangeReq& sIn, WmsPlatform::WxUserExchangeRes& sOut, tars::TarsCurrentPtr current);
 protected:
     DbAgent _db;
+
+    void loadconf();
+
     FundsPrx  _FundsPrx;
     OrderPrx  _OrderPrx;
 

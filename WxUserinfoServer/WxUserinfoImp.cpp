@@ -4,7 +4,7 @@
 
 
 using namespace std;
-
+extern TC_Config * g_pconf;
 
 const string WxUserinfoImp:: _basekey1 = "e4b,KyiniuApi>VmZg7J!y";
 const string WxUserinfoImp:: _basekey2 = "<zwrUG2^?vN;ixApp";
@@ -18,7 +18,7 @@ void WxUserinfoImp::initialize()
     try
     {
 
-    	 _db.init();
+    	 loadconf();
          _FundsPrx = Application::getCommunicator()->stringToProxy<FundsPrx>("WmsPlatform.FundsManagerServer.FundsObj");
          _OrderPrx = Application::getCommunicator()->stringToProxy<OrderPrx>("WmsPlatform.OrderManagerServer.OrderObj");
         //string order = "";
@@ -36,7 +36,12 @@ void WxUserinfoImp::destroy()
     //destroy servant here:
     //...
 }
-
+void WxUserinfoImp::loadconf()
+{
+    TC_DBConf tcDBConf;
+    tcDBConf.loadFromMap(g_pconf->getDomainMap("/tars/db"));
+    _db.init(tcDBConf);
+}
 
 int WxUserinfoImp::getLoginWxUserinfo(const WmsPlatform::WxLoginUserinfoReq& sIn, WmsPlatform::WxLoginUserinfoRes& sOut, tars::TarsCurrentPtr current)
 {

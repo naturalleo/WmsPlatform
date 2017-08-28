@@ -1,9 +1,20 @@
 #include "FundsImp.h"
 #include "servant/Application.h"
+extern TC_Config * g_pconf;
+
 
 using namespace std;
 
 //////////////////////////////////////////////////////
+
+
+void FundsImp::loadconf()
+{
+    TC_DBConf tcDBConf;
+    tcDBConf.loadFromMap(g_pconf->getDomainMap("/tars/db"));
+    _db.init(tcDBConf);
+}
+
 void FundsImp::initialize()
 {
     //initialize servant here:
@@ -12,8 +23,7 @@ void FundsImp::initialize()
 	TLOGDEBUG("begin FundsImp initialize"<<endl);
     try
     {
-
-    	 _db.init();
+        loadconf();
         //string order = "";
     	//_db.generaterOrderID("hello",order);
     }

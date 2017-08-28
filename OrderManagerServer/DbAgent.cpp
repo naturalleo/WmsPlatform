@@ -24,6 +24,22 @@ int DbAgent::init()
 	 return 0;
 }
 
+int DbAgent::init(TC_DBConf conf)
+{
+  TLOGDEBUG("begin DbAgent init"<<endl);
+  try{
+        _mysqlReg.init(conf) ;
+
+     }catch(exception &ex)
+     {
+        TLOGDEBUG("exception "<< ex.what() << endl);
+        return -1;
+     }
+   TLOGDEBUG("DbAgent init ok"<<endl);
+   return 0;
+}
+
+
 uint64_t DbAgent::generaterID()
 {
 
