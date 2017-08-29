@@ -134,11 +134,13 @@ int WxUserinfoImp::getWxUserIsAgent(const WmsPlatform::WxUserisAgentReq& sIn, Wm
     try
     {
          int result = 0;
-         int iRet = _db.isUserAgent(sIn.userId, result) ;
+         int level = 0
+         int iRet = _db.isUserAgent(sIn.userId, result, level) ;
          if(iRet == 0) 
          {
             sOut.errorCode = 0 ;
-            sOut.isAgent = result;
+            sOut.isAgent = TC_Common::tostr(result);
+            sOut.level = TC_Common::tostr(level);
          }
          else
          {
@@ -208,7 +210,8 @@ int WxUserinfoImp::updateWxUserCards(const WmsPlatform::WxUserExchangeReq& sIn, 
         }
 
         int result = 0;
-        int iRet = _db.isUserAgent(sIn.userId, result) ;
+        int level = 0;
+        int iRet = _db.isUserAgent(sIn.userId, result, level) ;
         if(iRet == 0) 
         {
             sOut.errorCode = 0 ;

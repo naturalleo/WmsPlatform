@@ -262,7 +262,7 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
             current->setResponse(false);
             WxUserisAgentReq req;
             string res;
-            req.userId = "123";  
+            req.userId = getValue(_para,"userId"); 
 
             WmsPlatform::WxUserinfoPrxCallbackPtr cb = new WxUserinfoCallback(current);
             _WxUserinfoPrx->tars_set_timeout(3000)->async_getWxUserIsAgent(cb,req);        
