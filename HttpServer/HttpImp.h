@@ -436,7 +436,7 @@ public:
         {
             s = "{\"status\":1,\"errCode\":0,\"error\":\"\",\"data\":"
                     "{"
-                    "\"orderCode\" : \""  + _data +  "\","
+                    "\"orderCode\" : \""  + _data +  "\"" 
                     "}"
                 "}";
         }
