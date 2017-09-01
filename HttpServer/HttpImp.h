@@ -280,7 +280,22 @@ public:
         TLOGDEBUG("callback_updateWxUserCards : " << ret  << endl);
         TC_HttpResponse rsp;
         vector<char> buffer;
-        string s="hello world";
+        string s;
+        if (ret == 0 )
+        {
+            s = "{\"status\":1,\"errCode\":0,\"error\":\"\",\"data\":"
+                    "{"
+                    "\"userId\" : \"" + sOut.userId + "\","   
+                    "\"totalcard\" : \"" + sOut.totalcard + "\","                         
+                    "\"currentcard\" : \""  + sOut.currentcard +  "\"" 
+                    "}"
+                "}";
+        }
+        else
+        {
+            s = "{\"status\":-1,\"errCode\":-1,\"error\":\"ret -1\",\"data\":[]}";
+        }
+
         rsp.setResponse(s.c_str(),s.size());
         rsp.encode(buffer);     
 
