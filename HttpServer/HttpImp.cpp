@@ -212,6 +212,13 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
                 WmsPlatform::FundsPrxCallbackPtr cb = new FundsCallback(current, data);
                 _FundsPrx->tars_set_timeout(3000)->async_modifyFunds(cb,req);  
             }    
+            else
+            {
+              TC_HttpResponse rsp;
+                string s = "{\"status\":1,\"errCode\":0}";
+                rsp.setResponse(s.c_str(),s.size());
+                rsp.encode(buffer);                
+            }
         }
         else if (request.getRequestUrl() == "/user/getFunds" && isParamExist(_para, "userId") && isParamExist(_para, "appId") && isParamExist(_para, "appCode") )
         {
