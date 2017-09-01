@@ -133,19 +133,17 @@ int WxUserinfoImp::getWxUserIsAgent(const WmsPlatform::WxUserisAgentReq& sIn, Wm
     TLOGDEBUG("getWxUserIsAgent : " << sIn.userId << endl);
     try
     {
-         int result = 0;
-         int level = 0;
-         int iRet = _db.isUserAgent(sIn.userId, result, level) ;
+         string agentType = "0";
+         int iRet = _db.isUserAgent(sIn.userId, agentType) ;
          if(iRet == 0) 
          {
             sOut.errorCode = 0 ;
-            sOut.isAgent = TC_Common::tostr(result);
-            sOut.level = TC_Common::tostr(level);
+            sOut.userId = sIn.userId;
+            sOut.agentType = agentType;
          }
          else
          {
              sOut.errorCode = -1 ;
-
             TLOGERROR("WxUserinfoImp getWxUserIsAgent iRet != 0: " << iRet);
             return -1;
          }
@@ -209,13 +207,12 @@ int WxUserinfoImp::updateWxUserCards(const WmsPlatform::WxUserExchangeReq& sIn, 
             return -1;
         }
 
-        int result = 0;
-        int level = 0;
-        int iRet = _db.isUserAgent(sIn.userId, result, level) ;
+        string agentType = "0";
+        int iRet = _db.isUserAgent(sIn.userId, agentType) ;
         if(iRet == 0) 
         {
             sOut.errorCode = 0 ;
-            if (result == 0) // 表明是代理身份
+            if (agentType != "0") // 表明是代理身份
             {
                 FundsUserModifyOtherReq req;
                 req.userId = sIn.userId;

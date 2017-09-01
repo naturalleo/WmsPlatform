@@ -40,8 +40,8 @@ struct WxUserisAgentReq
 struct WxUserisAgentRes
 {
     0 require  int errorCode;
-    1 require  string isAgent;
-    2 require  string level;
+    1 require  string userId;
+    2 require  string agentType;
 };
 
 

@@ -277,7 +277,6 @@ public:
 
     virtual void callback_updateWxUserCards(tars::Int32 ret,  const WmsPlatform::WxUserExchangeRes& sOut)
     {
-        //HttpImp::async_response_doRequest(_current, ret, sOut);
         TLOGDEBUG("callback_updateWxUserCards : " << ret  << endl);
         TC_HttpResponse rsp;
         vector<char> buffer;
@@ -287,8 +286,6 @@ public:
 
         _current->sendResponse(&buffer.at(0),buffer.size());
         TLOGDEBUG("callback_updateWxUserCards : " << s << s.size() << endl);
-       // _current->sendResponse(tars::TARSSERVERSUCCESS, buffer);    
-        //HttpImp::async_response_doRequest(_current, ret, buffer);
     }
     virtual void callback_updateWxUserCards_exception(tars::Int32 ret)
     { 
@@ -299,18 +296,29 @@ public:
 
     virtual void callback_getWxUserIsAgent(tars::Int32 ret,  const WmsPlatform::WxUserisAgentRes& sOut)
     {
-        //HttpImp::async_response_doRequest(_current, ret, sOut);
         TLOGDEBUG("callback_getWxUserIsAgent : " << ret << endl);
         TC_HttpResponse rsp;
         vector<char> buffer;
-        string s="hello world";
+        string s;
+        if (ret == 0 )
+        {
+            s = "{\"status\":1,\"errCode\":0,\"error\":\"\",\"data\":"
+                    "{"
+                    "\"userId\" : \"" + sOut.userId + "\","       
+                    "\"agentType\" : \""  + sOut.agentType +  "\"" 
+                    "}"
+                "}";
+        }
+        else
+        {
+            s = "{\"status\":-1,\"errCode\":-1,\"error\":\"ret -1\",\"data\":[]}";
+        }
+
         rsp.setResponse(s.c_str(),s.size());
         rsp.encode(buffer);     
 
         _current->sendResponse(&buffer.at(0),buffer.size());
         TLOGDEBUG("callback_getWxUserIsAgent : " << s << s.size() << endl);
-       // _current->sendResponse(tars::TARSSERVERSUCCESS, buffer);    
-        //HttpImp::async_response_doRequest(_current, ret, buffer);
     }
     virtual void callback_getWxUserIsAgent_exception(tars::Int32 ret)
     { 

@@ -214,23 +214,20 @@ int DbAgent::getDbUserinfo(const WmsPlatform::WxUserinfoReq &sIn, WxUserinfoRes 
 }
 
 
-int DbAgent::isUserAgent(const std::string userId ,int &result, int &level)
+int DbAgent::isUserAgent(const std::string userId ,string &agentType)
 {
     try
     {
-        string sSql = "select `userId`,`userType` from `t_user` where userId = " + userId + " limit 0,1";
+        string sSql = "select `userId`,`agentType` from `t_user` where userId = " + userId + " limit 0,1";
 
         tars::TC_Mysql::MysqlData item = _mysqlReg.queryRecord(sSql);
         if (item.size() == 0)
         {
-            result = -1;
-            level = 0;
             return 0;
         }
         else
         {
-            level = TC_Common::strto<int>(item[0]["userType"]);
-            result = 0;
+            agentType = item[0]["agentType"];
             return 0;
         }
 
