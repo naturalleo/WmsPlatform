@@ -214,7 +214,8 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
             }    
             else
             {
-              TC_HttpResponse rsp;
+                current->setResponse(true);
+                TC_HttpResponse rsp;
                 string s = "{\"status\":1,\"errCode\":0}";
                 rsp.setResponse(s.c_str(),s.size());
                 rsp.encode(buffer);                
