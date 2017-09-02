@@ -286,8 +286,8 @@ public:
             s = "{\"status\":1,\"errCode\":0,\"error\":\"\",\"data\":"
                     "{"
                     "\"userId\" : \"" + sOut.userId + "\","   
-                    "\"totalcard\" : \"" + sOut.totalcard + "\","                         
-                    "\"currentcard\" : \""  + sOut.currentcard +  "\"" 
+                    "\"totalGameCard\" : \"" + sOut.totalcard + "\","                         
+                    "\"surplusGameCard\" : \""  + sOut.currentcard +  "\"" 
                     "}"
                 "}";
         }
