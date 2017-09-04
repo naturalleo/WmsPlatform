@@ -203,11 +203,16 @@ int WxUserinfoImp::updateWxUserCards(const WmsPlatform::WxUserExchangeReq& sIn, 
         if (_OrderPrx->checkUserToken(req, ip) != 0)
         {
             sOut.errorCode = -1;
-            TLOGERROR("房卡转让：玩家token校验失败，不能转让房卡!");
+            TLOGERROR("房卡转让：玩家token校验失败，不能转让房卡! userId="<< sIn.userId << endl);
             //暂时屏蔽token校验
             // return -1;
         }
-
+        if (sIn.userId == sIn.otherId)
+        {
+            sOut.errorCode = -6 ;
+            TLOGERROR("房卡转让：不能转让给自己! userId="<< sIn.userId << endl);
+            return 0;
+        }
         string agentType = "0";
         int iRet = _db.isUserAgent(sIn.userId, agentType) ;
         if(iRet == 0) 
@@ -223,7 +228,8 @@ int WxUserinfoImp::updateWxUserCards(const WmsPlatform::WxUserExchangeReq& sIn, 
                 req.appCode = sIn.appCode;
                 
                 FundsUserModifyOtherRes res;
-                if (_FundsPrx->modifyFundsOther(req, res) == 0)
+                int ret = _FundsPrx->modifyFundsOther(req, res);
+                if (ret == 0)
                 {
                     sOut.errorCode = 0;
                     sOut.userId = res.userId;
@@ -232,13 +238,13 @@ int WxUserinfoImp::updateWxUserCards(const WmsPlatform::WxUserExchangeReq& sIn, 
                 }
                 else
                 {
-                    sOut.errorCode = -1;
+                    sOut.errorCode = ret;
                 }
             }
             else
             {
-                sOut.errorCode = -1 ;
-                TLOGERROR("房卡转让：玩家不是代理，不能转让房卡!");
+                sOut.errorCode = -5 ;
+                TLOGERROR("房卡转让：玩家不是代理，不能转让房卡!"<< sIn.userId << endl);
             }
             return 0;
         }

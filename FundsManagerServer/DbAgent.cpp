@@ -106,6 +106,41 @@ int DbAgent::insertFunds(const WmsPlatform::FundsNewUserReq& sIn, WmsPlatform::F
     }    
 }
 
+int DbAgent::getOtherFunds(const WmsPlatform::FundsUserInfoReq& sIn, WmsPlatform::FundsUserInfoRes& sOut)
+{
+    try
+    {
+
+      string sSql = "select `userId`, `surplusGameCard`,`totalUseGameCard` from `t_user_funds` where userId = '" + sIn.userId + "' and appId = '" + sIn.appId + "and appCode = " + sIn.appCode +  "' limit 0,1";
+
+      tars::TC_Mysql::MysqlData item = _mysqlReg.queryRecord(sSql);
+
+
+      if (item.size() == 0)
+      {
+        return -1;
+      }
+      else
+      {
+        sOut.userId      = item[0]["userId"];
+        sOut.totalcard   = item[0]["totalUseGameCard"];
+        sOut.currentcard = item[0]["surplusGameCard"];
+
+        return 0;
+      }   
+
+    }
+    catch (TC_Mysql_Exception& ex)
+    {
+        TLOGERROR(__FUNCTION__ << " exception: " << ex.what() << endl);
+        return -1;
+    }
+    catch (exception& ex)
+    {
+        TLOGERROR(__FUNCTION__ << " exception: " << ex.what() << endl);
+        return -1;
+    }
+}
 
 
 int DbAgent::getFunds(const WmsPlatform::FundsUserInfoReq& sIn, WmsPlatform::FundsUserInfoRes& sOut)
@@ -235,7 +270,7 @@ int DbAgent::modifyFundsOther(const WmsPlatform::FundsUserModifyOtherReq& sIn, W
         req1.appId   = sIn.appId;
         req1.appCode = sIn.appCode;
         FundsUserInfoRes res1;  
-        if (getFunds(req1, res1) != 0)
+        if (getOtherFunds(req1, res1) != 0)
         {
             TLOGDEBUG("转让房卡：找不到被转让的玩家/该玩家不是这省份的游戏，otherId=" << sIn.otherId <<" appId="<< sIn.appId << " appCode="<< sIn.appCode <<endl); 
             return -4;

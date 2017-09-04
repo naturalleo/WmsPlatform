@@ -283,13 +283,30 @@ public:
         string s;
         if (ret == 0 )
         {
-            s = "{\"status\":1,\"errCode\":0,\"error\":\"\",\"data\":"
+            if (sOut.errorCode == 0){
+                s = "{\"status\":1,\"errCode\":0,\"error\":\"\",\"data\":"
                     "{"
                     "\"userId\" : \"" + sOut.userId + "\","   
                     "\"totalGameCard\" : \"" + sOut.totalcard + "\","                         
                     "\"surplusGameCard\" : \""  + sOut.currentcard +  "\"" 
                     "}"
-                "}";
+                "}";              
+            }
+            else{
+                if (sOut.errorCode == -2){
+                    s = "{\"status\":-1,\"errCode\":-2,\"error\":\"非法操作，玩家ID异常!\",\"data\":[]}";
+                }else if (sOut.errorCode == -3){
+                    s = "{\"status\":-1,\"errCode\":-3,\"error\":\"房卡不足，请检查房卡数!\",\"data\":[]}";
+                }else if(sOut.errorCode == -4){
+                    s = "{\"status\":-1,\"errCode\":-4,\"error\":\"赠送ID输入错误，请重新输入!\",\"data\":[]}";
+                }else if(sOut.errorCode == -5){
+                    s = "{\"status\":-1,\"errCode\":-5,\"error\":\"只有代理才能转让房卡，请联系官方客服!\",\"data\":[]}";
+                }else if(sOut.errorCode == -6){
+                    s = "{\"status\":-1,\"errCode\":-6,\"error\":\"不能转让给自己，请重新输入赠送ID!\",\"data\":[]}";
+                }else{
+                    s = "{\"status\":-1,\"errCode\":-1,\"error\":\"ret -1\",\"data\":[]}";
+                }              
+            }
         }
         else
         {
