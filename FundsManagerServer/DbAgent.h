@@ -35,6 +35,8 @@ public:
 
     int modifyFunds(const WmsPlatform::FundsUserModifyReq& sIn, WmsPlatform::FundsUserInfoRes& sOut);
     
+    int insertExchangeLog(const WmsPlatform::FundsUserModifyOtherReq& sIn);
+
     int modifyFundsOther(const WmsPlatform::FundsUserModifyOtherReq& sIn, WmsPlatform::FundsUserModifyOtherRes& sOut);
 private:
     //mysql连接对象

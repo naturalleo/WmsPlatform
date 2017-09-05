@@ -295,6 +295,9 @@ int DbAgent::modifyFundsOther(const WmsPlatform::FundsUserModifyOtherReq& sIn, W
         int currentCards = TC_Common::strto<int>(sIn.cards) - TC_Common::strto<int>(res.currentcard);
         sOut.cards = TC_Common::tostr(currentCards);
         
+
+        insertExchangeLog(sIn);
+
         return 0;
     }
     catch (TC_Mysql_Exception& ex)
@@ -309,3 +312,33 @@ int DbAgent::modifyFundsOther(const WmsPlatform::FundsUserModifyOtherReq& sIn, W
     }
 }
 
+
+int DbAgent::insertExchangeLog(const WmsPlatform::FundsUserModifyOtherReq& sIn) 
+{
+    try
+    {
+      string sSql = "insert into t_user_exchange_log(`userId`,`otherId`,`cards`, `appId`, `appCode`, `createTime`)"
+                      "values"
+                      "( '" + sIn.userId + "',"
+                      " "   + sIn.otherId + " ,"  
+                      " "   + sIn.cards + ","
+                      " " + sIn.appId + " ,"
+                      "'" + sIn.appCode + "',"
+                      " " + TC_Common::now2str() + ")";
+
+      _mysqlReg.execute(sSql);
+      // TLOGDEBUG(__FUNCTION__ << pthread_self() <<" affected: " << _mysqlReg.getAffectedRows() << endl);
+      return 0;
+
+    }
+    catch (TC_Mysql_Exception& ex)
+    {
+        TLOGERROR(__FUNCTION__ << " exception: " << ex.what() << endl);
+        return -1;
+    }
+    catch (exception& ex)
+    {
+        TLOGERROR(__FUNCTION__ << " exception: " << ex.what() << endl);
+        return -1;
+    }    
+}
