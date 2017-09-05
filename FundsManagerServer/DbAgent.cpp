@@ -204,8 +204,8 @@ int DbAgent::modifyFunds(const WmsPlatform::FundsUserModifyReq& sIn, WmsPlatform
       if (sIn.opcode == "add")
       {
         sSql = "update  t_user_funds " 
-                        "set surplusGameCard = surplusGameCard  + "   + sIn.cards + ","
-                        "totalUseGameCard = totalUseGameCard + " + sIn.cards + " "
+                        "set surplusGameCard = surplusGameCard  - "   + sIn.cards + ","
+                        "totalUseGameCard = totalUseGameCard - " + sIn.cards + " "
                         " where userId = '" + sIn.userId + "' and appId = " + sIn.appId + " and appCode = \'" + sIn.appCode + "\'";
       }
       else if (sIn.opcode == "sub")
@@ -225,8 +225,9 @@ int DbAgent::modifyFunds(const WmsPlatform::FundsUserModifyReq& sIn, WmsPlatform
         return -1;
 
       TLOGDEBUG("modifyFunds sql: " << sSql << endl);
-
       _mysqlReg.execute(sSql);
+
+      insertUseCardLog(sIn);
 
       TLOGDEBUG(__FUNCTION__ << pthread_self() <<" affected: " << _mysqlReg.getAffectedRows() << endl);
 
@@ -312,6 +313,33 @@ int DbAgent::modifyFundsOther(const WmsPlatform::FundsUserModifyOtherReq& sIn, W
     }
 }
 
+int DbAgent::insertUseCardLog(const WmsPlatform::FundsUserModifyReq& sIn) 
+{
+    try
+    {
+      string sSql = "insert into t_user_card_log(`userId`, `cards`, `appId`, `appCode`, `createTime`)"
+                      "values"
+                      "( '" + sIn.userId + "'," 
+                      " "   + sIn.cards + ","
+                      " " + sIn.appId + " ,"
+                      "'" + sIn.appCode + "',"
+                      " " + TC_Common::now2str() + ")";
+
+      _mysqlReg.execute(sSql);
+      return 0;
+
+    }
+    catch (TC_Mysql_Exception& ex)
+    {
+        TLOGERROR(__FUNCTION__ << " exception: " << ex.what() << endl);
+        return -1;
+    }
+    catch (exception& ex)
+    {
+        TLOGERROR(__FUNCTION__ << " exception: " << ex.what() << endl);
+        return -1;
+    }    
+}
 
 int DbAgent::insertExchangeLog(const WmsPlatform::FundsUserModifyOtherReq& sIn) 
 {
