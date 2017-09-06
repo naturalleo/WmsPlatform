@@ -194,15 +194,12 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
             multimap<string, string> __para;
 
             parseNormal(__para, data);
-
-
+            
             FundsUserModifyReq req;
             req.userId = getValue(__para,"userId");
             req.appId = getValue(__para,"appId");
             req.appCode = getValue(__para,"appCode");
             req.cards = getValue(__para,"useNum");
-
-            TLOGDEBUG("updateOrder 2222222222222222222222222" << TC_Common::tostr(__para) << endl);
 
             if (getValue(_para,"status") == "used")
             {
