@@ -258,7 +258,7 @@ int DbAgent::modifyFundsOther(const WmsPlatform::FundsUserModifyOtherReq& sIn, W
 
         if (TC_Common::strto<int>(sIn.cards) <= 0)
         {
-           TLOGDEBUG("转让房卡：转让房卡数出错，userId=" << sIn.userId <<" appId="<< sIn.appId << " appCode="<< sIn.appCode <<<" cards="<< sIn.cards <<endl); 
+           TLOGDEBUG("转让房卡：转让房卡数出错，userId=" << sIn.userId <<" appId="<< sIn.appId << " appCode="<< sIn.appCode <<" cards="<< sIn.cards <<endl); 
           return -7;
         }
 
