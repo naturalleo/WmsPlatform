@@ -249,7 +249,6 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
 
             TLOGDEBUG("thirdPartyLogin domain : " << current->getIp() << endl);
 
-            req.openId       = "wxf0862d65306b025a";
             req.accessToken  = getValue(_para,"accessToken"); 
             req.refreshToken = getValue(_para,"refreshToken"); 
             req.wechatAppId  = getValue(_para,"wechatAppId"); 
@@ -257,7 +256,23 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
             req.ip           = current->getIp();
             req.appId        = getValue(_para,"appId"); 
             req.clientFrom   = getValue(_para,"loginFrom");
-             
+            if (req.appCode == "hnmj") //湖南麻将
+            {
+                req.openId       = "wxf0862d65306b025a";
+            } 
+            else if(req.appCode == "lnmj") //岭南麻将
+            {
+                req.openId       = "wxb6823d36e6268dc8";
+            }
+            else
+            {
+                current->setResponse(true);
+                TC_HttpResponse rsp;
+                string s = "{\"status\":1,\"errCode\":10400,\"error\":\"授权出错，请校验appId\",\"data\":[]}";
+                rsp.setResponse(s.c_str(),s.size());
+                rsp.encode(buffer);
+                return 0;                  
+            }
             WmsPlatform::WxoauthPrxCallbackPtr cb = new WxoauthCallback(current);
             _wxoauthPrx->tars_set_timeout(3000)->async_wxchatLogin(cb,req);              
 
@@ -366,8 +381,6 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
             rsp.setResponse(s.c_str(),s.size());
             rsp.encode(buffer);           
         }
-
-
     }
     catch(exception &ex)
     {

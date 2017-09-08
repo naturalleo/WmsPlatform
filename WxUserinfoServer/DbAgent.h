@@ -26,7 +26,7 @@ public:
 
     int init(TC_DBConf conf);
 
-  	int selectUserinfo(const std::string unionId, const std::string appGroupId, WxUserinfoRes &sOut) ;
+  	int selectUserinfo(const std::string unionId, const std::string appGroupId, const std::string appCode, WxUserinfoRes &sOut) ;
 
     int selectUserinfo(const std::string userId, WxUserinfoRes &sOut) ;
 

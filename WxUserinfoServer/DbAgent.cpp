@@ -39,11 +39,11 @@ int DbAgent::init(TC_DBConf conf)
 }
 
 
-int DbAgent::selectUserinfo(const std::string unionId, const std::string appGroupId, WxUserinfoRes &sOut) 
+int DbAgent::selectUserinfo(const std::string unionId, const std::string appGroupId, const std::string appCode, WxUserinfoRes &sOut) 
 {
     try
     {
-        string sSql = "select `userId`, `nickName`, `avatar`, `gender`, `lastLoginIp` from `t_user` where unionId = '" + unionId + "' and appGroupId = '" + appGroupId + "' limit 0,1";
+        string sSql = "select `userId`, `nickName`, `avatar`, `gender`, `lastLoginIp` from `t_user` where unionId = '" + unionId + "' and appGroupId = '" + appGroupId + "' and appCode = '" + appCode + "' limit 0,1";
         tars::TC_Mysql::MysqlData item = _mysqlReg.queryRecord(sSql);
         if (item.size() == 0)
         {
@@ -154,7 +154,7 @@ int DbAgent::getLoginDbUserinfo(const WmsPlatform::WxLoginUserinfoReq &sIn, stri
     try
     {   
         WxUserinfoRes res;
-        int ret = selectUserinfo(sIn.unionId , sIn.appGroupId, res);
+        int ret = selectUserinfo(sIn.unionId , sIn.appGroupId, sIn.appCode, res);
         if ( ret == 0)
         {
             if (insertNewUser(sIn, sOut) == 0)
