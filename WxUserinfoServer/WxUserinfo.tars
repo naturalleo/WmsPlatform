@@ -82,6 +82,7 @@ struct WxUserinfoRes
     2 require  string nickname;
     3 require  string sex;
     4 require  string ip;
+    5 require  string status;
 };
 
 

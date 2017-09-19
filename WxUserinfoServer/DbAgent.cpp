@@ -43,7 +43,7 @@ int DbAgent::selectUserinfo(const std::string unionId, const std::string appGrou
 {
     try
     {
-        string sSql = "select `userId`, `nickName`, `avatar`, `gender`, `lastLoginIp` from `t_user` where unionId = '" + unionId + "' and appGroupId = '" + appGroupId + "' and appCode = '" + appCode + "' limit 0,1";
+        string sSql = "select `userId`, `nickName`, `avatar`, `gender`, `lastLoginIp`, `status` from `t_user` where unionId = '" + unionId + "' and appGroupId = '" + appGroupId + "' and appCode = '" + appCode + "' limit 0,1";
         tars::TC_Mysql::MysqlData item = _mysqlReg.queryRecord(sSql);
         if (item.size() == 0)
         {
@@ -56,6 +56,7 @@ int DbAgent::selectUserinfo(const std::string unionId, const std::string appGrou
             sOut.nickname   = item[0]["nickName"];
             sOut.sex        = item[0]["gender"];
             sOut.ip         = item[0]["lastLoginIp"];
+            sOut.status     = item[0]["status"];
             TLOGDEBUG("selectUserinfo sOut.userId  : " <<  sOut.userId  <<endl);
             TLOGDEBUG("selectUserinfo sOut.headimgurl  : "<<  sOut.headimgurl  <<endl);
             return 1;
@@ -169,6 +170,12 @@ int DbAgent::getLoginDbUserinfo(const WmsPlatform::WxLoginUserinfoReq &sIn, stri
             return -1 ;
         }
         TLOGDEBUG("getLoginDbUserinfo uid : "<<  res.userId <<endl);
+        if(res.status == "0") //黑名单
+        {
+            TLOGDEBUG("玩家登录，黑名单uid : "<<  res.userId << endl);
+            return -1;
+        }
+
         sOut = res.userId ;
         return 0;
     }
