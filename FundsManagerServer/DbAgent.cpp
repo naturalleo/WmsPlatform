@@ -77,8 +77,8 @@ int DbAgent::insertFunds(const WmsPlatform::FundsNewUserReq& sIn, WmsPlatform::F
       string sSql = "insert into t_user_funds(`userId`,`surplusGameCard`,`totalUseGameCard`, `addTime`, `updateTime`, `appId`, `appCode`)"
                       "values"
                       "( '" + sIn.userId + "',"
-                      " "   + TC_Common::tostr(10) + ","
-                      " "   + TC_Common::tostr(10) + ","
+                      " "   + TC_Common::tostr(3) + ","
+                      " "   + TC_Common::tostr(3) + ","
                       " "   + TC_Common::tostr(TC_Common::now2ms()/1000) + ","
                       " "   + TC_Common::tostr(TC_Common::now2ms()/1000) + ","
                       "" + sIn.appId + " ,"
@@ -87,8 +87,8 @@ int DbAgent::insertFunds(const WmsPlatform::FundsNewUserReq& sIn, WmsPlatform::F
       _mysqlReg.execute(sSql);
 
       sOut.userId = sIn.userId;
-      sOut.totalcard = "10";
-      sOut.currentcard = "10";
+      sOut.totalcard = "3";
+      sOut.currentcard = "3";
 
       TLOGDEBUG(__FUNCTION__ << pthread_self() <<" affected: " << _mysqlReg.getAffectedRows() << endl);
       return 0;
@@ -185,7 +185,7 @@ int DbAgent::getFunds(const WmsPlatform::FundsUserInfoReq& sIn, WmsPlatform::Fun
         return -1;
     }
 }
-
+//returnGameCard：消耗总房卡数
 int DbAgent::modifyFunds(const WmsPlatform::FundsUserModifyReq& sIn, WmsPlatform::FundsUserInfoRes& sOut)
 {
     try
@@ -212,7 +212,8 @@ int DbAgent::modifyFunds(const WmsPlatform::FundsUserModifyReq& sIn, WmsPlatform
       {
         sSql = "update  t_user_funds " 
                         "set surplusGameCard = surplusGameCard -"  + sIn.cards + ","
-                        "totalUseGameCard = totalUseGameCard -" + sIn.cards + " "
+                        "totalUseGameCard = totalUseGameCard -" + sIn.cards + ","
+                        "returnGameCard = returnGameCard +" + sIn.cards + " "
                         " where userId = '" + sIn.userId + "' and appId = " + sIn.appId + " and appCode = \'" + sIn.appCode + "\'" ;
 
         if (TC_Common::strto<int>(sOut.currentcard) - TC_Common::strto<int>(sIn.cards) < 0)
@@ -244,7 +245,8 @@ int DbAgent::modifyFunds(const WmsPlatform::FundsUserModifyReq& sIn, WmsPlatform
         return -1;
     }
 }
-
+//totalGameCard：总房卡数
+//totalRechargeGameCard：总充值房卡数
 int DbAgent::modifyFundsOther(const WmsPlatform::FundsUserModifyOtherReq& sIn, WmsPlatform::FundsUserModifyOtherRes& sOut)
 {
     try
@@ -287,7 +289,8 @@ int DbAgent::modifyFundsOther(const WmsPlatform::FundsUserModifyOtherReq& sIn, W
         string sSql1 = "";
         sSql1 = "update  t_user_funds " 
                         "set surplusGameCard = surplusGameCard  - "   + sIn.cards + ","
-                        "totalUseGameCard = totalUseGameCard - " + sIn.cards + " "
+                        "totalUseGameCard = totalUseGameCard - " + sIn.cards + ","
+                        "returnGameCard = returnGameCard +" + sIn.cards + " "
                         " where userId = '" + sIn.userId + "' and appId = " + sIn.appId + " and appCode = \'" + sIn.appCode + "\'";
         _mysqlReg.execute(sSql1);
 
@@ -295,7 +298,9 @@ int DbAgent::modifyFundsOther(const WmsPlatform::FundsUserModifyOtherReq& sIn, W
         string sSql2 = "";
         sSql2 = "update  t_user_funds " 
                         "set surplusGameCard = surplusGameCard  + "   + sIn.cards + ","
-                        "totalUseGameCard = totalUseGameCard + " + sIn.cards + " "
+                        "totalUseGameCard = totalUseGameCard + " + sIn.cards + ","
+                        "totalGameCard = totalGameCard + " + sIn.cards + ","
+                        "totalRechargeGameCard = totalRechargeGameCard + " + sIn.cards + " "
                         " where userId = '" + sIn.otherId + "' and appId = " + sIn.appId + " and appCode = \'" + sIn.appCode + "\'";
         _mysqlReg.execute(sSql2);
 
