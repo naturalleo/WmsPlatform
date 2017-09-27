@@ -26,6 +26,8 @@ public:
 
     int init(TC_DBConf conf);
 
+    int updateLoginTime(const std::string userId);
+
   	int selectUserinfo(const std::string unionId, const std::string appGroupId, const std::string appCode, WxUserinfoRes &sOut) ;
 
     int selectUserinfo(const std::string userId, WxUserinfoRes &sOut) ;

@@ -38,6 +38,32 @@ int DbAgent::init(TC_DBConf conf)
    return 0;
 }
 
+int DbAgent::updateLoginTime(const std::string userId)
+{
+    try
+    {
+        string sSql;
+        sSql = "update t_user set lastLoginTime = " + TC_Common::tostr(TC_Common::now2ms()/1000) + " "
+                        "where userId = " + userId + "";
+
+        TLOGDEBUG("update loginTime sql: " << sSql << endl);
+        _mysqlReg.execute(sSql);
+
+        TLOGDEBUG(__FUNCTION__ << pthread_self() <<" affected: " << _mysqlReg.getAffectedRows() << endl);
+        return 0 ;
+    }
+    catch (TC_Mysql_Exception& ex)
+    {
+        TLOGERROR(__FUNCTION__ << " exception: " << ex.what() << endl);
+        return -1;
+    }
+    catch (exception& ex)
+    {
+        TLOGERROR(__FUNCTION__ << " exception: " << ex.what() << endl);
+        return -1;
+    }
+}
+
 
 int DbAgent::selectUserinfo(const std::string unionId, const std::string appGroupId, const std::string appCode, WxUserinfoRes &sOut) 
 {
@@ -175,7 +201,7 @@ int DbAgent::getLoginDbUserinfo(const WmsPlatform::WxLoginUserinfoReq &sIn, stri
             TLOGDEBUG("玩家登录，黑名单uid : "<<  res.userId << endl);
             return -1;
         }
-
+        updateLoginTime(res.userId);
         sOut = res.userId ;
         return 0;
     }
