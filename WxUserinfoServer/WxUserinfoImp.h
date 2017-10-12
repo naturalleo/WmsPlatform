@@ -44,6 +44,8 @@ public:
     virtual int getWxUserIsAgent(const WmsPlatform::WxUserisAgentReq& sIn, WmsPlatform::WxUserisAgentRes& sOut, tars::TarsCurrentPtr current);
 
     virtual int updateWxUserCards(const WmsPlatform::WxUserExchangeReq& sIn, WmsPlatform::WxUserExchangeRes& sOut, tars::TarsCurrentPtr current);
+
+    virtual int setActivationCode(const WmsPlatform::WxUserSetActivationCodeReq& sIn, WmsPlatform::WxUserSetActivationCodeRes& sOut, tars::TarsCurrentPtr current);
 protected:
     DbAgent _db;
 

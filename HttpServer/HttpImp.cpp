@@ -374,6 +374,19 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
             WmsPlatform::WxUserinfoPrxCallbackPtr cb = new WxUserinfoCallback(current);
             _WxUserinfoPrx->tars_set_timeout(3000)->async_updateWxUserCards(cb,req);        
         }
+        else if (request.getRequestUrl() == "/GameService/setActivationCode")
+        {
+            current->setResponse(false);
+            WxUserSetActivationCodeReq req;
+
+            req.userId = getValue(_para,"userId");  
+            req.appId = getValue(_para,"appId");
+            req.appCode = getValue(_para,"appCode"); 
+            req.token = getValue(_para,"token");   
+            req.activationCode = getValue(_para,"activationCode"); 
+            WmsPlatform::WxUserinfoPrxCallbackPtr cb = new WxUserinfoCallback(current);
+            _WxUserinfoPrx->tars_set_timeout(3000)->async_setActivationCode(cb,req);   
+        }
         else
         {
             TC_HttpResponse rsp;

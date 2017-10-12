@@ -41,6 +41,7 @@ public:
      */
     virtual int test(tars::TarsCurrentPtr current) { return 0;};
 
+    // int testHttps(const WmsPlatform::WxoauthReq& sIn);
 
     int getLoginUseInfo(const WxLoginUserinfoReq &req, WmsPlatform::WxoauthReq sIn,  WxLoginUserinfoRes & res);
 

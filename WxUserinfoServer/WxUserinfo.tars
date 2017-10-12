@@ -14,7 +14,9 @@ struct WxLoginUserinfoReq
     7 require  string appCode;  
     8 optional string ip;
     9 optional string clientFrom;
-    
+    10 optional string isRefreshToken;
+    11 optional string wechatAccessToken;
+    12 optional string wechatRefreshToken;
 };
 
 
@@ -28,7 +30,7 @@ struct WxLoginUserinfoRes
     5 require string totalcard;
     6 require string currentcard;
     7 require string token;
-
+    8 require string activationCode;
 };
 
 struct WxUserisAgentReq
@@ -83,9 +85,24 @@ struct WxUserinfoRes
     3 require  string sex;
     4 require  string ip;
     5 require  string status;
+    6 require  string activationCode;
 };
 
+struct WxUserSetActivationCodeReq
+{
+    0 require  string userId;
+    1 require  string appId;
+    2 require  string appCode;
+    3 require  string token;
+    4 require  string activationCode;    
+};
 
+struct WxUserSetActivationCodeRes
+{
+    0 require  int errorCode;
+    1 require  string userId;
+    2 require  string activationCode;  
+};
 
 interface WxUserinfo
 {
@@ -99,6 +116,7 @@ interface WxUserinfo
 
     int updateWxUserCards(WxUserExchangeReq req, out WxUserExchangeRes res);
 
+    int setActivationCode(WxUserSetActivationCodeReq req, out WxUserSetActivationCodeRes res);
 };
 
 }; 

@@ -36,9 +36,11 @@ public:
 
     int getDbUserinfo(const WmsPlatform::WxUserinfoReq &sIn, WxUserinfoRes &sOut);
 
-    int getLoginDbUserinfo(const WmsPlatform::WxLoginUserinfoReq &sIn, string &sOut);
-    
+    int getLoginDbUserinfo(const WmsPlatform::WxLoginUserinfoReq &sIn, string &sOut, string &sActivationCode);
+
     int isUserAgent(const std::string userId ,string &agentType);
+
+    int activationCodeSet(const std::string userId ,const std::string activationCode);
 
 private:
     //mysql连接对象

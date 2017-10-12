@@ -69,7 +69,7 @@ int DbAgent::selectUserinfo(const std::string unionId, const std::string appGrou
 {
     try
     {
-        string sSql = "select `userId`, `nickName`, `avatar`, `gender`, `lastLoginIp`, `status` from `t_user` where unionId = '" + unionId + "' and appGroupId = '" + appGroupId + "' and appCode = '" + appCode + "' limit 0,1";
+        string sSql = "select `userId`, `nickName`, `avatar`, `gender`, `lastLoginIp`, `status`, `activationCode` from `t_user` where unionId = '" + unionId + "' and appGroupId = '" + appGroupId + "' and appCode = '" + appCode + "' limit 0,1";
         tars::TC_Mysql::MysqlData item = _mysqlReg.queryRecord(sSql);
         if (item.size() == 0)
         {
@@ -83,6 +83,8 @@ int DbAgent::selectUserinfo(const std::string unionId, const std::string appGrou
             sOut.sex        = item[0]["gender"];
             sOut.ip         = item[0]["lastLoginIp"];
             sOut.status     = item[0]["status"];
+            sOut.activationCode = item[0]["activationCode"];
+
             TLOGDEBUG("selectUserinfo sOut.userId  : " <<  sOut.userId  <<endl);
             TLOGDEBUG("selectUserinfo sOut.headimgurl  : "<<  sOut.headimgurl  <<endl);
             return 1;
@@ -103,7 +105,7 @@ int DbAgent::selectUserinfo(const std::string userId, WxUserinfoRes &sOut)
 {
     try
     {
-        string sSql = "select `userId`, `nickName`, `avatar`, `gender`, `lastLoginIp` from `t_user` where userId = '" + userId + "' limit 0,1";
+        string sSql = "select `userId`, `nickName`, `avatar`, `gender`, `lastLoginIp`, `status`, `activationCode` from `t_user` where userId = '" + userId + "' limit 0,1";
 
         tars::TC_Mysql::MysqlData item = _mysqlReg.queryRecord(sSql);
         if (item.size() == 0)
@@ -118,7 +120,8 @@ int DbAgent::selectUserinfo(const std::string userId, WxUserinfoRes &sOut)
             sOut.nickname = item[0]["nickName"];
             sOut.sex = item[0]["gender"];
             sOut.ip = item[0]["lastLoginIp"];
-
+            sOut.status     = item[0]["status"];
+            sOut.activationCode = item[0]["activationCode"];
 
             return 1;
         }
@@ -176,7 +179,7 @@ int DbAgent::insertNewUser(const WmsPlatform::WxLoginUserinfoReq &in, std::strin
     }
 }
 
-int DbAgent::getLoginDbUserinfo(const WmsPlatform::WxLoginUserinfoReq &sIn, string &sOut )
+int DbAgent::getLoginDbUserinfo(const WmsPlatform::WxLoginUserinfoReq &sIn, string &sOut, string &sActivationCode)
 {
     try
     {   
@@ -186,6 +189,8 @@ int DbAgent::getLoginDbUserinfo(const WmsPlatform::WxLoginUserinfoReq &sIn, stri
         {
             if (insertNewUser(sIn, sOut) == 0)
             {
+                // 新用户直接返回
+                sActivationCode = "0";
                 TLOGDEBUG("getLoginDbUserinfo insertNewUser uid : "<<  sOut << endl);
                 return 1;
             }
@@ -203,6 +208,7 @@ int DbAgent::getLoginDbUserinfo(const WmsPlatform::WxLoginUserinfoReq &sIn, stri
         }
         updateLoginTime(res.userId);
         sOut = res.userId ;
+        sActivationCode = res.activationCode;
         return 0;
     }
     catch (TC_Mysql_Exception& ex)
@@ -276,4 +282,30 @@ int DbAgent::isUserAgent(const std::string userId ,string &agentType)
         TLOGERROR(__FUNCTION__ << " exception: " << ex.what() << endl);
         return -1;
     }  
+}
+
+int DbAgent::activationCodeSet(const std::string userId ,const std::string activationCode)
+{
+    try
+    {
+        string sSql;
+        sSql = "update t_user set activationCode = " + activationCode + " "
+                        "where userId = " + userId + "";
+
+        TLOGDEBUG("set activationCodeSet sql: " << sSql << endl);
+        _mysqlReg.execute(sSql);
+
+        TLOGDEBUG(__FUNCTION__ << pthread_self() <<" affected: " << _mysqlReg.getAffectedRows() << endl);
+        return 0 ;
+    }
+    catch (TC_Mysql_Exception& ex)
+    {
+        TLOGERROR(__FUNCTION__ << " exception: " << ex.what() << endl);
+        return -1;
+    }
+    catch (exception& ex)
+    {
+        TLOGERROR(__FUNCTION__ << " exception: " << ex.what() << endl);
+        return -1;
+    }
 }

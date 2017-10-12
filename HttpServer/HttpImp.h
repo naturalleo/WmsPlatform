@@ -239,6 +239,7 @@ public:
                     "\"avatar\" : \""  + sOut.headimgurl +  "\","
                     "\"totalGameCard\" : \""  + sOut.totalcard +  "\","
                     "\"surplusGameCard\" : \""  + sOut.currentcard +  "\","
+                    "\"activationCode\" : \""  + sOut.activationCode +  "\","
                     "\"isNew\" : "  + sOut.isNew +  " "
                     "}"
                 "}";
@@ -377,7 +378,8 @@ public:
                     "\"userId\" : \"" + sOut.userId + "\","
                     "\"nickName\" : \""  + sOut.nickname +  "\","
                     "\"gender\" : \""  + sOut.sex +  "\","
-                    "\"avatar\" : \""  + sOut.headimgurl +  "\","                   
+                    "\"avatar\" : \""  + sOut.headimgurl +  "\","  
+                    "\"activationCode\" : \""  + sOut.activationCode +  "\","                 
                     "\"ip\" : \""  + sOut.ip +  "\"" 
                     "}"
                 "}";
@@ -398,12 +400,56 @@ public:
         TLOGERROR("WxUserinfoCallback callback_getWxUserIsAgent_exception ret:" << ret << endl); 
         WmsPlatform::WxUserinfoRes res;
 
-
         WxUserinfo::async_response_getWxUserinfo(_current, ret, res);
     }
 
+    virtual void callback_setActivationCode(tars::Int32 ret,  const WmsPlatform::WxUserSetActivationCodeRes& sOut)
+    {
+        TLOGDEBUG("callback_setActivationCode : " << ret << endl);
+        TC_HttpResponse rsp;
+        vector<char> buffer;
+        string s;
+        if (ret == 0 )
+        {
+                if (sOut.errorCode == 0)
+                {
+                    s = "{\"status\":1,\"errCode\":0,\"error\":\"\",\"data\":"
+                            "{"
+                            "\"userId\" : \"" + sOut.userId + "\","       
+                            "\"activationCode\" : \""  + sOut.activationCode +  "\"" 
+                            "}"
+                        "}";        
+                }
+                else if (sOut.errorCode == -2)
+                {
+                    s = "{\"status\":-1,\"errCode\":-2,\"error\":\"激活码无效，请重新输入!\",\"data\":[]}";
+                }
+                else if(sOut.errorCode == -3)
+                {
+                     s = "{\"status\":-1,\"errCode\":-3,\"error\":\"激活码无效，请重新输入!\",\"data\":[]}";
+                }
+                else{
+                    s = "{\"status\":-1,\"errCode\":-1,\"error\":\"激活码无效，请重新输入!\",\"data\":[]}";
+                }  
+        }
+        else
+        {
+            s = "{\"status\":-1,\"errCode\":-1,\"error\":\"ret -1\",\"data\":[]}";
+        }
 
+        rsp.setResponse(s.c_str(),s.size());
+        rsp.encode(buffer);     
 
+        _current->sendResponse(&buffer.at(0),buffer.size());
+        TLOGDEBUG("callback_setActivationCode : " << s << s.size() << endl);
+    }
+    virtual void callback_setActivationCode_exception(tars::Int32 ret)
+    { 
+        TLOGERROR("WxUserinfoCallback callback_setActivationCode_exception ret:" << ret << endl); 
+        WmsPlatform::WxUserSetActivationCodeRes res;
+
+        WxUserinfo::async_response_setActivationCode(_current, ret, res);
+    }
 
 
 

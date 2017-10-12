@@ -48,7 +48,7 @@ int WxUserinfoImp::getLoginWxUserinfo(const WmsPlatform::WxLoginUserinfoReq& sIn
 	TLOGDEBUG("getLoginWxUserinfo : " << sIn.unionId << endl);
     try
     {
-    	int iRet = _db.getLoginDbUserinfo(sIn, sOut.userId);
+    	int iRet = _db.getLoginDbUserinfo(sIn, sOut.userId, sOut.activationCode);
         if (iRet == -1)
         {
             TLOGERROR("WxUserinfoImp getWxUserinfo iRet != 0: " << iRet);
@@ -84,7 +84,6 @@ int WxUserinfoImp::getLoginWxUserinfo(const WmsPlatform::WxLoginUserinfoReq& sIn
     	sOut.sex 		 =  sIn.sex ;
         sOut.totalcard   = res.totalcard;
         sOut.currentcard = res.currentcard;
- 
     }
     catch(exception &ex)
     {
@@ -218,7 +217,7 @@ int WxUserinfoImp::updateWxUserCards(const WmsPlatform::WxUserExchangeReq& sIn, 
         if(iRet == 0) 
         {
             sOut.errorCode = 0 ;
-            if (agentType != "0") // 表明是代理身份
+            if (agentType == "1" || agentType == "2" ) // 只有1级代理和2级代理才能转让房卡，3级代理（推广员）不能转让房卡，但可以作为激活码
             {
                 FundsUserModifyOtherReq req;
                 req.userId = sIn.userId;
@@ -273,4 +272,54 @@ string WxUserinfoImp::getLoginToken(string figure)
     token = tars::TC_MD5::md5str(tars::TC_MD5::md5str(WxUserinfoImp::_basekey1 + figure) + WxUserinfoImp::_basekey2) ;
 
     return token;
+}
+
+int WxUserinfoImp::setActivationCode(const WmsPlatform::WxUserSetActivationCodeReq& sIn, WmsPlatform::WxUserSetActivationCodeRes& sOut, tars::TarsCurrentPtr current)
+{
+    TLOGDEBUG("setActivationCode : " << sIn.userId << endl);
+    try
+    { 
+        string agentType = "0";
+        int iRet = _db.isUserAgent(sIn.activationCode, agentType);
+        if(iRet == 0) 
+        {
+            sOut.errorCode = 0 ;
+            if (agentType != "0") // 表明是代理身份
+            {
+                int ret = _db.activationCodeSet(sIn.userId,sIn.activationCode);
+                if (ret == 0)
+                {
+                    sOut.errorCode = 0;
+                    sOut.userId = sIn.userId;
+                    sOut.activationCode = sIn.activationCode;
+                }
+                else
+                {
+                    sOut.errorCode = -3 ;
+                    TLOGERROR("设置激活码：设置激活码失败，数据库语句操作错误 "<< sIn.userId << endl);
+                    TLOGERROR("WxUserinfoImp setActivationCode iRet != 0: " << iRet << endl);
+                    return -1;            
+                }
+            }
+            else
+            {
+                sOut.errorCode = -2 ;
+                TLOGERROR("设置激活码：填入的激活码不是代理!"<< sIn.activationCode << endl);
+            }
+            return 0;
+        }
+        else
+        {
+            sOut.errorCode = -1 ;
+            TLOGERROR("设置激活码：异常操作，在数据库中找不到该操作玩家: "<< sIn.userId << endl);
+            TLOGERROR("WxUserinfoImp setActivationCode iRet != 0: " << iRet << endl);
+            return -1;
+        }
+    }
+    catch(exception &ex)
+    {
+        cout << ex.what() << endl;
+        return -1;
+    } 
+    return 0 ;
 }
