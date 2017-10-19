@@ -42,7 +42,8 @@ public:
     virtual int modifyFundsOther(const WmsPlatform::FundsUserModifyOtherReq& sIn, WmsPlatform::FundsUserModifyOtherRes& sOut, tars::TarsCurrentPtr current);
 
     virtual int checkFunds(const WmsPlatform::FundsCheckReq& req, tars::TarsCurrentPtr current);
-        
+     
+    virtual int setWinnerLog(const WmsPlatform::SetWinnerReq& sIn, tars::TarsCurrentPtr current); 
 protected:
     void loadconf();
     

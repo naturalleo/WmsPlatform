@@ -27,8 +27,6 @@ struct FundsUserInfoRes
 
 };
 
-
-
 struct FundsUserModifyReq
 {
     0 require  string userId;
@@ -60,6 +58,17 @@ struct FundsCheckReq
     3 require  string cards ;     
 };
 
+struct SetWinnerReq
+{
+    0 require  string userId;
+    1 require  string nickName;
+    2 require  string appId;  
+    3 require  string appCode; 
+    4 require  string point;
+    5 require  string activationCode;
+    6 require  string token;   
+};
+
 interface Funds
 {
     int test();
@@ -73,6 +82,8 @@ interface Funds
 	int modifyFunds(FundsUserModifyReq req, out FundsUserInfoRes res);
 
     int modifyFundsOther(FundsUserModifyOtherReq req, out FundsUserModifyOtherRes result) ;
+
+    int setWinnerLog(SetWinnerReq req);
 
 };
 

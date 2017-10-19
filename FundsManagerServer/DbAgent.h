@@ -40,6 +40,8 @@ public:
     int insertExchangeLog(const WmsPlatform::FundsUserModifyOtherReq& sIn);
 
     int modifyFundsOther(const WmsPlatform::FundsUserModifyOtherReq& sIn, WmsPlatform::FundsUserModifyOtherRes& sOut);
+
+    int insertWinnerLog(const WmsPlatform::SetWinnerReq& sIn);
 private:
     //mysql连接对象
     tars::TC_Mysql _mysqlReg;

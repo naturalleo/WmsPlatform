@@ -306,6 +306,8 @@ public:
                     s = "{\"status\":-1,\"errCode\":-6,\"error\":\"不能转让给自己，请重新输入赠送ID!\",\"data\":[]}";
                 }else if(sOut.errorCode == -7){
                     s = "{\"status\":-1,\"errCode\":-7,\"error\":\"赠送数量输入有误，请重新输入!\",\"data\":[]}";
+                }else if(sOut.errorCode == -8){
+                    s = "{\"status\":-1,\"errCode\":-8,\"error\":\"不能向同级代理转让房卡!\",\"data\":[]}";
                 }else{
                     s = "{\"status\":-1,\"errCode\":-1,\"error\":\"ret -1\",\"data\":[]}";
                 }              
@@ -428,6 +430,14 @@ public:
                 {
                      s = "{\"status\":-1,\"errCode\":-3,\"error\":\"激活码无效，请重新输入!\",\"data\":[]}";
                 }
+                else if(sOut.errorCode == -4)
+                {
+                     s = "{\"status\":-1,\"errCode\":-4,\"error\":\"请输入湖南麻将激活码!\",\"data\":[]}";
+                }
+                else if(sOut.errorCode == -5)
+                {
+                     s = "{\"status\":-1,\"errCode\":-5,\"error\":\"请输入岭南麻将激活码!\",\"data\":[]}";
+                }     
                 else{
                     s = "{\"status\":-1,\"errCode\":-1,\"error\":\"激活码无效，请重新输入!\",\"data\":[]}";
                 }  
@@ -581,6 +591,40 @@ public:
         Funds::async_response_modifyFunds(_current, ret, res);
     }
 
+
+    virtual void callback_setWinnerLog(tars::Int32 ret)
+    {
+        //HttpImp::async_response_doRequest(_current, ret, sOut);
+        TLOGDEBUG("callback_setWinnerLog : " << ret << endl);
+        TC_HttpResponse rsp;
+        vector<char> buffer;
+        string s ;
+
+        if (ret == 0 )
+        {
+            s = "{\"status\":1,\"errCode\":0,\"error\":\"\",\"data\": \"\"}";
+        }
+        else
+        {
+            s = "{\"status\":-1,\"errCode\":-1,\"error\":\"ret -1\",\"data\":[]}";
+        }
+
+
+        rsp.setResponse(s.c_str(),s.size());
+        rsp.encode(buffer);     
+
+
+        _current->sendResponse(&buffer.at(0),buffer.size());
+        TLOGDEBUG("callback_setWinnerLog : " << s << s.size() << endl);
+       // _current->sendResponse(tars::TARSSERVERSUCCESS, buffer);    
+        //HttpImp::async_response_doRequest(_current, ret, buffer);
+    }
+    virtual void callback_setWinnerLog_exception(tars::Int32 ret)
+    { 
+        TLOGERROR("OrderCallback callback_setWinnerLog_exception ret:" << ret << endl); 
+
+        Funds::async_response_setWinnerLog(_current, ret);
+    }
 
 
     TarsCurrentPtr _current;

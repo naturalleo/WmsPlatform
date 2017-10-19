@@ -107,129 +107,130 @@ int WxoauthImp::wxchatLogin(const WmsPlatform::WxoauthReq& sIn, WmsPlatform::WxL
                 int errcode = count_json.GetInt();
                 if (errcode == 42001 or errcode == 40001 or errcode == 40014)
                 {
-                    if(sIn.appId == "2") //岭南麻将测试
-                    {
-                        string url = "https://api.weixin.qq.com/sns/oauth2/refresh_token?appid="
-                         + sIn.wechatAppId + "&grant_type=refresh_token"
-                         + "&refresh_token=" + sIn.refreshToken;
-                        TLOGDEBUG("WxoauthImp wxchatLogin refresh_token : " << url << endl); 
-                        TC_HttpRequest stHttpReq;
-                        stHttpReq.setCacheControl("no-cache");
-                        stHttpReq.setGetRequest(url,true);
-                        stHttpReq.encode();
-                        TC_HttpResponse stHttpRep;
-                        int iRet = stHttpReq.doRequest(stHttpRep, 3000);
-                        if(iRet != 0)
-                        {
-                            TLOGERROR("WxoauthImp wxchatLogin refresh_token iRet!=0 : " << iRet << endl);
-                            return -1;
-                        }
-                        string isRefreshToken = "";
-                        string wechatAccessToken = "";
-                        string wechatRefreshToken = "";
+                    // if(sIn.appId == "2") //岭南麻将测试
+                    // {
+                    //     string url = "https://api.weixin.qq.com/sns/oauth2/refresh_token?appid="
+                    //      + sIn.wechatAppId + "&grant_type=refresh_token"
+                    //      + "&refresh_token=" + sIn.refreshToken;
+                    //     TLOGDEBUG("WxoauthImp wxchatLogin refresh_token : " << url << endl); 
+                    //     TC_HttpRequest stHttpReq;
+                    //     stHttpReq.setCacheControl("no-cache");
+                    //     stHttpReq.setGetRequest(url,true);
+                    //     stHttpReq.encode();
+                    //     TC_HttpResponse stHttpRep;
+                    //     int iRet = stHttpReq.doRequest(stHttpRep, 3000);
+                    //     if(iRet != 0)
+                    //     {
+                    //         TLOGERROR("WxoauthImp wxchatLogin refresh_token iRet!=0 : " << iRet << endl);
+                    //         return -1;
+                    //     }
+                    //     string isRefreshToken = "";
+                    //     string wechatAccessToken = "";
+                    //     string wechatRefreshToken = "";
 
-                        TLOGDEBUG("WxoauthImp wxchatLogin refresh_token content " << stHttpRep.getContent() << endl);
-                        using rapidjson::Document ;
-                        rapidjson::Document document;
-                        document.Parse(stHttpRep.getContent().c_str());
+                    //     TLOGDEBUG("WxoauthImp wxchatLogin refresh_token content " << stHttpRep.getContent() << endl);
+                    //     using rapidjson::Document ;
+                    //     rapidjson::Document document;
+                    //     document.Parse(stHttpRep.getContent().c_str());
 
-                        if (document.HasParseError()) // 通过HasParseError()来判断解析是否成功
-                        {
-                            TLOGERROR("parse error: " << document.GetParseError() << document.GetErrorOffset() );
-                            return -1;
-                        }
-                        else
-                        {
-                             if (document.HasMember("errcode") )
-                             {
-                                rapidjson::Value& count_json = document["errcode"];
-                                int errcode = count_json.GetInt();
-                                if (errcode)
-                                {
-                                    //失效，返回错误码，让客户端重新授权登录
-                                    return 1;  
-                                }
-                            }
-                            else
-                            {
-                                wechatAccessToken = (document["access_token"]).GetString();
-                                wechatRefreshToken = (document["refresh_token"]).GetString();
-                                isRefreshToken = "true";
+                    //     if (document.HasParseError()) // 通过HasParseError()来判断解析是否成功
+                    //     {
+                    //         TLOGERROR("parse error: " << document.GetParseError() << document.GetErrorOffset() );
+                    //         return -1;
+                    //     }
+                    //     else
+                    //     {
+                    //          if (document.HasMember("errcode") )
+                    //          {
+                    //             rapidjson::Value& count_json = document["errcode"];
+                    //             int errcode = count_json.GetInt();
+                    //             if (errcode)
+                    //             {
+                    //                 //失效，返回错误码，让客户端重新授权登录
+                    //                 return 1;  
+                    //             }
+                    //         }
+                    //         else
+                    //         {
+                    //             wechatAccessToken = (document["access_token"]).GetString();
+                    //             wechatRefreshToken = (document["refresh_token"]).GetString();
+                    //             isRefreshToken = "true";
 
 
-                                string url = "http://api.weixin.qq.com/sns/userinfo?access_token="
-                                             + wechatAccessToken + "&openid="
-                                             +sIn.openId + "&lang=zh_CN";
-                                TLOGDEBUG("WxoauthImp wxchatLogin again url : " << url << endl);
-                                TC_HttpRequest stHttpReq;
-                                stHttpReq.setCacheControl("no-cache");
-                                stHttpReq.setGetRequest(url);
-                                TC_HttpResponse stHttpRep;
-                                int iRet = stHttpReq.doRequest(stHttpRep, 3000);
-                                if(iRet != 0)
-                                {
-                                    TLOGERROR("WxoauthImp wxchatLogin again iRet!=0 : " << iRet << endl);
-                                    return -1;
-                                }
-                                TLOGDEBUG("WxoauthImp wxchatLogin again content " << stHttpRep.getContent() << endl);
-                                using rapidjson::Document ;
-                                rapidjson::Document document;
-                                document.Parse(stHttpRep.getContent().c_str());
+                    //             string url = "http://api.weixin.qq.com/sns/userinfo?access_token="
+                    //                          + wechatAccessToken + "&openid="
+                    //                          +sIn.openId + "&lang=zh_CN";
+                    //             TLOGDEBUG("WxoauthImp wxchatLogin again url : " << url << endl);
+                    //             TC_HttpRequest stHttpReq;
+                    //             stHttpReq.setCacheControl("no-cache");
+                    //             stHttpReq.setGetRequest(url);
+                    //             TC_HttpResponse stHttpRep;
+                    //             int iRet = stHttpReq.doRequest(stHttpRep, 3000);
+                    //             if(iRet != 0)
+                    //             {
+                    //                 TLOGERROR("WxoauthImp wxchatLogin again iRet!=0 : " << iRet << endl);
+                    //                 return -1;
+                    //             }
+                    //             TLOGDEBUG("WxoauthImp wxchatLogin again content " << stHttpRep.getContent() << endl);
+                    //             using rapidjson::Document ;
+                    //             rapidjson::Document document;
+                    //             document.Parse(stHttpRep.getContent().c_str());
 
-                                if (document.HasParseError()) // 通过HasParseError()来判断解析是否成功
-                                {
-                                    TLOGERROR("parse error: " << document.GetParseError() << document.GetErrorOffset() );
-                                    //sOut = "{\"status\":1,\"errCode\":10401,\"error\":\"winxin erro callback\",\"data\":[]}";
-                                    return -1;
-                                }
-                                else
-                                {
-                                    if (document.HasMember("errcode") )
-                                    {
-                                        rapidjson::Value& count_json = document["errcode"];
+                    //             if (document.HasParseError()) // 通过HasParseError()来判断解析是否成功
+                    //             {
+                    //                 TLOGERROR("parse error: " << document.GetParseError() << document.GetErrorOffset() );
+                    //                 //sOut = "{\"status\":1,\"errCode\":10401,\"error\":\"winxin erro callback\",\"data\":[]}";
+                    //                 return -1;
+                    //             }
+                    //             else
+                    //             {
+                    //                 if (document.HasMember("errcode") )
+                    //                 {
+                    //                     rapidjson::Value& count_json = document["errcode"];
 
-                                        int errcode = count_json.GetInt();
+                    //                     int errcode = count_json.GetInt();
 
-                                        if (errcode == 42001 or errcode == 40001 or errcode == 40014)
-                                        {
-                                            //失效，返回错误码，让客户端重新授权登录
-                                            return 1;  
-                                        }
-                                    }
-                                    else
-                                    {
-                                        WxLoginUserinfoReq req;
-                                        req.unionId     = (document["unionid"]).GetString();
-                                        req.headimgurl  = (document["headimgurl"]).GetString();
-                                        req.nickname    = (document["nickname"]).GetString();
-                                        req.sex         = TC_Common::tostr((document["sex"]).GetInt());
-                                        req.openId      = (document["openid"]).GetString();
-                                        req.appCode     = sIn.appCode;
-                                        req.appId       = sIn.appId;
-                                        req.appGroupId  = "1";
-                                        req.isRefreshToken = isRefreshToken;
-                                        req.wechatAccessToken = wechatAccessToken;
-                                        req.wechatRefreshToken = wechatRefreshToken; 
-                                        if (0 == getLoginUseInfo(req, sIn, sOut))
-                                        {
-                                            TLOGDEBUG("WxoauthImp wxchatLogin again success! " << endl);
-                                            return 0;
-                                        }
-                                        else
-                                        {
-                                            return -1;         
-                                        }
-                                    }   
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        //湖南麻将
-                        //errcode == 42001 or errcode == 40001 or errcode == 40014
-                        return 1;   
-                    }                               
+                    //                     if (errcode == 42001 or errcode == 40001 or errcode == 40014)
+                    //                     {
+                    //                         //失效，返回错误码，让客户端重新授权登录
+                    //                         return 1;  
+                    //                     }
+                    //                 }
+                    //                 else
+                    //                 {
+                    //                     WxLoginUserinfoReq req;
+                    //                     req.unionId     = (document["unionid"]).GetString();
+                    //                     req.headimgurl  = (document["headimgurl"]).GetString();
+                    //                     req.nickname    = (document["nickname"]).GetString();
+                    //                     req.sex         = TC_Common::tostr((document["sex"]).GetInt());
+                    //                     req.openId      = (document["openid"]).GetString();
+                    //                     req.appCode     = sIn.appCode;
+                    //                     req.appId       = sIn.appId;
+                    //                     req.appGroupId  = "1";
+                    //                     req.isRefreshToken = isRefreshToken;
+                    //                     req.wechatAccessToken = wechatAccessToken;
+                    //                     req.wechatRefreshToken = wechatRefreshToken; 
+                    //                     if (0 == getLoginUseInfo(req, sIn, sOut))
+                    //                     {
+                    //                         TLOGDEBUG("WxoauthImp wxchatLogin again success! " << endl);
+                    //                         return 0;
+                    //                     }
+                    //                     else
+                    //                     {
+                    //                         return -1;         
+                    //                     }
+                    //                 }   
+                    //             }
+                    //         }
+                    //     }
+                    // }
+                    // else
+                    // {
+                    //     //湖南麻将
+                    //     //errcode == 42001 or errcode == 40001 or errcode == 40014
+                    //     return 1;   
+                    // }    
+                    return 1;                           
                 }
             }
             else

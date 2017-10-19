@@ -139,7 +139,37 @@ int DbAgent::selectUserinfo(const std::string userId, WxUserinfoRes &sOut)
 
 }
 
+int DbAgent::selectUserGameType(const std::string userId, std::string &appId, std::string &appCode)
+{
+    try
+    {
+        string sSql = "select `appId`, `appCode` from `t_user` where userId = '" + userId + "' limit 0,1";
 
+        tars::TC_Mysql::MysqlData item = _mysqlReg.queryRecord(sSql);
+        if (item.size() == 0)
+        {
+            return 0;
+        }
+        else
+        {
+
+            appId = item[0]["appId"];
+            appCode = item[0]["appCode"];
+            return 1;
+        }
+    }
+    catch (TC_Mysql_Exception& ex)
+    {
+        TLOGERROR(__FUNCTION__ << " exception: " << ex.what() << endl);
+        return -1;
+    }
+    catch (exception& ex)
+    {
+        TLOGERROR(__FUNCTION__ << " exception: " << ex.what() << endl);
+        return -1;
+    }   
+
+}
 
 int DbAgent::insertNewUser(const WmsPlatform::WxLoginUserinfoReq &in, std::string &uid)
 {

@@ -127,3 +127,23 @@ int FundsImp::checkFunds(const WmsPlatform::FundsCheckReq& sIn, tars::TarsCurren
     }
     return -1;   
 }
+
+int FundsImp::setWinnerLog(const WmsPlatform::SetWinnerReq& sIn, tars::TarsCurrentPtr current)
+{
+    TLOGDEBUG("setWinnerLog : " << sIn.userId << endl);
+    try
+    {
+        if (0 == _db.insertWinnerLog(sIn))
+        {
+            return 0;
+        }
+
+        return -1;
+    }
+    catch(exception &ex)
+    {
+        cout << ex.what() << endl;
+        return -1;
+    }
+    return -1;
+}

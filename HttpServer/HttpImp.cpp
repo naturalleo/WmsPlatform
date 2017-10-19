@@ -387,6 +387,21 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
             WmsPlatform::WxUserinfoPrxCallbackPtr cb = new WxUserinfoCallback(current);
             _WxUserinfoPrx->tars_set_timeout(3000)->async_setActivationCode(cb,req);   
         }
+        else if (request.getRequestUrl() == "/statistics/setWinnerLog")
+        {
+            current->setResponse(false);
+            SetWinnerReq req;
+
+            req.userId = getValue(_para,"userId");  
+            req.nickName = getValue(_para,"nickName");
+            req.appId = getValue(_para,"appId");
+            req.appCode = getValue(_para,"appCode"); 
+            req.token = getValue(_para,"token");   
+            req.point = getValue(_para,"point"); 
+            req.activationCode = getValue(_para,"activationCode"); 
+            WmsPlatform::FundsPrxCallbackPtr cb = new FundsCallback(current);
+            _FundsPrx->tars_set_timeout(3000)->async_setWinnerLog(cb,req);           
+        }
         else
         {
             TC_HttpResponse rsp;

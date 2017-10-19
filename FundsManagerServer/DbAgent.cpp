@@ -337,6 +337,7 @@ int DbAgent::insertUseCardLog(const WmsPlatform::FundsUserModifyReq& sIn)
                       "'" + sIn.appCode + "',"
                       " " + TC_Common::now2str() + ")";
 
+      TLOGDEBUG("insertUseCardLog sql: " << sSql << endl);  
       _mysqlReg.execute(sSql);
       return 0;
 
@@ -366,6 +367,39 @@ int DbAgent::insertExchangeLog(const WmsPlatform::FundsUserModifyOtherReq& sIn)
                       "'" + sIn.appCode + "',"
                       " " + TC_Common::now2str() + ")";
 
+      TLOGDEBUG("insertExchangeLog sql: " << sSql << endl);                 
+      _mysqlReg.execute(sSql);
+      // TLOGDEBUG(__FUNCTION__ << pthread_self() <<" affected: " << _mysqlReg.getAffectedRows() << endl);
+      return 0;
+
+    }
+    catch (TC_Mysql_Exception& ex)
+    {
+        TLOGERROR(__FUNCTION__ << " exception: " << ex.what() << endl);
+        return -1;
+    }
+    catch (exception& ex)
+    {
+        TLOGERROR(__FUNCTION__ << " exception: " << ex.what() << endl);
+        return -1;
+    }    
+}
+
+int DbAgent::insertWinnerLog(const WmsPlatform::SetWinnerReq& sIn) 
+{
+    try
+    {
+      string sSql = "insert into t_winner_log(`userId`,`nickName`,`point`,`activationCode`,`appId`, `appCode`, `createTime`)"
+                      "values"
+                      "( '" + sIn.userId + "',"
+                      " '"   + sIn.nickName + "' ,"  
+                      " "   + sIn.point + ","
+                      " "   + sIn.activationCode + ","
+                      " " + sIn.appId + " ,"
+                      "'" + sIn.appCode + "',"
+                      " " + TC_Common::now2str() + ")";
+
+      TLOGDEBUG("insertWinnerLog sql: " << sSql << endl);
       _mysqlReg.execute(sSql);
       // TLOGDEBUG(__FUNCTION__ << pthread_self() <<" affected: " << _mysqlReg.getAffectedRows() << endl);
       return 0;

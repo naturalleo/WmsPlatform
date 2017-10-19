@@ -32,6 +32,8 @@ public:
 
     int selectUserinfo(const std::string userId, WxUserinfoRes &sOut) ;
 
+    int selectUserGameType(const std::string userId, std::string &appId, std::string &appCode);
+
     int insertNewUser(const WmsPlatform::WxLoginUserinfoReq &sIn, std::string &uid);
 
     int getDbUserinfo(const WmsPlatform::WxUserinfoReq &sIn, WxUserinfoRes &sOut);
