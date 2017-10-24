@@ -224,11 +224,38 @@ int WxUserinfoImp::updateWxUserCards(const WmsPlatform::WxUserExchangeReq& sIn, 
                 int ret = _db.isUserAgent(sIn.otherId, otherAgentType) ;
                 if (ret == 0)
                 {
-                    if (TC_Common::strto<int>(otherAgentType) >= TC_Common::strto<int>(agentType))
+                    if (otherAgentType != "0")
                     {
-                        sOut.errorCode = -8 ;
-                        TLOGERROR("房卡转让：对方是代理，并且同属一级不能转让，我的代理等级="<< agentType << endl); 
-                        TLOGERROR("房卡转让：对方是代理，并且同属一级不能转让，对方代理等级"<< otherAgentType << endl);                              
+                        if (TC_Common::strto<int>(otherAgentType) <= TC_Common::strto<int>(agentType))
+                        {
+                            sOut.errorCode = -8 ;
+                            TLOGERROR("房卡转让：对方是代理，并且同属一级不能转让，我的代理等级="<< agentType << endl); 
+                            TLOGERROR("房卡转让：对方是代理，并且同属一级不能转让，对方代理等级"<< otherAgentType << endl);                              
+                        }
+                        else
+                        {
+                            FundsUserModifyOtherReq req;
+                            req.userId = sIn.userId;
+                            req.otherId = sIn.otherId;
+                            req.cards = sIn.cards;
+                            req.appId = sIn.appId;
+                            req.appCode = sIn.appCode;
+                            
+                            FundsUserModifyOtherRes res;
+                            int ret = _FundsPrx->modifyFundsOther(req, res);
+                            if (ret == 0)
+                            {
+                                sOut.errorCode = 0;
+                                sOut.userId = res.userId;
+                                sOut.totalcard = res.cards;
+                                sOut.currentcard = res.cards;
+                                TLOGERROR("房卡转让：转让房卡成功uid="<< sIn.userId << " 对方ID=" <<sIn.otherId<< " 房卡数="<< sIn.cards <<endl); 
+                            }
+                            else
+                            {
+                                sOut.errorCode = ret;
+                            }                   
+                        }
                     }
                     else
                     {
@@ -252,8 +279,8 @@ int WxUserinfoImp::updateWxUserCards(const WmsPlatform::WxUserExchangeReq& sIn, 
                         else
                         {
                             sOut.errorCode = ret;
-                        }                 
-                    }   
+                        }                    
+                    }  
                 }
             }
             else
