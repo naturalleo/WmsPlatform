@@ -43,6 +43,10 @@ public:
 
     // int testHttps(const WmsPlatform::WxoauthReq& sIn);
 
+    int refreshToken(const WmsPlatform::WxoauthReq& sIn, string& content);
+    
+    int getWeiXinUserInfo(const WmsPlatform::WxoauthReq& sIn, string& content);
+
     int getLoginUseInfo(const WxLoginUserinfoReq &req, WmsPlatform::WxoauthReq sIn,  WxLoginUserinfoRes & res);
 
     string getLoginToken(string figure = "");

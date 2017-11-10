@@ -109,7 +109,7 @@ int DbAgent::updateUserToken(const WmsPlatform::WxoauthReq& req, const string &t
           << "'" << req.ip << "'," << TC_Common::tostr(TC_Common::now2ms()/1000) << ", " << req.appId 
           << ", '" << req.appCode << "', '" << token << "'," << req. clientFrom << ")";
 
-
+      TLOGDEBUG("updateUserToken  "<< oss.str() <<endl);
       _mysqlReg.execute(oss.str());
 
       TLOGDEBUG(__FUNCTION__ << pthread_self() <<" affected: " << _mysqlReg.getAffectedRows() << endl);
@@ -133,11 +133,12 @@ int DbAgent::checkUserToken(const WxUserinfoReq &req, string &ip)
 {
     try
     {
-    
       int pos = TC_Common::strto<int>(req.userId) % 10 ;
       ostringstream oss("");
       oss << "select ip from t_user_login_log_"<< TC_Common::tostr(pos) << " where userId = "<< req.userId << " and "
-          << "appId = " << req.appId << " and appCode = '" << req.appCode << "' and loginToken = '" << req.token << "'" ;
+          << "appId = " << req.appId << " and appCode = '" << req.appCode << "' and loginToken = '" << req.token << "'" << " order by addTime DESC LIMIT 1";
+
+      TLOGDEBUG("checkUserToken  "<< oss.str() <<endl);
 
       TC_Mysql::MysqlData item = _mysqlReg.queryRecord(oss.str());
       if (item.size() == 0)
