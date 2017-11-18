@@ -768,7 +768,39 @@ public:
         Game::async_response_getPlayerGameDetailRecord(_current, ret, res);
     }
 
+ virtual void callback_getPlayerShareRecord(tars::Int32 ret,  const std::string& sOut)
+    {
+        //HttpImp::async_response_doRequest(_current, ret, sOut);
+        TLOGDEBUG("callback_getPlayerShareRecord : " << ret  << endl);
+        TC_HttpResponse rsp;
+        vector<char> buffer;
+        string s ;
 
+        if (ret == 0 )
+        {
+           s = sOut;
+        }
+        else
+        {
+            s = "{\"status\":-1,\"errCode\":-1,\"error\":\"ret -1\",\"data\":[]}";
+        }
+
+
+        rsp.setResponse(s.c_str(),s.size());
+        rsp.encode(buffer);     
+
+
+        _current->sendResponse(&buffer.at(0),buffer.size());
+        TLOGDEBUG("callback_getPlayerShareRecord : " << s.size() << endl);
+       // _current->sendResponse(tars::TARSSERVERSUCCESS, buffer);    
+        //HttpImp::async_response_doRequest(_current, ret, buffer);
+    }
+    virtual void callback_getPlayerShareRecord_exception(tars::Int32 ret)
+    { 
+        TLOGERROR("callback_getPlayerShareRecord_exception ret:" << ret << endl); 
+        string res;
+        Game::async_response_getPlayerShareRecord(_current, ret, res);
+    }
 
 
 

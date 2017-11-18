@@ -72,7 +72,8 @@ int GameImp::getPlayerShareRecord(const WmsPlatform::GameShareRecordReq& sIn, st
 	TLOGDEBUG("getPlayerShareRecord : " << endl);
     try
     {
-    	 return 0;
+        
+    	 return _db.getGameSharesRecord(sIn, sOut);
 
     }
     catch(exception &ex)

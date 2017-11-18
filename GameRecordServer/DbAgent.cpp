@@ -178,7 +178,44 @@ int DbAgent::getGameSharesRecord(const WmsPlatform::GameShareRecordReq& sIn, Wms
 {
     try
     {
-      //SELECT t1.*,t2.config FROM game_result_log AS t1 LEFT JOIN build_room_log AS t2 ON t1.room_id=t2.room_id  WHERE t1.ID=155703;
+      string sSql = "SELECT t1.*,t2.config FROM game_result_log AS t1 LEFT JOIN build_room_log AS t2 ON t1.room_id=t2.room_id  WHERE t1.ID=" + sIn.shareCode;
+
+       tars::TC_Mysql::MysqlData item = _mysqlReg.queryRecord(sSql);
+
+
+      if (item.size() == 0)
+      {
+
+        sOut = "{\"status\":1,\"errCode\":0,\"error\":\"\",\"data\":{}}";
+
+        return  0;
+      }
+      else
+      {
+
+        sOut = "{\"status\":1,\"errCode\":0,\"error\":\"\",\"data\":"
+                    "{"
+                    "\"room_id\" : \""        + item[0]["room_id"] +  "\","
+                    "\"owner\" : \""          + item[0]["owner"] +  "\","
+                    "\"end_time\" : \""       + item[0]["end_time"] +  "\","
+                    "\"game_index\" : \""     + item[0]["game_index"] +  "\","
+                    "\"shareCode\" : \""      + item[0]["ID"] +  "\","
+                    "\"config\" : \""         + specialStrChange(item[0]["config"]) +  "\","
+                    "\"game_action\" : \""    + specialStrChange(item[0]["game_action"]) +  "\","
+                    "\"chair_1_uid\" : \""    + item[0]["chair_1_uid"] +  "\","
+                    "\"chair_1_point\" : \""  + item[0]["chair_1_point"] +  "\","
+                    "\"chair_2_uid\" : \""    + item[0]["chair_2_uid"] +  "\","
+                    "\"chair_2_point\" : \""  + item[0]["chair_2_point"] +  "\","
+                    "\"chair_3_uid\" : \""    + item[0]["chair_3_uid"] +  "\","
+                    "\"chair_3_point\" : \""  + item[0]["chair_3_point"] +  "\","                    
+                    "\"chair_4_uid\" : \""    + item[0]["chair_4_uid"] +  "\","
+                    "\"chair_4_point\" : \""  + item[0]["chair_4_point"] +  "\""
+                    "}"
+                "}";
+
+        return  0;
+      } 
+
 
       return 0 ;
     }
