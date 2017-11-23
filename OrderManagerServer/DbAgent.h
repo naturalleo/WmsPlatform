@@ -29,6 +29,8 @@ public:
 
     uint64_t generaterID();
 
+    int replaceStr(string &sString);
+
     int generaterOrderID(const WmsPlatform::CreateRoomReq &in, string &order);
 
     int updateUserToken(const WmsPlatform::WxoauthReq& req, const string &token);

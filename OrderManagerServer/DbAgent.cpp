@@ -167,13 +167,25 @@ int DbAgent::checkUserToken(const WxUserinfoReq &req, string &ip)
     }   
 }
 
+int DbAgent::replaceStr(string &sString)
+{
+    string sSrc  = TC_Common::replace(sString, "update", " ");
+    sSrc  = TC_Common::replace(sSrc, "delete", " ");
+    sSrc  = TC_Common::replace(sSrc, "select", " ");
+    sSrc  = TC_Common::replace(sSrc, "insert", " ");
+    sSrc  = TC_Common::replace(sSrc, "exec", " ");
+    sSrc  = TC_Common::replace(sSrc, "and", " ");   
+    sSrc  = TC_Common::replace(sSrc, "'", " ");       
+    return sSrc;
+}
+
 int DbAgent::reportSuggestion(const ReportSuggestionReq &req)
 {
+    string sContent = replaceStr(req.content); 
     try
     {
   
-    string sSql = 
-                "insert into t_suggestion (`userId`,`appId`,`appCode`,`clientFrom`,`version`,`suggestType`,`title`,`content`,`status`,`contacts`,`addTime`,`updateTime`) values " 
+    string sSql = "insert into t_suggestion (`userId`,`appId`,`appCode`,`clientFrom`,`version`,`suggestType`,`title`,`content`,`status`,`contacts`,`addTime`,`updateTime`) values " 
                         "(" + req.userId + " ," 
                         " " + req.appId + " ,"
                         " '" + req.appCode + "' ,"
@@ -181,7 +193,7 @@ int DbAgent::reportSuggestion(const ReportSuggestionReq &req)
                         " '" + req.clientVer + "' ,"
                         " " + req.suggestType + " ,"
                         " '" + req.title + "' ,"
-                        " '" + req.content + "' ,"
+                        " '" + sContent + "' ,"
                         " 0 ,"
                         " '" + req.contacts + "' ,"
                         " " + TC_Common::tostr(TC_Common::now2ms()/1000) + " ,"

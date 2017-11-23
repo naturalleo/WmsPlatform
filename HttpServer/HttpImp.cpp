@@ -402,6 +402,37 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
             WmsPlatform::FundsPrxCallbackPtr cb = new FundsCallback(current);
             _FundsPrx->tars_set_timeout(3000)->async_setWinnerLog(cb,req);           
         }
+        // else if (request.getRequestUrl() == "/Game/getShareDetail" && isParamExist(_para, "appId") && isParamExist(_para, "appCode") && isParamExist(_para, "shareCode") && isParamExist(_para, "userId"))
+        // {
+
+        //     current->setResponse(false);
+        //     GameShareRecordReq req;
+        //     req.userId = getValue(_para,"userId");
+        //     req.shareCode = getValue(_para,"shareCode");
+        //     req.appId = getValue(_para,"appId");
+        //     req.appCode = getValue(_para,"appCode");
+        //     req.token = getValue(_para,"token"); 
+
+
+        //     WmsPlatform::GamePrxCallbackPtr cb = new GameCallback(current);
+        //     _GamePrx->tars_set_timeout(3000)->async_getPlayerShareRecord(cb,req);        
+        // }
+        // else if (request.getRequestUrl() == "/Game/getResultDetail" && isParamExist(_para, "appId") && isParamExist(_para, "appCode") && isParamExist(_para, "userId") && isParamExist(_para, "token")
+        //     && isParamExist(_para, "roomId") && isParamExist(_para, "owner") )
+        // {
+
+        //     current->setResponse(false);
+        //     GameRecordDetailReq req;
+        //     req.appId = getValue(_para,"appId");
+        //     req.appCode = getValue(_para,"appCode");
+        //     req.userId = getValue(_para,"userId");
+        //     req.token = getValue(_para,"token");
+        //     req.room_id = getValue(_para,"roomId");
+        //     req.owner = getValue(_para,"owner");
+
+        //     WmsPlatform::GamePrxCallbackPtr cb = new GameCallback(current);
+        //     _GamePrx->tars_set_timeout(3000)->async_getPlayerGameDetailRecord(cb,req);        
+        // }
         else
         {
             TC_HttpResponse rsp;

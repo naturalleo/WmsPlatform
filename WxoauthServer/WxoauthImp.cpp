@@ -346,7 +346,9 @@ int WxoauthImp::wxchatLogin(const WmsPlatform::WxoauthReq& sIn, WmsPlatform::WxL
                                         WxLoginUserinfoReq req;
                                         req.unionId     = (document["unionid"]).GetString();
                                         req.headimgurl  = (document["headimgurl"]).GetString();
-                                        req.nickname    = (document["nickname"]).GetString();
+                                        string tmpName = (document["nickname"]).GetString();
+                                        string sNickName  = TC_Common::replace(tmpName, "'", " ");
+                                        req.nickname    = sNickName;
                                         req.sex         = TC_Common::tostr((document["sex"]).GetInt());
                                         req.openId      = (document["openid"]).GetString();
                                         req.appCode     = sIn.appCode;
@@ -383,7 +385,9 @@ int WxoauthImp::wxchatLogin(const WmsPlatform::WxoauthReq& sIn, WmsPlatform::WxL
                 WxLoginUserinfoReq req;
                 req.unionId     = (document["unionid"]).GetString();
                 req.headimgurl  = (document["headimgurl"]).GetString();
-                req.nickname    = (document["nickname"]).GetString();
+                string tmpName = (document["nickname"]).GetString();
+                string sNickName  = TC_Common::replace(tmpName, "'", " ");
+                req.nickname    = sNickName;
                 req.sex         = TC_Common::tostr((document["sex"]).GetInt());
                 req.openId      = (document["openid"]).GetString();
                 req.appCode     = sIn.appCode;
