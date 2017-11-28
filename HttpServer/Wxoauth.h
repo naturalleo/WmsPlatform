@@ -11,7 +11,7 @@
 #include <vector>
 #include "tup/Tars.h"
 using namespace std;
-#include "WxUserinfo.h"
+#include "../WxUserinfoServer/WxUserinfo.h"
 #include "servant/ServantProxy.h"
 #include "servant/Servant.h"
 #include "promise/promise.h"
@@ -28,31 +28,49 @@ namespace WmsPlatform
         }
         static string MD5()
         {
-            return "55420b345e13da84aad635417b0d3f4b";
+            return "8f9c697a216eacdd694cb2a2e96fe600";
         }
         WxoauthReq()
-        :openId(""),accessToken(""),refreshToken(""),wechatAppId("")
+        :openId(""),accessToken(""),appCode(""),ip(""),appId(""),clientFrom(""),refreshToken(""),wechatAppId(""),userId(""),token("")
         {
         }
         void resetDefautlt()
         {
             openId = "";
             accessToken = "";
+            appCode = "";
+            ip = "";
+            appId = "";
+            clientFrom = "";
             refreshToken = "";
             wechatAppId = "";
+            userId = "";
+            token = "";
         }
         template<typename WriterT>
         void writeTo(tars::TarsOutputStream<WriterT>& _os) const
         {
             _os.write(openId, 0);
             _os.write(accessToken, 1);
+            _os.write(appCode, 2);
+            _os.write(ip, 3);
+            _os.write(appId, 4);
+            _os.write(clientFrom, 5);
             if (refreshToken != "")
             {
-                _os.write(refreshToken, 2);
+                _os.write(refreshToken, 6);
             }
             if (wechatAppId != "")
             {
-                _os.write(wechatAppId, 3);
+                _os.write(wechatAppId, 7);
+            }
+            if (userId != "")
+            {
+                _os.write(userId, 8);
+            }
+            if (token != "")
+            {
+                _os.write(token, 9);
             }
         }
         template<typename ReaderT>
@@ -61,16 +79,28 @@ namespace WmsPlatform
             resetDefautlt();
             _is.read(openId, 0, true);
             _is.read(accessToken, 1, true);
-            _is.read(refreshToken, 2, false);
-            _is.read(wechatAppId, 3, false);
+            _is.read(appCode, 2, true);
+            _is.read(ip, 3, true);
+            _is.read(appId, 4, true);
+            _is.read(clientFrom, 5, true);
+            _is.read(refreshToken, 6, false);
+            _is.read(wechatAppId, 7, false);
+            _is.read(userId, 8, false);
+            _is.read(token, 9, false);
         }
         ostream& display(ostream& _os, int _level=0) const
         {
             tars::TarsDisplayer _ds(_os, _level);
             _ds.display(openId,"openId");
             _ds.display(accessToken,"accessToken");
+            _ds.display(appCode,"appCode");
+            _ds.display(ip,"ip");
+            _ds.display(appId,"appId");
+            _ds.display(clientFrom,"clientFrom");
             _ds.display(refreshToken,"refreshToken");
             _ds.display(wechatAppId,"wechatAppId");
+            _ds.display(userId,"userId");
+            _ds.display(token,"token");
             return _os;
         }
         ostream& displaySimple(ostream& _os, int _level=0) const
@@ -78,19 +108,31 @@ namespace WmsPlatform
             tars::TarsDisplayer _ds(_os, _level);
             _ds.displaySimple(openId, true);
             _ds.displaySimple(accessToken, true);
+            _ds.displaySimple(appCode, true);
+            _ds.displaySimple(ip, true);
+            _ds.displaySimple(appId, true);
+            _ds.displaySimple(clientFrom, true);
             _ds.displaySimple(refreshToken, true);
-            _ds.displaySimple(wechatAppId, false);
+            _ds.displaySimple(wechatAppId, true);
+            _ds.displaySimple(userId, true);
+            _ds.displaySimple(token, false);
             return _os;
         }
     public:
         std::string openId;
         std::string accessToken;
+        std::string appCode;
+        std::string ip;
+        std::string appId;
+        std::string clientFrom;
         std::string refreshToken;
         std::string wechatAppId;
+        std::string userId;
+        std::string token;
     };
     inline bool operator==(const WxoauthReq&l, const WxoauthReq&r)
     {
-        return l.openId == r.openId && l.accessToken == r.accessToken && l.refreshToken == r.refreshToken && l.wechatAppId == r.wechatAppId;
+        return l.openId == r.openId && l.accessToken == r.accessToken && l.appCode == r.appCode && l.ip == r.ip && l.appId == r.appId && l.clientFrom == r.clientFrom && l.refreshToken == r.refreshToken && l.wechatAppId == r.wechatAppId && l.userId == r.userId && l.token == r.token;
     }
     inline bool operator!=(const WxoauthReq&l, const WxoauthReq&r)
     {
@@ -108,7 +150,7 @@ namespace WmsPlatform
         virtual void callback_test_exception(tars::Int32 ret)
         { throw std::runtime_error("callback_test_exception() override incorrect."); }
 
-        virtual void callback_wxchatLogin(tars::Int32 ret,  const WmsPlatform::WxUserinfoRes& res)
+        virtual void callback_wxchatLogin(tars::Int32 ret,  const WmsPlatform::WxLoginUserinfoRes& res)
         { throw std::runtime_error("callback_wxchatLogin() override incorrect."); }
         virtual void callback_wxchatLogin_exception(tars::Int32 ret)
         { throw std::runtime_error("callback_wxchatLogin_exception() override incorrect."); }
@@ -178,7 +220,7 @@ namespace WmsPlatform
                     tars::Int32 _ret;
                     _is.read(_ret, 0, true);
 
-                    WmsPlatform::WxUserinfoRes res;
+                    WmsPlatform::WxLoginUserinfoRes res;
                     _is.read(res, 2, true);
                     CallbackThreadData * pCbtd = CallbackThreadData::getData();
                     assert(pCbtd != NULL);
@@ -238,7 +280,7 @@ namespace WmsPlatform
         {
         public:
             tars::Int32 _ret;
-            WmsPlatform::WxUserinfoRes res;
+            WmsPlatform::WxLoginUserinfoRes res;
             map<std::string, std::string> _mRspContext;
         };
         
@@ -438,7 +480,7 @@ namespace WmsPlatform
                         tars::Int32 _ret;
                         _is.read(_ret, 0, true);
 
-                        WmsPlatform::WxUserinfoRes res;
+                        WmsPlatform::WxLoginUserinfoRes res;
                         _is.read(res, 2, true);
                         setResponseContext(msg->response.context);
 
@@ -519,7 +561,7 @@ namespace WmsPlatform
             tars_invoke_async(tars::TARSNORMAL,"test", _os.getByteBuffer(), context, _mStatus, callback, true);
         }
 
-        tars::Int32 wxchatLogin(const WmsPlatform::WxoauthReq & req,WmsPlatform::WxUserinfoRes &res,const map<string, string> &context = TARS_CONTEXT(),map<string, string> * pResponseContext = NULL)
+        tars::Int32 wxchatLogin(const WmsPlatform::WxoauthReq & req,WmsPlatform::WxLoginUserinfoRes &res,const map<string, string> &context = TARS_CONTEXT(),map<string, string> * pResponseContext = NULL)
         {
             tars::TarsOutputStream<tars::BufferWriter> _os;
             _os.write(req, 1);
@@ -614,8 +656,8 @@ namespace WmsPlatform
             }
         }
 
-        virtual tars::Int32 wxchatLogin(const WmsPlatform::WxoauthReq & req,WmsPlatform::WxUserinfoRes &res,tars::TarsCurrentPtr current) = 0;
-        static void async_response_wxchatLogin(tars::TarsCurrentPtr current, tars::Int32 _ret, const WmsPlatform::WxUserinfoRes &res)
+        virtual tars::Int32 wxchatLogin(const WmsPlatform::WxoauthReq & req,WmsPlatform::WxLoginUserinfoRes &res,tars::TarsCurrentPtr current) = 0;
+        static void async_response_wxchatLogin(tars::TarsCurrentPtr current, tars::Int32 _ret, const WmsPlatform::WxLoginUserinfoRes &res)
         {
             if (current->getRequestVersion() == TUPVERSION )
             {
@@ -690,7 +732,7 @@ namespace WmsPlatform
                     tars::TarsInputStream<tars::BufferReader> _is;
                     _is.setBuffer(_current->getRequestBuffer());
                     WmsPlatform::WxoauthReq req;
-                    WmsPlatform::WxUserinfoRes res;
+                    WmsPlatform::WxLoginUserinfoRes res;
                     if (_current->getRequestVersion() == TUPVERSION)
                     {
                         UniAttribute<tars::BufferWriter, tars::BufferReader>  tarsAttr;

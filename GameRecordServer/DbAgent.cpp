@@ -174,12 +174,46 @@ int DbAgent::getGameRecordDetail(const WmsPlatform::GameRecordDetailReq& sIn, ve
     }
 }
 
-int DbAgent::getGameSharesRecord(const WmsPlatform::GameShareRecordReq& sIn, WmsPlatform::GameShareRecordRes& sOut)
+int DbAgent::getGameSharesRecord(const WmsPlatform::GameShareRecordReq& sIn, vector<GameRecordDetailItem>& sOut)
 {
     try
     {
       //SELECT t1.*,t2.config FROM game_result_log AS t1 LEFT JOIN build_room_log AS t2 ON t1.room_id=t2.room_id  WHERE t1.ID=155703;
+      string sSql = "SELECT t1.*,t2.config FROM game_result_log AS t1 LEFT JOIN build_room_log AS t2 ON t1.room_id=t2.room_id  WHERE t1.ID = "+  sIn.shareCode + ";"
+      tars::TC_Mysql::MysqlData item = _mysqlReg.queryRecord(sSql);
+      if (item.size() == 0)
+      {
+        return 0;
+      }
+      else
+      {
+        for (size_t i = 0 ; i < item.size(); ++i)
+        {
+          GameRecordDetailItem t;
+          string json_1 = item[i]["config"];
+          string json_2 = item[i]["game_action"];
+          t.room_id          = item[i]["room_id"];
+          t.owner            = item[i]["owner"];
+          t.game_index       = item[i]["game_index"];
+          t.end_time         = item[i]["end_time"];
+          t.config           = specialStrChange(json_1); 
+          t.game_action      = specialStrChange(json_2); 
 
+          t.chair_1_uid      = item[i]["chair_1_uid"];
+          t.chair_1_point    = item[i]["chair_1_point"];     
+
+          t.chair_2_uid      = item[i]["chair_2_uid"];
+          t.chair_2_point    = item[i]["chair_2_point"];     
+
+          t.chair_3_uid      = item[i]["chair_3_uid"];
+          t.chair_3_point    = item[i]["chair_3_point"];     
+
+          t.chair_4_uid      = item[i]["chair_4_uid"];
+          t.chair_4_point    = item[i]["chair_4_point"]; 
+
+          sOut.push_back(t);
+        }
+      }
       return 0 ;
     }
     catch (TC_Mysql_Exception& ex)

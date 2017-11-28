@@ -32,10 +32,18 @@ struct ReportSuggestionReq
     6 require string content;	
 	7 require string suggestType;
 	8 require string title;
-
 };
 
-
+struct ReportApplyAgentReq
+{
+    0 require string userId;
+    1 require string appId;
+    2 require string appCode;
+    3 require string token;
+    4 require string nickName;
+    5 require string phoneNum;
+    6 require string activationCode;
+};
 
 struct SysNoticeReq
 {
@@ -68,6 +76,8 @@ interface Order
 
  	int reportSuggestion(ReportSuggestionReq req);
 
+    int reportApplyAgent(ReportApplyAgentReq req);
+    
  	int sysNotice(SysNoticeReq req, out SysNoticeRes res);
 
 };

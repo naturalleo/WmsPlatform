@@ -59,7 +59,6 @@ int GameImp::getPlayerGameDetailRecord(const WmsPlatform::GameRecordDetailReq& s
     try
     {
     	 return _db.getGameRecordDetail(sIn, sOut);
-
     }
     catch(exception &ex)
     {
@@ -67,13 +66,13 @@ int GameImp::getPlayerGameDetailRecord(const WmsPlatform::GameRecordDetailReq& s
         return -1;
     }
 }
-int GameImp::getPlayerShareRecord(const WmsPlatform::GameShareRecordReq& sIn, string& sOut, tars::TarsCurrentPtr current)
+
+int GameImp::getPlayerShareRecord(const WmsPlatform::GameShareRecordReq& sIn, vector<GameRecordDetailItem>& sOut, tars::TarsCurrentPtr current)
 {
 	TLOGDEBUG("getPlayerShareRecord : " << endl);
     try
     {
-    	 return 0;
-
+         return _db.getGameSharesRecord(sIn, sOut);
     }
     catch(exception &ex)
     {

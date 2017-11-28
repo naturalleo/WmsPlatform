@@ -74,8 +74,6 @@ struct GameRecordDetailItem
 
 };
 
-
-
 struct GameShareRecordReq
 {
 	0 require string appID;
@@ -89,7 +87,6 @@ struct GameShareRecordRes
 {
 	0 require string game_action;
 	1 require string game_result;
-
 };
 
 
@@ -102,8 +99,7 @@ interface Game
 
     int getPlayerGameDetailRecord(GameRecordDetailReq req, out vector<GameRecordDetailItem> res);
 
-    int getPlayerShareRecord(GameShareRecordReq req, out string res);
-
+    int getPlayerShareRecord(GameShareRecordReq req, out vector<GameRecordDetailItem> res);
 };
 
 }; 

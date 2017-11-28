@@ -33,8 +33,7 @@ public:
 
     int getGameRecordDetail(const WmsPlatform::GameRecordDetailReq& sIn, vector<GameRecordDetailItem>& sOut);
 
-    int getGameSharesRecord(const WmsPlatform::GameShareRecordReq& sIn, WmsPlatform::GameShareRecordRes& sOut);
-    
+    int getGameSharesRecord(const WmsPlatform::GameShareRecordReq& sIn, vector<GameRecordDetailItem>& sOut);
 
     string specialStrChange(string &s);
 

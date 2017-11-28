@@ -163,6 +163,35 @@ public:
         Order::async_response_reportSuggestion(_current, ret);
     }
 
+    virtual void callback_reportApplyAgent(tars::Int32 ret)
+    {
+        TLOGDEBUG("callback_reportApplyAgent : " << ret << endl);
+        TC_HttpResponse rsp;
+        vector<char> buffer;
+        string s ;
+
+        if (ret == 0 )
+        {
+            s = "{\"status\":1,\"errCode\":0,\"error\":\"\",\"data\": \"\"}";
+        }
+        else
+        {
+            s = "{\"status\":-1,\"errCode\":-1,\"error\":\"ret -1\",\"data\":[]}";
+        }
+
+        rsp.setResponse(s.c_str(),s.size());
+        rsp.encode(buffer);     
+
+        _current->sendResponse(&buffer.at(0),buffer.size());
+        TLOGDEBUG("callback_reportApplyAgent : " << s << s.size() << endl);
+    }
+    virtual void callback_reportApplyAgent_exception(tars::Int32 ret)
+    { 
+        TLOGERROR("OrderCallback callback_reportApplyAgent_exception ret:" << ret << endl); 
+
+        Order::async_response_reportApplyAgent(_current, ret);
+    }
+
    virtual void callback_sysNotice(tars::Int32 ret, const SysNoticeRes& res)
     {
         //HttpImp::async_response_doRequest(_current, ret, sOut);
@@ -769,9 +798,64 @@ public:
     }
 
 
+    virtual void callback_getPlayerShareRecord(tars::Int32 ret,  const vector<GameRecordDetailItem>& sOut)
+    {
+        //HttpImp::async_response_doRequest(_current, ret, sOut);
+        TLOGDEBUG("callback_getPlayerShareRecord : " << ret  << endl);
+        TC_HttpResponse rsp;
+        vector<char> buffer;
+        string s ;
+
+        if (ret == 0 )
+        {
+           s = "{\"status\":1,\"errCode\":0,\"error\":\"\",\"data\":[";
+            for(vector<GameRecordDetailItem>::const_iterator itr = sOut.begin(); itr != sOut.end(); ++itr)
+                {
+                    s+= (itr == sOut.begin() ? string(""):string(", ")) +
+                        "{" 
+                            + "\"room_id\": \""        + itr->room_id + "\", "
+                            + "\"owner\": \""          + itr->owner + "\", "
+                            + "\"end_time\": \""       + itr->end_time + "\", "
+                            + "\"game_index\": \""     + itr->game_index + "\", "
+                            + "\"shareCode\": \""      + itr->share_code + "\", "
+                            + "\"config\": \""         + itr->config + "\", "
+                            + "\"game_action\": \""    + itr->game_action + "\", "
+
+                            + "\"chair_1_uid\": \""    + itr->chair_1_uid + "\", "
+                            + "\"chair_1_point\": \""  + itr->chair_1_point + "\", "
 
 
+                            + "\"chair_2_uid\": \""    + itr->chair_2_uid + "\", "
+                            + "\"chair_2_point\": \""  + itr->chair_2_point + "\", "
 
+                            + "\"chair_3_uid\": \""    + itr->chair_3_uid + "\", "
+                            + "\"chair_3_point\": \""  + itr->chair_3_point + "\", "
+
+                            + "\"chair_4_uid\": \""    + itr->chair_4_uid + "\", "
+                            + "\"chair_4_point\": \""  + itr->chair_4_point + "\" "
+                        "}";
+                }
+                s += "]}";
+        }
+        else
+        {
+            s = "{\"status\":-1,\"errCode\":-1,\"error\":\"ret -1\",\"data\":[]}";
+        }
+
+
+        rsp.setResponse(s.c_str(),s.size());
+        rsp.encode(buffer);     
+
+
+        _current->sendResponse(&buffer.at(0),buffer.size());
+        TLOGDEBUG("callback_getPlayerShareRecord : " << s.size() << endl);
+    }
+    virtual void callback_getPlayerShareRecord_exception(tars::Int32 ret)
+    { 
+        TLOGERROR("callback_getPlayerShareRecord_exception ret:" << ret << endl); 
+        vector<GameRecordDetailItem> res;
+        Game::async_response_getPlayerShareRecord(_current, ret, res);
+    }
 
 
     TarsCurrentPtr _current;

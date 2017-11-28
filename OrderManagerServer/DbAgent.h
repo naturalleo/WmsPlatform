@@ -29,7 +29,7 @@ public:
 
     uint64_t generaterID();
 
-    int replaceStr(string &sString);
+    string replaceStr(string sString);
 
     int generaterOrderID(const WmsPlatform::CreateRoomReq &in, string &order);
 
@@ -38,6 +38,8 @@ public:
     int checkUserToken(const WxUserinfoReq &req, string &ip);
 
     int reportSuggestion(const ReportSuggestionReq &req);
+
+    int reportApplyAgent(const ReportApplyAgentReq &req);
 
     int sysNotice(const SysNoticeReq& req, SysNoticeRes& res);
 

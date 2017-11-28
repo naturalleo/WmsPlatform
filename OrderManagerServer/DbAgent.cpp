@@ -167,7 +167,7 @@ int DbAgent::checkUserToken(const WxUserinfoReq &req, string &ip)
     }   
 }
 
-int DbAgent::replaceStr(string &sString)
+string DbAgent::replaceStr(string sString)
 {
     string sSrc  = TC_Common::replace(sString, "update", " ");
     sSrc  = TC_Common::replace(sSrc, "delete", " ");
@@ -216,6 +216,39 @@ int DbAgent::reportSuggestion(const ReportSuggestionReq &req)
 
     return 0;
 }
+
+int DbAgent::reportApplyAgent(const ReportApplyAgentReq &req)
+{
+    try
+    {
+    string sSql = "insert into t_apply_agent (`userId`,`appId`,`appCode`,`activationCode`,`nickName`,`phoneNum`,`createTime`) values " 
+                        "(" + req.userId + " ," 
+                        " " + req.appId + " ,"
+                        " '" + req.appCode + "' ,"
+                        " " + req.activationCode + " ,"
+                        " '" + req.nickName + "' ," 
+                        " '" + req.phoneNum + "' ,"
+                        " " + TC_Common::tostr(TC_Common::now2ms()/1000) + " )" ;
+
+    TLOGDEBUG("DbAgent reportApplyAgent  "<< sSql <<endl);
+    _mysqlReg.execute(sSql);
+
+    TLOGDEBUG(__FUNCTION__ << pthread_self() <<" affected: " << _mysqlReg.getAffectedRows() << endl);
+    }
+    catch (TC_Mysql_Exception& ex)
+    {
+        TLOGERROR(__FUNCTION__ << " exception: " << ex.what() << endl);
+        return -1;
+    }
+    catch (exception& ex)
+    {
+        TLOGERROR(__FUNCTION__ << " exception: " << ex.what() << endl);
+        return -1;
+    }
+
+    return 0;
+}
+
 
 int DbAgent::sysNotice(const SysNoticeReq& req, SysNoticeRes& res)
 {

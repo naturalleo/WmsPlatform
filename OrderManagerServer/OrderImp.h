@@ -40,13 +40,12 @@ public:
 
     virtual int updateUserToken(const WmsPlatform::WxoauthReq& req, const std::string& token, tars::TarsCurrentPtr current);
 
-
     virtual int checkUserToken(const WmsPlatform::WxUserinfoReq& req, std::string& ip, tars::TarsCurrentPtr current);
-
 
     virtual int reportSuggestion(const ReportSuggestionReq &req, tars::TarsCurrentPtr current);
 
-
+    virtual int reportApplyAgent(const ReportApplyAgentReq &req, tars::TarsCurrentPtr current);
+    
     virtual int sysNotice(const SysNoticeReq& req, SysNoticeRes& res, tars::TarsCurrentPtr current);
 protected:
     void loadconf();

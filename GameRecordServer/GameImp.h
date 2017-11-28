@@ -37,7 +37,7 @@ public:
 
     virtual int getPlayerGameRecord(const WmsPlatform::GameRecordReq& sIn, vector<GameRecordItem>& sOut, tars::TarsCurrentPtr current);
     virtual int getPlayerGameDetailRecord(const WmsPlatform::GameRecordDetailReq& sIn, vector<GameRecordDetailItem>& sOut, tars::TarsCurrentPtr current);
-    virtual int getPlayerShareRecord(const WmsPlatform::GameShareRecordReq& sIn, string& sOut, tars::TarsCurrentPtr current);
+    virtual int getPlayerShareRecord(const WmsPlatform::GameShareRecordReq& sIn, vector<GameRecordDetailItem>& sOut, tars::TarsCurrentPtr current);
 private:
     void loadconf();
     DbAgent _db;

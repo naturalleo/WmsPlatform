@@ -125,6 +125,23 @@ int OrderImp::reportSuggestion(const ReportSuggestionReq &sReq, tars::TarsCurren
     return _ret;
 }
 
+int OrderImp::reportApplyAgent(const ReportApplyAgentReq &sReq, tars::TarsCurrentPtr current)
+{
+    TLOGDEBUG("reportApplyAgent : " << sReq.userId << endl);
+
+    int _ret;
+    try
+    {
+        _ret = _db.reportApplyAgent(sReq);   
+    }
+    catch(exception &ex)
+    {
+        cout << ex.what() << endl;
+        return -1;
+    }
+    return _ret;
+}
+
 int OrderImp::sysNotice(const SysNoticeReq& sReq, SysNoticeRes& res, tars::TarsCurrentPtr current)
 {
     TLOGDEBUG("sysNotice : " << endl);
