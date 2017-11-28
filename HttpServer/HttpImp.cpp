@@ -344,6 +344,21 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
             WmsPlatform::GamePrxCallbackPtr cb = new GameCallback(current);
             _GamePrx->tars_set_timeout(3000)->async_getPlayerShareRecord(cb,req);        
         }
+        else if (request.getRequestUrl() == "Game/getShareDetail" && isParamExist(_para, "appId") && isParamExist(_para, "appCode") && isParamExist(_para, "userId") && isParamExist(_para, "token")
+            && isParamExist(_para, "shareCode")  )
+        {
+            current->setResponse(false);
+            GameShareRecordReq req;
+            req.appID = getValue(_para,"appId");
+            req.appCode = getValue(_para,"appCode");
+            req.userId = getValue(_para,"userId");
+            req.token = getValue(_para,"token");
+            req.shareCode = getValue(_para,"shareCode");
+
+
+            WmsPlatform::GamePrxCallbackPtr cb = new GameCallback(current);
+            _GamePrx->tars_set_timeout(3000)->async_getPlayerShareRecord(cb,req);        
+        }
         else if (request.getRequestUrl() == "/Suggestion/add")
         {
             current->setResponse(false);
