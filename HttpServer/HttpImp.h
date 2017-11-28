@@ -736,10 +736,10 @@ public:
     }
 
 
-    virtual void callback_getPlayerGameDetailRecord(tars::Int32 ret,  const vector<GameRecordDetailItem>& sOut)
+    virtual void callback_getPlayerShareRecord(tars::Int32 ret,  const vector<GameRecordDetailItem>& sOut)
     {
         //HttpImp::async_response_doRequest(_current, ret, sOut);
-        TLOGDEBUG("callback_getPlayerGameDetailRecord : " << ret  << endl);
+        TLOGDEBUG("callback_getPlayerShareRecord : " << ret  << endl);
         TC_HttpResponse rsp;
         vector<char> buffer;
         string s ;
@@ -786,16 +786,15 @@ public:
 
 
         _current->sendResponse(&buffer.at(0),buffer.size());
-        TLOGDEBUG("callback_getPlayerGameDetailRecord : " << s.size() << endl);
-       // _current->sendResponse(tars::TARSSERVERSUCCESS, buffer);    
-        //HttpImp::async_response_doRequest(_current, ret, buffer);
+        TLOGDEBUG("callback_getPlayerShareRecord : " << s.size() << endl);
     }
-    virtual void callback_getPlayerGameDetailRecord_exception(tars::Int32 ret)
+    virtual void callback_getPlayerShareRecord_exception(tars::Int32 ret)
     { 
-        TLOGERROR("callback_getPlayerGameDetailRecord_exception ret:" << ret << endl); 
+        TLOGERROR("callback_getPlayerShareRecord_exception ret:" << ret << endl); 
         vector<GameRecordDetailItem> res;
-        Game::async_response_getPlayerGameDetailRecord(_current, ret, res);
+        Game::async_response_getPlayerShareRecord(_current, ret, res);
     }
+
     TarsCurrentPtr _current;
 };
 
