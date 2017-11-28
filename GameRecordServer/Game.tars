@@ -83,13 +83,6 @@ struct GameShareRecordReq
 	4 require string shareCode;
 };
 
-struct GameShareRecordRes
-{
-	0 require string game_action;
-	1 require string game_result;
-};
-
-
 
 interface Game
 {
