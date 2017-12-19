@@ -179,7 +179,7 @@ int DbAgent::getGameSharesRecord(const WmsPlatform::GameShareRecordReq& sIn, vec
     try
     {
       //SELECT t1.*,t2.config FROM game_result_log AS t1 LEFT JOIN build_room_log AS t2 ON t1.room_id=t2.room_id  WHERE t1.ID=155703;
-      string sSql = "SELECT t1.*,t2.config FROM game_result_log AS t1 LEFT JOIN build_room_log AS t2 ON t1.room_id=t2.room_id  WHERE t1.ID = "+  sIn.shareCode + ";"
+      string sSql = "SELECT t1.*,t2.config FROM game_result_log AS t1 LEFT JOIN build_room_log AS t2 ON t1.room_id=t2.room_id  WHERE t1.ID = "+  sIn.shareCode + ";";
       tars::TC_Mysql::MysqlData item = _mysqlReg.queryRecord(sSql);
       if (item.size() == 0)
       {

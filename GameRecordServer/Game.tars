@@ -76,7 +76,7 @@ struct GameRecordDetailItem
 
 struct GameShareRecordReq
 {
-	0 require string appID;
+	0 require string appId;
 	1 require string appCode;
 	2 require string userId;
 	3 require string token;

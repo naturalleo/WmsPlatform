@@ -349,7 +349,7 @@ int HttpImp::doRequest(TarsCurrentPtr current, vector<char> &buffer)
         {
             current->setResponse(false);
             GameShareRecordReq req;
-            req.appID = getValue(_para,"appId");
+            req.appId = getValue(_para,"appId");
             req.appCode = getValue(_para,"appCode");
             req.userId = getValue(_para,"userId");
             req.token = getValue(_para,"token");
